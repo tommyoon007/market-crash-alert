@@ -1,0 +1,11 @@
+{
+  "name": "US Market Crash Alert",
+  "short_name": "Crash Alert",
+  "description": "미국 증시 폭락 조기경보 대시보드",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#0b1120",
+  "orientation": "portrait-primary",
+  "lang": "ko"
+}
