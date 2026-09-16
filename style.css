@@ -5,23 +5,86 @@
 body {
     margin: 0;
     padding: 20px;
-    background: #111827;
-    color: #f3f4f6;
+    background: #0b1120;
+    color: #f8fafc;
     font-family: Arial, sans-serif;
 }
 
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
 h1 {
-    margin-bottom: 8px;
+    margin: 0;
     font-size: 28px;
 }
 
-p {
-    color: #9ca3af;
+.subtitle {
+    margin: 8px 0 25px;
+    color: #94a3b8;
 }
 
-#app {
-    margin-top: 30px;
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.card {
     padding: 20px;
-    background: #1f2937;
+    background: #172033;
+    border: 1px solid #26334a;
     border-radius: 14px;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.ticker {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.description {
+    margin-top: 12px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.value {
+    margin-top: 18px;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.status {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #166534;
+    color: #dcfce7;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 18px;
+    }
 }
