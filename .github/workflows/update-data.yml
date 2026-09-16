@@ -1,0 +1,106 @@
+name: Update FRED Market Data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "5 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Collect FRED data
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.parse
+          import urllib.request
+          from datetime import datetime, timezone
+
+          API_KEY = os.environ["FRED_API_KEY"]
+
+          series = {
+              "HY OAS": "BAMLH0A0HYM2",
+              "CCC OAS": "BAMLH0A3HYC",
+              "VIX": "VIXCLS",
+              "NFCI": "NFCI",
+              "10Y - 2Y": "T10Y2Y",
+              "Sahm Rule": "SAHMREALTIME"
+          }
+
+          result = {
+              "updated_at": datetime.now(timezone.utc).isoformat(),
+              "status": "ok",
+              "data": {}
+          }
+
+          for name, series_id in series.items():
+              params = urllib.parse.urlencode({
+                  "series_id": series_id,
+                  "api_key": API_KEY,
+                  "file_type": "json",
+                  "sort_order": "desc",
+                  "limit": "30"
+              })
+
+              url = (
+                  "https://api.stlouisfed.org/fred/series/observations?"
+                  + params
+              )
+
+              with urllib.request.urlopen(url, timeout=30) as response:
+                  data = json.load(response)
+
+              observations = []
+
+              for item in data.get("observations", []):
+                  value = item.get("value")
+
+                  if value == ".":
+                      continue
+
+                  try:
+                      value = float(value)
+                  except ValueError:
+                      continue
+
+                  observations.append({
+                      "date": item["date"],
+                      "value": value
+                  })
+
+              result["data"][series_id] = {
+                  "name": name,
+                  "observations": observations
+              }
+
+          with open("data.json", "w", encoding="utf-8") as f:
+              json.dump(result, f, ensure_ascii=False, indent=2)
+
+          print("FRED data collection completed.")
+          print("Series:", ", ".join(series.values()))
+          PY
+
+      - name: Commit data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update FRED market data"
+            git push
+          fi
