@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    padding: 16px;
+    padding: 14px;
     background: #0b1120;
     color: #f8fafc;
     font-family: Arial, sans-serif;
@@ -12,19 +12,19 @@ body {
 
 h1 {
     margin: 0;
-    font-size: 25px;
+    font-size: 23px;
     line-height: 1.2;
 }
 
 p {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     color: #94a3b8;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 #app {
-    max-width: 1200px;
-    margin: 20px auto 0;
+    max-width: 1150px;
+    margin: 16px auto 0;
 }
 
 /* ================================
@@ -32,27 +32,27 @@ p {
 ================================ */
 
 .overall {
-    margin-bottom: 14px;
-    padding: 16px 20px;
-    border-radius: 14px;
+    margin-bottom: 12px;
+    padding: 13px 16px;
+    border-radius: 13px;
     text-align: center;
 }
 
 .overall-label {
-    font-size: 13px;
+    font-size: 12px;
     color: #cbd5e1;
 }
 
 .overall-value {
-    margin-top: 5px;
-    font-size: 30px;
+    margin-top: 4px;
+    font-size: 28px;
     font-weight: bold;
 }
 
 .overall-time {
-    margin-top: 5px;
+    margin-top: 4px;
     color: #94a3b8;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .overall.safe {
@@ -72,51 +72,59 @@ p {
 }
 
 /* ================================
-   지표 카드
+   카드
 ================================ */
 
 .dashboard {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
 }
 
 .card {
-    padding: 15px;
+    padding: 13px;
     background: #172033;
     border: 1px solid #26334a;
-    border-radius: 13px;
+    border-radius: 12px;
+    min-width: 0;
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .card-title {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
 }
 
 .ticker {
-    margin-top: 3px;
+    margin-top: 2px;
     color: #64748b;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .description {
-    margin-top: 7px;
+    margin-top: 6px;
     color: #94a3b8;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .value {
-    margin-top: 12px;
-    font-size: 27px;
+    margin-top: 10px;
+    font-size: 25px;
     font-weight: bold;
 }
 
 .status {
+    flex-shrink: 0;
     display: inline-block;
-    margin-top: 7px;
-    padding: 5px 10px;
-    border-radius: 18px;
-    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 10px;
     font-weight: bold;
 }
 
@@ -146,32 +154,32 @@ p {
 }
 
 /* ================================
-   변화량
+   5일 / 20일 변화
 ================================ */
 
 .changes {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 7px;
+    margin-top: 10px;
 }
 
 .change-box {
-    padding: 8px 10px;
+    padding: 7px 9px;
     background: #111827;
-    border-radius: 9px;
+    border-radius: 8px;
 }
 
 .change-label {
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     color: #64748b;
-    font-size: 10px;
+    font-size: 9px;
 }
 
 .change-up,
 .change-down,
 .change-neutral {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
 }
 
@@ -188,13 +196,84 @@ p {
 }
 
 /* ================================
+   그래프
+================================ */
+
+.chart-wrapper {
+    width: 100%;
+    height: 155px;
+    margin-top: 12px;
+    padding: 4px 0;
+    background: #111827;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.chart {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.chart-empty {
+    height: 155px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111827;
+    border-radius: 9px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+/* ================================
+   기간 버튼
+================================ */
+
+.period-buttons {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.period-buttons::-webkit-scrollbar {
+    display: none;
+}
+
+.period-button {
+    flex: 1;
+    min-width: 54px;
+    padding: 6px 5px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    background: #111827;
+    color: #94a3b8;
+    font-size: 9px;
+    cursor: pointer;
+}
+
+.period-button:hover {
+    background: #1e293b;
+}
+
+.period-button.active {
+    background: #334155;
+    border-color: #60a5fa;
+    color: #f8fafc;
+    font-weight: bold;
+}
+
+/* ================================
    기준일
 ================================ */
 
 .date {
-    margin-top: 9px;
+    margin-top: 7px;
     color: #64748b;
-    font-size: 10px;
+    font-size: 9px;
 }
 
 /* ================================
@@ -202,10 +281,10 @@ p {
 ================================ */
 
 .source {
-    margin-top: 14px;
+    margin-top: 12px;
     text-align: center;
     color: #64748b;
-    font-size: 10px;
+    font-size: 9px;
 }
 
 /* ================================
@@ -213,9 +292,9 @@ p {
 ================================ */
 
 .error {
-    padding: 25px;
+    padding: 24px;
     background: #7f1d1d;
-    border-radius: 13px;
+    border-radius: 12px;
     text-align: center;
 }
 
@@ -226,48 +305,55 @@ p {
 @media (max-width: 700px) {
 
     body {
-        padding: 12px;
+        padding: 10px;
     }
 
     h1 {
-        font-size: 22px;
+        font-size: 21px;
     }
 
     p {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     #app {
-        margin-top: 16px;
+        margin-top: 13px;
     }
 
     .overall {
-        padding: 14px;
-        margin-bottom: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
     }
 
     .overall-value {
-        font-size: 27px;
+        font-size: 26px;
     }
 
     .dashboard {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 8px;
     }
 
     .card {
-        padding: 14px;
+        padding: 11px;
     }
 
     .card-title {
-        font-size: 17px;
+        font-size: 16px;
     }
 
     .value {
-        font-size: 25px;
+        font-size: 24px;
     }
 
-    .changes {
-        gap: 7px;
+    .chart-wrapper,
+    .chart-empty {
+        height: 145px;
+    }
+
+    .period-button {
+        min-width: 50px;
+        padding: 6px 3px;
+        font-size: 9px;
     }
 }
