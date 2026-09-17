@@ -46,6 +46,7 @@ const indicators = [
 const app = document.getElementById("app");
 
 function formatValue(value, decimals, unit) {
+
     if (value === null || value === undefined) {
         return "--";
     }
@@ -54,6 +55,7 @@ function formatValue(value, decimals, unit) {
 }
 
 function formatChange(value, decimals, unit) {
+
     if (value === null || value === undefined) {
         return "--";
     }
@@ -64,6 +66,7 @@ function formatChange(value, decimals, unit) {
 }
 
 function getStatus(indicator, value) {
+
     if (value === null || value === undefined) {
         return {
             text: "데이터 없음",
@@ -74,80 +77,153 @@ function getStatus(indicator, value) {
     switch (indicator.ticker) {
 
         case "BAMLH0A0HYM2":
+
             if (value >= 6) {
-                return { text: "위험", className: "danger" };
+                return {
+                    text: "위험",
+                    className: "danger"
+                };
             }
 
             if (value >= 5) {
-                return { text: "경계", className: "warning" };
+                return {
+                    text: "경계",
+                    className: "warning"
+                };
             }
 
             if (value >= 4) {
-                return { text: "주의", className: "caution" };
+                return {
+                    text: "주의",
+                    className: "caution"
+                };
             }
 
-            return { text: "안정", className: "safe" };
+            return {
+                text: "안정",
+                className: "safe"
+            };
+
 
         case "BAMLH0A3HYC":
+
             if (value >= 10) {
-                return { text: "위험", className: "danger" };
+                return {
+                    text: "위험",
+                    className: "danger"
+                };
             }
 
             if (value >= 8) {
-                return { text: "경계", className: "warning" };
+                return {
+                    text: "경계",
+                    className: "warning"
+                };
             }
 
             if (value >= 6) {
-                return { text: "주의", className: "caution" };
+                return {
+                    text: "주의",
+                    className: "caution"
+                };
             }
 
-            return { text: "안정", className: "safe" };
+            return {
+                text: "안정",
+                className: "safe"
+            };
+
 
         case "VIXCLS":
+
             if (value >= 40) {
-                return { text: "위험", className: "danger" };
+                return {
+                    text: "위험",
+                    className: "danger"
+                };
             }
 
             if (value >= 30) {
-                return { text: "경계", className: "warning" };
+                return {
+                    text: "경계",
+                    className: "warning"
+                };
             }
 
             if (value >= 20) {
-                return { text: "주의", className: "caution" };
+                return {
+                    text: "주의",
+                    className: "caution"
+                };
             }
 
-            return { text: "안정", className: "safe" };
+            return {
+                text: "안정",
+                className: "safe"
+            };
+
 
         case "NFCI":
+
             if (value >= 1) {
-                return { text: "위험", className: "danger" };
+                return {
+                    text: "위험",
+                    className: "danger"
+                };
             }
 
             if (value >= 0.5) {
-                return { text: "경계", className: "warning" };
+                return {
+                    text: "경계",
+                    className: "warning"
+                };
             }
 
             if (value >= 0) {
-                return { text: "주의", className: "caution" };
+                return {
+                    text: "주의",
+                    className: "caution"
+                };
             }
 
-            return { text: "완화", className: "safe" };
+            return {
+                text: "완화",
+                className: "safe"
+            };
+
 
         case "T10Y2Y":
+
             if (value <= -1) {
-                return { text: "주의", className: "caution" };
+                return {
+                    text: "주의",
+                    className: "caution"
+                };
             }
 
-            return { text: "정상", className: "safe" };
+            return {
+                text: "정상",
+                className: "safe"
+            };
+
 
         case "SAHMREALTIME":
+
             if (value >= 0.5) {
-                return { text: "침체 신호", className: "danger" };
+                return {
+                    text: "침체 신호",
+                    className: "danger"
+                };
             }
 
-            return { text: "정상", className: "safe" };
+            return {
+                text: "정상",
+                className: "safe"
+            };
+
 
         default:
+
             return {
                 text: "확인",
                 className: "unknown"
@@ -242,6 +318,7 @@ function createCard(indicator, data) {
             <div class="changes">
 
                 <div class="change-box">
+
                     <div class="change-label">
                         5일 변화
                     </div>
@@ -253,9 +330,11 @@ function createCard(indicator, data) {
                             indicator.unit
                         )}
                     </div>
+
                 </div>
 
                 <div class="change-box">
+
                     <div class="change-label">
                         20일 변화
                     </div>
@@ -267,6 +346,7 @@ function createCard(indicator, data) {
                             indicator.unit
                         )}
                     </div>
+
                 </div>
 
             </div>
@@ -280,11 +360,14 @@ function createCard(indicator, data) {
     `;
 }
 
+
+/* ================================
+   종합 위험도 계산
+================================ */
+
 function calculateOverallRisk(allData) {
 
-    let danger = 0;
-    let warning = 0;
-    let caution = 0;
+    let score = 0;
 
     indicators.forEach(indicator => {
 
@@ -298,34 +381,110 @@ function calculateOverallRisk(allData) {
         const value =
             Number(observations[0].value);
 
-        const status =
-            getStatus(indicator, value);
-
-        if (status.className === "danger") {
-            danger++;
+        if (Number.isNaN(value)) {
+            return;
         }
 
-        else if (status.className === "warning") {
-            warning++;
-        }
+        switch (indicator.ticker) {
 
-        else if (status.className === "caution") {
-            caution++;
+            case "BAMLH0A0HYM2":
+
+                if (value >= 6) {
+                    score += 3;
+                }
+
+                else if (value >= 5) {
+                    score += 2;
+                }
+
+                else if (value >= 4) {
+                    score += 1;
+                }
+
+                break;
+
+
+            case "BAMLH0A3HYC":
+
+                if (value >= 10) {
+                    score += 3;
+                }
+
+                else if (value >= 8) {
+                    score += 2;
+                }
+
+                else if (value >= 6) {
+                    score += 1;
+                }
+
+                break;
+
+
+            case "VIXCLS":
+
+                if (value >= 40) {
+                    score += 3;
+                }
+
+                else if (value >= 30) {
+                    score += 2;
+                }
+
+                else if (value >= 20) {
+                    score += 1;
+                }
+
+                break;
+
+
+            case "NFCI":
+
+                if (value >= 1) {
+                    score += 3;
+                }
+
+                else if (value >= 0.5) {
+                    score += 2;
+                }
+
+                else if (value >= 0) {
+                    score += 1;
+                }
+
+                break;
+
+
+            case "T10Y2Y":
+
+                if (value <= -1) {
+                    score += 1;
+                }
+
+                break;
+
+
+            case "SAHMREALTIME":
+
+                if (value >= 0.5) {
+                    score += 3;
+                }
+
+                break;
         }
     });
 
-    if (danger >= 2) {
+
+    if (score >= 7) {
 
         return {
-            text: "STRESS",
+            text: "HIGH RISK",
             className: "danger"
         };
     }
 
-    if (
-        danger >= 1 ||
-        warning >= 2
-    ) {
+
+    if (score >= 4) {
 
         return {
             text: "WARNING",
@@ -333,10 +492,8 @@ function calculateOverallRisk(allData) {
         };
     }
 
-    if (
-        caution >= 2 ||
-        warning >= 1
-    ) {
+
+    if (score >= 2) {
 
         return {
             text: "CAUTION",
@@ -344,11 +501,17 @@ function calculateOverallRisk(allData) {
         };
     }
 
+
     return {
         text: "NORMAL",
         className: "safe"
     };
 }
+
+
+/* ================================
+   데이터 불러오기
+================================ */
 
 async function loadData() {
 
@@ -359,6 +522,7 @@ async function loadData() {
         );
 
         if (!response.ok) {
+
             throw new Error(
                 "data.json을 불러오지 못했습니다."
             );
@@ -398,6 +562,7 @@ async function loadData() {
 
             </div>
 
+
             <div class="dashboard">
 
                 ${
@@ -413,9 +578,12 @@ async function loadData() {
 
             </div>
 
+
             <div class="source">
+
                 Data source:
                 Federal Reserve Bank of St. Louis (FRED)
+
             </div>
         `;
 
