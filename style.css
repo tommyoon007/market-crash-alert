@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    padding: 20px;
+    padding: 16px;
     background: #0b1120;
     color: #f8fafc;
     font-family: Arial, sans-serif;
@@ -12,60 +12,111 @@ body {
 
 h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 25px;
+    line-height: 1.2;
 }
 
 p {
-    color: #94a3b8;
-}
-
-#app {
-    max-width: 1100px;
-    margin: 30px auto 0;
-}
-
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
-
-.card {
-    padding: 20px;
-    background: #172033;
-    border: 1px solid #26334a;
-    border-radius: 14px;
-}
-
-.card-title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.ticker {
-    margin-top: 5px;
-    color: #64748b;
-    font-size: 12px;
-}
-
-.description {
-    margin-top: 12px;
+    margin: 8px 0 0;
     color: #94a3b8;
     font-size: 14px;
 }
 
-.value {
-    margin-top: 18px;
+#app {
+    max-width: 1200px;
+    margin: 20px auto 0;
+}
+
+/* ================================
+   종합 위험도
+================================ */
+
+.overall {
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    text-align: center;
+}
+
+.overall-label {
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.overall-value {
+    margin-top: 5px;
     font-size: 30px;
+    font-weight: bold;
+}
+
+.overall-time {
+    margin-top: 5px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.overall.safe {
+    background: #14532d;
+}
+
+.overall.caution {
+    background: #713f12;
+}
+
+.overall.warning {
+    background: #7c2d12;
+}
+
+.overall.danger {
+    background: #7f1d1d;
+}
+
+/* ================================
+   지표 카드
+================================ */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.card {
+    padding: 15px;
+    background: #172033;
+    border: 1px solid #26334a;
+    border-radius: 13px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.ticker {
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.description {
+    margin-top: 7px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.value {
+    margin-top: 12px;
+    font-size: 27px;
     font-weight: bold;
 }
 
 .status {
     display: inline-block;
-    margin-top: 10px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 13px;
+    margin-top: 7px;
+    padding: 5px 10px;
+    border-radius: 18px;
+    font-size: 12px;
     font-weight: bold;
 }
 
@@ -94,128 +145,129 @@ p {
     color: #d1d5db;
 }
 
-/* 변화량 */
+/* ================================
+   변화량
+================================ */
 
 .changes {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 18px;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .change-box {
-    padding: 10px;
+    padding: 8px 10px;
     background: #111827;
-    border-radius: 10px;
+    border-radius: 9px;
 }
 
 .change-label {
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     color: #64748b;
-    font-size: 12px;
+    font-size: 10px;
+}
+
+.change-up,
+.change-down,
+.change-neutral {
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .change-up {
     color: #4ade80;
-    font-size: 16px;
-    font-weight: bold;
 }
 
 .change-down {
     color: #f87171;
-    font-size: 16px;
-    font-weight: bold;
 }
 
 .change-neutral {
     color: #cbd5e1;
-    font-size: 16px;
-    font-weight: bold;
 }
+
+/* ================================
+   기준일
+================================ */
 
 .date {
-    margin-top: 12px;
+    margin-top: 9px;
     color: #64748b;
-    font-size: 12px;
+    font-size: 10px;
 }
 
-.overall {
-    margin-bottom: 20px;
-    padding: 24px;
-    border-radius: 16px;
-    text-align: center;
-}
-
-.overall-label {
-    font-size: 14px;
-    color: #cbd5e1;
-}
-
-.overall-value {
-    margin-top: 8px;
-    font-size: 34px;
-    font-weight: bold;
-}
-
-.overall-time {
-    margin-top: 8px;
-    color: #94a3b8;
-    font-size: 12px;
-}
-
-.overall.safe {
-    background: #14532d;
-}
-
-.overall.caution {
-    background: #713f12;
-}
-
-.overall.warning {
-    background: #7c2d12;
-}
-
-.overall.danger {
-    background: #7f1d1d;
-}
+/* ================================
+   출처
+================================ */
 
 .source {
-    margin-top: 20px;
+    margin-top: 14px;
     text-align: center;
     color: #64748b;
-    font-size: 12px;
+    font-size: 10px;
 }
 
+/* ================================
+   오류
+================================ */
+
 .error {
-    padding: 30px;
+    padding: 25px;
     background: #7f1d1d;
-    border-radius: 14px;
+    border-radius: 13px;
     text-align: center;
 }
+
+/* ================================
+   모바일
+================================ */
 
 @media (max-width: 700px) {
 
     body {
-        padding: 15px;
+        padding: 12px;
     }
 
     h1 {
-        font-size: 24px;
+        font-size: 22px;
+    }
+
+    p {
+        font-size: 13px;
+    }
+
+    #app {
+        margin-top: 16px;
+    }
+
+    .overall {
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    .overall-value {
+        font-size: 27px;
     }
 
     .dashboard {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .card {
-        padding: 18px;
+        padding: 14px;
+    }
+
+    .card-title {
+        font-size: 17px;
     }
 
     .value {
-        font-size: 28px;
+        font-size: 25px;
     }
 
     .changes {
-        grid-template-columns: 1fr 1fr;
+        gap: 7px;
     }
 }
