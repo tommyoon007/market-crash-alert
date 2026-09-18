@@ -58,7 +58,7 @@ let currentView = "dashboard";
 let selectedPeriods = {};
 
 const periodOptions = [
-    { key: "all", label: "전체" },
+    { key: "all", label: "전체기간" },
     { key: "10y", label: "10년" },
     { key: "5y", label: "5년" },
     { key: "1y", label: "1년" },
@@ -414,6 +414,27 @@ function downsample(observations, maxPoints = 180) {
 
 
 /* ================================
+   날짜 표시
+================================ */
+
+function formatChartDate(dateString) {
+
+    if (!dateString) {
+        return "--";
+    }
+
+    const parts =
+        dateString.split("-");
+
+    if (parts.length !== 3) {
+        return dateString;
+    }
+
+    return `${parts[0]}-${parts[1]}-${parts[2]}`;
+}
+
+
+/* ================================
    SVG 그래프
 ================================ */
 
@@ -448,12 +469,12 @@ function createChart(
         points.map(item => Number(item.value));
 
     const width = 700;
-    const height = 180;
+    const height = 210;
 
-    const paddingLeft = 38;
+    const paddingLeft = 42;
     const paddingRight = 8;
-    const paddingTop = 10;
-    const paddingBottom = 22;
+    const paddingTop = 12;
+    const paddingBottom = 28;
 
     const chartWidth =
         width -
@@ -531,9 +552,6 @@ function createChart(
          Z`;
 
 
-    const latest =
-        coords[coords.length - 1];
-
     const first =
         coords[0];
 
@@ -542,11 +560,16 @@ function createChart(
             Math.floor(coords.length / 2)
         ];
 
+    const latest =
+        coords[coords.length - 1];
+
 
     const formatAxisValue = value => {
+
         return Number(value).toFixed(
             indicator.decimals
         );
+
     };
 
 
@@ -559,7 +582,11 @@ function createChart(
 
 
     return `
-        <div class="chart-wrapper">
+        <div
+            class="chart-wrapper"
+            data-ticker="${indicator.ticker}"
+            data-period="${periodKey}"
+        >
 
             <svg
                 class="chart"
@@ -572,7 +599,7 @@ function createChart(
                     y1="${paddingTop}"
                     x2="${width - paddingRight}"
                     y2="${paddingTop}"
-                    stroke="#24344e"
+                    stroke="#263957"
                     stroke-width="1"
                 />
 
@@ -581,7 +608,7 @@ function createChart(
                     y1="${height / 2}"
                     x2="${width - paddingRight}"
                     y2="${height / 2}"
-                    stroke="#24344e"
+                    stroke="#263957"
                     stroke-width="1"
                 />
 
@@ -590,93 +617,524 @@ function createChart(
                     y1="${height - paddingBottom}"
                     x2="${width - paddingRight}"
                     y2="${height - paddingBottom}"
-                    stroke="#24344e"
+                    stroke="#263957"
                     stroke-width="1"
                 />
+
 
                 <text
                     x="2"
                     y="${paddingTop + 4}"
-                    fill="#657a99"
+                    fill="#8da2c2"
                     font-size="10"
                 >
                     ${formatAxisValue(axisTop)}
                 </text>
 
+
                 <text
                     x="2"
                     y="${height / 2 + 4}"
-                    fill="#657a99"
+                    fill="#8da2c2"
                     font-size="10"
                 >
                     ${formatAxisValue(axisMiddle)}
                 </text>
 
+
                 <text
                     x="2"
                     y="${height - paddingBottom + 4}"
-                    fill="#657a99"
+                    fill="#8da2c2"
                     font-size="10"
                 >
                     ${formatAxisValue(axisBottom)}
                 </text>
 
+
                 <path
                     d="${areaPath}"
-                    fill="rgba(59,130,246,0.07)"
+                    fill="rgba(59,130,246,0.10)"
                     stroke="none"
                 />
+
 
                 <path
                     d="${linePath}"
                     fill="none"
-                    stroke="#4f9cff"
-                    stroke-width="2.2"
+                    stroke="#55a5ff"
+                    stroke-width="2.5"
                     stroke-linejoin="round"
                     stroke-linecap="round"
                 />
 
+
                 <circle
+                    class="chart-latest-point"
                     cx="${latest.x}"
                     cy="${latest.y}"
-                    r="3.5"
-                    fill="#63a8ff"
+                    r="4"
+                    fill="#7ab8ff"
                 />
+
 
                 <text
                     x="${first.x}"
-                    y="${height - 5}"
-                    fill="#657a99"
+                    y="${height - 6}"
+                    fill="#7d92b1"
                     font-size="9"
                     text-anchor="start"
                 >
                     ${first.date}
                 </text>
 
+
                 <text
                     x="${middle.x}"
-                    y="${height - 5}"
-                    fill="#657a99"
+                    y="${height - 6}"
+                    fill="#7d92b1"
                     font-size="9"
                     text-anchor="middle"
                 >
                     ${middle.date}
                 </text>
 
+
                 <text
                     x="${latest.x}"
-                    y="${height - 5}"
-                    fill="#657a99"
+                    y="${height - 6}"
+                    fill="#7d92b1"
                     font-size="9"
                     text-anchor="end"
                 >
                     ${latest.date}
                 </text>
 
+
+                <!--
+                    터치 감지 영역
+                -->
+                <rect
+                    class="chart-touch-area"
+                    x="${paddingLeft}"
+                    y="${paddingTop}"
+                    width="${chartWidth}"
+                    height="${chartHeight}"
+                    fill="transparent"
+                />
+
+
+                <!--
+                    터치 위치 세로선
+                -->
+                <line
+                    class="chart-touch-line"
+                    x1="${paddingLeft}"
+                    y1="${paddingTop}"
+                    x2="${paddingLeft}"
+                    y2="${height - paddingBottom}"
+                    stroke="#ffffff"
+                    stroke-width="1.5"
+                    stroke-dasharray="4 4"
+                    opacity="0"
+                />
+
+
+                <circle
+                    class="chart-touch-point"
+                    cx="${paddingLeft}"
+                    cy="${paddingTop}"
+                    r="5"
+                    fill="#ffffff"
+                    stroke="#4f9cff"
+                    stroke-width="2"
+                    opacity="0"
+                />
+
             </svg>
+
+
+            <div class="chart-tooltip">
+
+                <div class="chart-tooltip-date">
+                    ${formatChartDate(latest.date)}
+                </div>
+
+                <div class="chart-tooltip-value">
+                    ${formatValue(
+                        latest.value,
+                        indicator.decimals,
+                        indicator.unit
+                    )}
+                </div>
+
+            </div>
 
         </div>
     `;
+}
+
+
+/* ================================
+   그래프 터치 기능
+================================ */
+
+function setupChartTouchEvents() {
+
+    document
+        .querySelectorAll(".chart-wrapper")
+        .forEach(wrapper => {
+
+            const ticker =
+                wrapper.dataset.ticker;
+
+            const period =
+                wrapper.dataset.period;
+
+            const indicator =
+                indicators.find(
+                    item => item.ticker === ticker
+                );
+
+            if (!indicator) {
+                return;
+            }
+
+
+            const observations =
+                allData[ticker]?.observations || [];
+
+
+            const filtered =
+                filterObservations(
+                    observations,
+                    period
+                );
+
+
+            if (!filtered.length) {
+                return;
+            }
+
+
+            const ordered =
+                filtered.slice().reverse();
+
+
+            const points =
+                downsample(
+                    ordered,
+                    180
+                );
+
+
+            const svg =
+                wrapper.querySelector(".chart");
+
+            const touchArea =
+                wrapper.querySelector(
+                    ".chart-touch-area"
+                );
+
+            const touchLine =
+                wrapper.querySelector(
+                    ".chart-touch-line"
+                );
+
+            const touchPoint =
+                wrapper.querySelector(
+                    ".chart-touch-point"
+                );
+
+            const tooltip =
+                wrapper.querySelector(
+                    ".chart-tooltip"
+                );
+
+
+            if (
+                !svg ||
+                !touchArea ||
+                !touchLine ||
+                !touchPoint ||
+                !tooltip
+            ) {
+                return;
+            }
+
+
+            const width = 700;
+
+            const paddingLeft = 42;
+            const paddingRight = 8;
+
+            const chartWidth =
+                width -
+                paddingLeft -
+                paddingRight;
+
+
+            function showPoint(event) {
+
+                const rect =
+                    svg.getBoundingClientRect();
+
+                let clientX =
+                    event.clientX;
+
+
+                if (
+                    event.touches &&
+                    event.touches.length
+                ) {
+                    clientX =
+                        event.touches[0].clientX;
+                }
+
+
+                let x =
+                    clientX -
+                    rect.left;
+
+
+                if (x < paddingLeft) {
+                    x = paddingLeft;
+                }
+
+                if (
+                    x >
+                    rect.width - paddingRight
+                ) {
+                    x =
+                        rect.width -
+                        paddingRight;
+                }
+
+
+                const ratio =
+                    (
+                        x -
+                        (
+                            paddingLeft *
+                            rect.width /
+                            width
+                        )
+                    ) /
+                    (
+                        chartWidth *
+                        rect.width /
+                        width
+                    );
+
+
+                let index =
+                    Math.round(
+                        ratio *
+                        (
+                            points.length - 1
+                        )
+                    );
+
+
+                index =
+                    Math.max(
+                        0,
+                        Math.min(
+                            points.length - 1,
+                            index
+                        )
+                    );
+
+
+                const point =
+                    points[index];
+
+
+                const svgX =
+                    paddingLeft +
+                    (
+                        index /
+                        Math.max(
+                            points.length - 1,
+                            1
+                        )
+                    ) *
+                    chartWidth;
+
+
+                const values =
+                    points.map(
+                        item =>
+                            Number(item.value)
+                    );
+
+
+                let min =
+                    Math.min(...values);
+
+                let max =
+                    Math.max(...values);
+
+
+                if (min === max) {
+                    min -= 1;
+                    max += 1;
+                }
+
+
+                const range =
+                    max - min;
+
+
+                min -= range * 0.08;
+                max += range * 0.08;
+
+
+                const finalRange =
+                    max - min;
+
+
+                const height = 210;
+
+                const paddingTop = 12;
+                const paddingBottom = 28;
+
+                const chartHeight =
+                    height -
+                    paddingTop -
+                    paddingBottom;
+
+
+                const svgY =
+                    paddingTop +
+                    (
+                        1 -
+                        (
+                            Number(point.value) -
+                            min
+                        ) /
+                        finalRange
+                    ) *
+                    chartHeight;
+
+
+                touchLine.setAttribute(
+                    "x1",
+                    svgX
+                );
+
+                touchLine.setAttribute(
+                    "x2",
+                    svgX
+                );
+
+                touchLine.setAttribute(
+                    "opacity",
+                    "1"
+                );
+
+
+                touchPoint.setAttribute(
+                    "cx",
+                    svgX
+                );
+
+                touchPoint.setAttribute(
+                    "cy",
+                    svgY
+                );
+
+                touchPoint.setAttribute(
+                    "opacity",
+                    "1"
+                );
+
+
+                tooltip.innerHTML = `
+
+                    <div class="chart-tooltip-date">
+                        ${formatChartDate(
+                            point.date
+                        )}
+                    </div>
+
+                    <div class="chart-tooltip-value">
+                        ${formatValue(
+                            point.value,
+                            indicator.decimals,
+                            indicator.unit
+                        )}
+                    </div>
+
+                `;
+
+
+                const wrapperWidth =
+                    wrapper.clientWidth;
+
+
+                const pointScreenX =
+                    (
+                        svgX /
+                        width
+                    ) *
+                    wrapperWidth;
+
+
+                let tooltipLeft =
+                    pointScreenX -
+                    60;
+
+
+                if (tooltipLeft < 4) {
+                    tooltipLeft = 4;
+                }
+
+
+                if (
+                    tooltipLeft + 120 >
+                    wrapperWidth - 4
+                ) {
+                    tooltipLeft =
+                        wrapperWidth - 124;
+                }
+
+
+                tooltip.style.left =
+                    tooltipLeft + "px";
+
+
+                tooltip.classList.add(
+                    "visible"
+                );
+
+            }
+
+
+            touchArea.addEventListener(
+                "pointerdown",
+                event => {
+
+                    showPoint(event);
+
+                }
+            );
+
+
+            touchArea.addEventListener(
+                "pointermove",
+                event => {
+
+                    if (
+                        event.buttons
+                    ) {
+                        showPoint(event);
+                    }
+
+                }
+            );
+
+        });
 }
 
 
@@ -813,7 +1271,7 @@ function createCard(
                         <div class="change-box">
 
                             <div class="change-label">
-                                5일
+                                5일 변화
                             </div>
 
                             <div class="${getChangeClass(
@@ -833,7 +1291,7 @@ function createCard(
                         <div class="change-box">
 
                             <div class="change-label">
-                                20일
+                                20일 변화
                             </div>
 
                             <div class="${getChangeClass(
@@ -915,34 +1373,98 @@ function calculateOverallRisk(data) {
 
 
     if (score >= 7) {
+
         return {
             text: "HIGH RISK",
             className: "danger",
             score: score
         };
+
     }
 
+
     if (score >= 4) {
+
         return {
             text: "WARNING",
             className: "warning",
             score: score
         };
+
     }
 
+
     if (score >= 2) {
+
         return {
             text: "CAUTION",
             className: "caution",
             score: score
         };
+
     }
+
 
     return {
         text: "NORMAL",
         className: "safe",
         score: score
     };
+}
+
+
+/* ================================
+   위험지수 HTML
+================================ */
+
+function createRiskScoreHTML(overall) {
+
+    const maxScore = 16;
+
+    const percentage =
+        Math.min(
+            100,
+            Math.round(
+                (
+                    overall.score /
+                    maxScore
+                ) *
+                100
+            )
+        );
+
+
+    return `
+
+        <div class="risk-score-box">
+
+            <div class="risk-score-label">
+                위험 지수
+            </div>
+
+            <div class="risk-score-number">
+
+                <strong>
+                    ${overall.score}
+                </strong>
+
+                <span>
+                    / ${maxScore}
+                </span>
+
+            </div>
+
+            <div class="risk-score-bar">
+
+                <div
+                    class="risk-score-fill"
+                    style="width:${percentage}%"
+                ></div>
+
+            </div>
+
+        </div>
+    `;
 }
 
 
@@ -962,29 +1484,31 @@ function renderDashboard() {
 
         <div class="overall ${overall.className}">
 
-            <div class="overall-label">
-                종합 금융시장 위험도
+            <div class="overall-left">
+
+                <div class="overall-label">
+                    종합 금융시장 위험도
+                </div>
+
+                <div class="overall-value">
+                    ${overall.text}
+                </div>
+
+                <div class="overall-time">
+                    데이터 업데이트:
+                    ${
+                        window.marketDataUpdatedAt
+                            ? new Date(
+                                window.marketDataUpdatedAt
+                            ).toLocaleString("ko-KR")
+                            : "--"
+                    }
+                </div>
+
             </div>
 
-            <div class="overall-value">
-                ${overall.text}
-            </div>
 
-            <div class="overall-time">
-                위험 점수:
-                ${overall.score}
-            </div>
-
-            <div class="overall-time">
-                데이터 업데이트:
-                ${
-                    window.marketDataUpdatedAt
-                        ? new Date(
-                            window.marketDataUpdatedAt
-                        ).toLocaleString("ko-KR")
-                        : "--"
-                }
-            </div>
+            ${createRiskScoreHTML(overall)}
 
         </div>
 
@@ -1021,7 +1545,10 @@ function renderDashboard() {
         </div>
     `;
 
+
     attachDashboardEvents();
+
+    setupChartTouchEvents();
 }
 
 
@@ -1067,12 +1594,14 @@ function renderRiskView() {
                     value
                 );
 
+
             return `
                 <div class="risk-row">
 
                     <div class="risk-row-top">
 
                         <div>
+
                             <div class="risk-name">
                                 ${indicator.name}
                             </div>
@@ -1080,6 +1609,7 @@ function renderRiskView() {
                             <div class="risk-description">
                                 ${indicator.description}
                             </div>
+
                         </div>
 
                         <div class="status ${status.className}">
@@ -1087,6 +1617,7 @@ function renderRiskView() {
                         </div>
 
                     </div>
+
 
                     <div class="risk-row-bottom">
 
@@ -1129,18 +1660,24 @@ function renderRiskView() {
 
         <div class="overall ${overall.className}">
 
-            <div class="overall-label">
-                현재 종합 위험도
+            <div class="overall-left">
+
+                <div class="overall-label">
+                    현재 종합 위험도
+                </div>
+
+                <div class="overall-value">
+                    ${overall.text}
+                </div>
+
+                <div class="overall-time">
+                    총 위험 점수:
+                    ${overall.score} / 16
+                </div>
+
             </div>
 
-            <div class="overall-value">
-                ${overall.text}
-            </div>
-
-            <div class="overall-time">
-                총 위험 점수:
-                ${overall.score}
-            </div>
+            ${createRiskScoreHTML(overall)}
 
         </div>
 
@@ -1158,6 +1695,7 @@ function renderRiskView() {
             ${rows}
 
         </div>
+
 
         <div class="source">
             Data source:
@@ -1258,17 +1796,23 @@ function renderTrendView() {
 
         <div class="overall ${overall.className}">
 
-            <div class="overall-label">
-                시장 추세
+            <div class="overall-left">
+
+                <div class="overall-label">
+                    시장 추세
+                </div>
+
+                <div class="overall-value">
+                    ${overall.text}
+                </div>
+
+                <div class="overall-time">
+                    기본 추세 기간: 1년
+                </div>
+
             </div>
 
-            <div class="overall-value">
-                ${overall.text}
-            </div>
-
-            <div class="overall-time">
-                기본 추세 기간: 1년
-            </div>
+            ${createRiskScoreHTML(overall)}
 
         </div>
 
@@ -1293,6 +1837,9 @@ function renderTrendView() {
             Federal Reserve Bank of St. Louis (FRED)
         </div>
     `;
+
+
+    setupChartTouchEvents();
 }
 
 
@@ -1340,6 +1887,7 @@ function attachDashboardEvents() {
                         period;
 
                     renderDashboard();
+
                 }
             );
 
@@ -1412,6 +1960,7 @@ async function loadData() {
             throw new Error(
                 "data.json을 불러오지 못했습니다."
             );
+
         }
 
 
@@ -1446,7 +1995,9 @@ async function loadData() {
                 잠시 후 다시 시도해주세요.
 
             </div>
+
         `;
+
     }
 }
 
