@@ -6,8 +6,8 @@
 
     <title>US Market Crash Alert</title>
 
-    <link rel="manifest" href="manifest.json?v=3">
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="manifest" href="manifest.json?v=4">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
@@ -19,12 +19,32 @@
         데이터를 불러오는 중...
     </div>
 
-    <script src="app.js?v=3"></script>
+    <!-- 하단 메뉴 -->
+    <nav class="bottom-nav">
+
+        <button class="nav-item active">
+            <span>📊</span>
+            <small>대시보드</small>
+        </button>
+
+        <button class="nav-item">
+            <span>⚠️</span>
+            <small>위험도</small>
+        </button>
+
+        <button class="nav-item">
+            <span>📈</span>
+            <small>추세</small>
+        </button>
+
+    </nav>
+
+    <script src="app.js?v=4"></script>
 
     <script>
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-            navigator.serviceWorker.register("./service-worker.js?v=3");
+            navigator.serviceWorker.register("./service-worker.js?v=4");
         });
     }
     </script>
