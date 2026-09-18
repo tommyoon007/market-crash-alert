@@ -1,53 +1,66 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>US Market Crash Alert</title>
 
-    <link rel="manifest" href="manifest.json?v=4">
-    <link rel="stylesheet" href="style.css?v=4">
+    <link
+        rel="manifest"
+        href="manifest.json?v=4"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css?v=4"
+    >
+
 </head>
+
 
 <body>
 
     <h1>🇺🇸 US Market Crash Alert</h1>
-    <p>미국 증시 폭락 조기경보 대시보드</p>
+
+    <p>
+        미국 증시 폭락 조기경보 대시보드
+    </p>
+
 
     <div id="app">
         데이터를 불러오는 중...
     </div>
 
-    <!-- 하단 메뉴 -->
-    <nav class="bottom-nav">
-
-        <button class="nav-item active">
-            <span>📊</span>
-            <small>대시보드</small>
-        </button>
-
-        <button class="nav-item">
-            <span>⚠️</span>
-            <small>위험도</small>
-        </button>
-
-        <button class="nav-item">
-            <span>📈</span>
-            <small>추세</small>
-        </button>
-
-    </nav>
 
     <script src="app.js?v=4"></script>
 
+
     <script>
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("./service-worker.js?v=4");
-        });
-    }
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener(
+                "load",
+                () => {
+
+                    navigator.serviceWorker.register(
+                        "./service-worker.js?v=4"
+                    );
+
+                }
+            );
+
+        }
+
     </script>
 
 </body>
+
 </html>
