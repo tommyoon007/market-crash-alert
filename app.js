@@ -54,30 +54,12 @@ const app = document.getElementById("app");
 let allData = {};
 
 const periodOptions = [
-    {
-        key: "all",
-        label: "전체기간"
-    },
-    {
-        key: "10y",
-        label: "10년"
-    },
-    {
-        key: "5y",
-        label: "5년"
-    },
-    {
-        key: "1y",
-        label: "1년"
-    },
-    {
-        key: "6m",
-        label: "6개월"
-    },
-    {
-        key: "3m",
-        label: "3개월"
-    }
+    { key: "all", label: "전체" },
+    { key: "10y", label: "10년" },
+    { key: "5y", label: "5년" },
+    { key: "1y", label: "1년" },
+    { key: "6m", label: "6개월" },
+    { key: "3m", label: "3개월" }
 ];
 
 
@@ -125,147 +107,87 @@ function getStatus(indicator, value) {
         case "BAMLH0A0HYM2":
 
             if (value >= 6) {
-                return {
-                    text: "위험",
-                    className: "danger"
-                };
+                return { text: "위험", className: "danger" };
             }
 
             if (value >= 5) {
-                return {
-                    text: "경계",
-                    className: "warning"
-                };
+                return { text: "경계", className: "warning" };
             }
 
             if (value >= 4) {
-                return {
-                    text: "주의",
-                    className: "caution"
-                };
+                return { text: "주의", className: "caution" };
             }
 
-            return {
-                text: "안정",
-                className: "safe"
-            };
+            return { text: "안정", className: "safe" };
 
 
         case "BAMLH0A3HYC":
 
             if (value >= 10) {
-                return {
-                    text: "위험",
-                    className: "danger"
-                };
+                return { text: "위험", className: "danger" };
             }
 
             if (value >= 8) {
-                return {
-                    text: "경계",
-                    className: "warning"
-                };
+                return { text: "경계", className: "warning" };
             }
 
             if (value >= 6) {
-                return {
-                    text: "주의",
-                    className: "caution"
-                };
+                return { text: "주의", className: "caution" };
             }
 
-            return {
-                text: "안정",
-                className: "safe"
-            };
+            return { text: "안정", className: "safe" };
 
 
         case "VIXCLS":
 
             if (value >= 40) {
-                return {
-                    text: "위험",
-                    className: "danger"
-                };
+                return { text: "위험", className: "danger" };
             }
 
             if (value >= 30) {
-                return {
-                    text: "경계",
-                    className: "warning"
-                };
+                return { text: "경계", className: "warning" };
             }
 
             if (value >= 20) {
-                return {
-                    text: "주의",
-                    className: "caution"
-                };
+                return { text: "주의", className: "caution" };
             }
 
-            return {
-                text: "안정",
-                className: "safe"
-            };
+            return { text: "안정", className: "safe" };
 
 
         case "NFCI":
 
             if (value >= 1) {
-                return {
-                    text: "위험",
-                    className: "danger"
-                };
+                return { text: "위험", className: "danger" };
             }
 
             if (value >= 0.5) {
-                return {
-                    text: "경계",
-                    className: "warning"
-                };
+                return { text: "경계", className: "warning" };
             }
 
             if (value >= 0) {
-                return {
-                    text: "주의",
-                    className: "caution"
-                };
+                return { text: "주의", className: "caution" };
             }
 
-            return {
-                text: "완화",
-                className: "safe"
-            };
+            return { text: "완화", className: "safe" };
 
 
         case "T10Y2Y":
 
             if (value <= -1) {
-                return {
-                    text: "주의",
-                    className: "caution"
-                };
+                return { text: "주의", className: "caution" };
             }
 
-            return {
-                text: "정상",
-                className: "safe"
-            };
+            return { text: "정상", className: "safe" };
 
 
         case "SAHMREALTIME":
 
             if (value >= 0.5) {
-                return {
-                    text: "침체 신호",
-                    className: "danger"
-                };
+                return { text: "침체 신호", className: "danger" };
             }
 
-            return {
-                text: "정상",
-                className: "safe"
-            };
+            return { text: "정상", className: "safe" };
 
 
         default:
@@ -302,18 +224,6 @@ function getChange(observations, periodsAgo) {
 }
 
 
-/*
-   위험지표에 맞는 변화 방향 표시
-
-   higher:
-   상승 = 위험 증가 = 빨강
-   하락 = 위험 감소 = 초록
-
-   lower:
-   하락 = 위험 증가 = 빨강
-   상승 = 위험 감소 = 초록
-*/
-
 function getChangeClass(indicator, change) {
 
     if (change === null) {
@@ -347,7 +257,7 @@ function getChangeClass(indicator, change) {
 
 
 /* ================================
-   날짜 계산
+   날짜
 ================================ */
 
 function getDateDaysAgo(days) {
@@ -398,16 +308,13 @@ function filterObservations(observations, periodKey) {
     const startDate = getDateDaysAgo(days);
 
     return observations.filter(item => {
-
-        const itemDate = new Date(item.date);
-
-        return itemDate >= startDate;
+        return new Date(item.date) >= startDate;
     });
 }
 
 
 /* ================================
-   그래프용 데이터 압축
+   그래프 데이터 압축
 ================================ */
 
 function downsample(observations, maxPoints = 180) {
@@ -435,7 +342,7 @@ function downsample(observations, maxPoints = 180) {
 
 
 /* ================================
-   SVG 그래프 생성
+   SVG 그래프
 ================================ */
 
 function createChart(
@@ -454,16 +361,10 @@ function createChart(
 
         return `
             <div class="chart-empty">
-                해당 기간의 데이터가 없습니다.
+                데이터 없음
             </div>
         `;
     }
-
-    /*
-       FRED 데이터는 최신순이므로
-       그래프에서는 오래된 데이터 → 최신 데이터
-       순서로 뒤집는다.
-    */
 
     const ordered =
         filtered.slice().reverse();
@@ -475,12 +376,12 @@ function createChart(
         points.map(item => Number(item.value));
 
     const width = 700;
-    const height = 190;
+    const height = 180;
 
-    const paddingLeft = 42;
-    const paddingRight = 12;
-    const paddingTop = 14;
-    const paddingBottom = 30;
+    const paddingLeft = 38;
+    const paddingRight = 8;
+    const paddingTop = 10;
+    const paddingBottom = 22;
 
     const chartWidth =
         width -
@@ -499,16 +400,11 @@ function createChart(
         Math.max(...values);
 
     if (min === max) {
-
         min -= 1;
         max += 1;
     }
 
     const range = max - min;
-
-    /*
-       그래프 위아래 여백
-    */
 
     min -= range * 0.08;
     max += range * 0.08;
@@ -549,11 +445,9 @@ function createChart(
     const linePath =
         coords.map((point, index) => {
 
-            return (
-                index === 0
-                    ? `M ${point.x} ${point.y}`
-                    : `L ${point.x} ${point.y}`
-            );
+            return index === 0
+                ? `M ${point.x} ${point.y}`
+                : `L ${point.x} ${point.y}`;
 
         }).join(" ");
 
@@ -568,10 +462,8 @@ function createChart(
     const latest =
         coords[coords.length - 1];
 
-
     const first =
         coords[0];
-
 
     const middle =
         coords[
@@ -580,21 +472,18 @@ function createChart(
 
 
     const formatAxisValue = value => {
-
         return Number(value).toFixed(
             indicator.decimals
         );
     };
 
 
-    const axisTop =
-        max;
+    const axisTop = max;
 
     const axisMiddle =
         min + (max - min) / 2;
 
-    const axisBottom =
-        min;
+    const axisBottom = min;
 
 
     return `
@@ -606,14 +495,12 @@ function createChart(
                 preserveAspectRatio="none"
             >
 
-                <!-- 가로선 -->
-
                 <line
                     x1="${paddingLeft}"
                     y1="${paddingTop}"
                     x2="${width - paddingRight}"
                     y2="${paddingTop}"
-                    stroke="#26334a"
+                    stroke="#24344e"
                     stroke-width="1"
                 />
 
@@ -622,7 +509,7 @@ function createChart(
                     y1="${height / 2}"
                     x2="${width - paddingRight}"
                     y2="${height / 2}"
-                    stroke="#26334a"
+                    stroke="#24344e"
                     stroke-width="1"
                 />
 
@@ -631,72 +518,69 @@ function createChart(
                     y1="${height - paddingBottom}"
                     x2="${width - paddingRight}"
                     y2="${height - paddingBottom}"
-                    stroke="#26334a"
+                    stroke="#24344e"
                     stroke-width="1"
                 />
 
-                <!-- Y축 숫자 -->
 
                 <text
-                    x="3"
+                    x="2"
                     y="${paddingTop + 4}"
-                    fill="#64748b"
-                    font-size="11"
+                    fill="#657a99"
+                    font-size="10"
                 >
                     ${formatAxisValue(axisTop)}
                 </text>
 
                 <text
-                    x="3"
+                    x="2"
                     y="${height / 2 + 4}"
-                    fill="#64748b"
-                    font-size="11"
+                    fill="#657a99"
+                    font-size="10"
                 >
                     ${formatAxisValue(axisMiddle)}
                 </text>
 
                 <text
-                    x="3"
+                    x="2"
                     y="${height - paddingBottom + 4}"
-                    fill="#64748b"
-                    font-size="11"
+                    fill="#657a99"
+                    font-size="10"
                 >
                     ${formatAxisValue(axisBottom)}
                 </text>
 
-                <!-- 그래프 영역 -->
 
                 <path
                     d="${areaPath}"
-                    fill="rgba(59,130,246,0.08)"
+                    fill="rgba(59,130,246,0.07)"
                     stroke="none"
                 />
+
 
                 <path
                     d="${linePath}"
                     fill="none"
-                    stroke="#60a5fa"
+                    stroke="#4f9cff"
                     stroke-width="2.2"
                     stroke-linejoin="round"
                     stroke-linecap="round"
                 />
 
-                <!-- 최신값 점 -->
 
                 <circle
                     cx="${latest.x}"
                     cy="${latest.y}"
-                    r="4"
-                    fill="#60a5fa"
+                    r="3.5"
+                    fill="#63a8ff"
                 />
 
-                <!-- X축 날짜 -->
 
                 <text
                     x="${first.x}"
-                    y="${height - 7}"
-                    fill="#64748b"
-                    font-size="10"
+                    y="${height - 5}"
+                    fill="#657a99"
+                    font-size="9"
                     text-anchor="start"
                 >
                     ${first.date}
@@ -704,9 +588,9 @@ function createChart(
 
                 <text
                     x="${middle.x}"
-                    y="${height - 7}"
-                    fill="#64748b"
-                    font-size="10"
+                    y="${height - 5}"
+                    fill="#657a99"
+                    font-size="9"
                     text-anchor="middle"
                 >
                     ${middle.date}
@@ -714,9 +598,9 @@ function createChart(
 
                 <text
                     x="${latest.x}"
-                    y="${height - 7}"
-                    fill="#64748b"
-                    font-size="10"
+                    y="${height - 5}"
+                    fill="#657a99"
+                    font-size="9"
                     text-anchor="end"
                 >
                     ${latest.date}
@@ -811,13 +695,11 @@ function createCard(
             value
         );
 
-    const chart =
-        createChart(
-            indicator,
-            observations,
-            selectedPeriod
-        );
 
+    /*
+       핵심 변경:
+       왼쪽 정보 영역 + 오른쪽 그래프 영역
+    */
 
     return `
         <div
@@ -825,97 +707,116 @@ function createCard(
             data-card="${indicator.ticker}"
         >
 
-            <div class="card-header">
+            <div class="card-main">
 
-                <div>
+                <div class="card-info">
 
-                    <div class="card-title">
-                        ${indicator.name}
+                    <div class="card-header">
+
+                        <div>
+
+                            <div class="card-title">
+                                ${indicator.name}
+                            </div>
+
+                            <div class="ticker">
+                                ${indicator.ticker}
+                            </div>
+
+                        </div>
+
+                        <div class="status ${status.className}">
+                            ${status.text}
+                        </div>
+
                     </div>
 
-                    <div class="ticker">
-                        ${indicator.ticker}
+
+                    <div class="description">
+                        ${indicator.description}
+                    </div>
+
+
+                    <div class="value">
+                        ${formatValue(
+                            value,
+                            indicator.decimals,
+                            indicator.unit
+                        )}
+                    </div>
+
+
+                    <div class="changes">
+
+                        <div class="change-box">
+
+                            <div class="change-label">
+                                5일
+                            </div>
+
+                            <div class="${getChangeClass(
+                                indicator,
+                                change5
+                            )}">
+                                ${formatChange(
+                                    change5,
+                                    indicator.decimals,
+                                    indicator.unit
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="change-box">
+
+                            <div class="change-label">
+                                20일
+                            </div>
+
+                            <div class="${getChangeClass(
+                                indicator,
+                                change20
+                            )}">
+                                ${formatChange(
+                                    change20,
+                                    indicator.decimals,
+                                    indicator.unit
+                                )}
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
 
-                <div class="status ${status.className}">
-                    ${status.text}
+
+                <div class="card-chart">
+
+                    ${createChart(
+                        indicator,
+                        observations,
+                        selectedPeriod
+                    )}
+
                 </div>
 
             </div>
 
 
-            <div class="description">
-                ${indicator.description}
-            </div>
+            <div class="card-bottom">
 
-
-            <div class="value">
-                ${formatValue(
-                    value,
-                    indicator.decimals,
-                    indicator.unit
+                ${createPeriodButtons(
+                    indicator,
+                    selectedPeriod
                 )}
-            </div>
 
-
-            <div class="changes">
-
-                <div class="change-box">
-
-                    <div class="change-label">
-                        5일 변화
-                    </div>
-
-                    <div class="${getChangeClass(
-                        indicator,
-                        change5
-                    )}">
-                        ${formatChange(
-                            change5,
-                            indicator.decimals,
-                            indicator.unit
-                        )}
-                    </div>
-
+                <div class="date">
+                    기준일:
+                    ${latest ? latest.date : "--"}
                 </div>
 
-
-                <div class="change-box">
-
-                    <div class="change-label">
-                        20일 변화
-                    </div>
-
-                    <div class="${getChangeClass(
-                        indicator,
-                        change20
-                    )}">
-                        ${formatChange(
-                            change20,
-                            indicator.decimals,
-                            indicator.unit
-                        )}
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            ${chart}
-
-
-            ${createPeriodButtons(
-                indicator,
-                selectedPeriod
-            )}
-
-
-            <div class="date">
-                기준일:
-                ${latest ? latest.date : "--"}
             </div>
 
         </div>
@@ -952,86 +853,50 @@ function calculateOverallRisk(data) {
 
             case "BAMLH0A0HYM2":
 
-                if (value >= 6) {
-                    score += 3;
-                }
-
-                else if (value >= 5) {
-                    score += 2;
-                }
-
-                else if (value >= 4) {
-                    score += 1;
-                }
+                if (value >= 6) score += 3;
+                else if (value >= 5) score += 2;
+                else if (value >= 4) score += 1;
 
                 break;
 
 
             case "BAMLH0A3HYC":
 
-                if (value >= 10) {
-                    score += 3;
-                }
-
-                else if (value >= 8) {
-                    score += 2;
-                }
-
-                else if (value >= 6) {
-                    score += 1;
-                }
+                if (value >= 10) score += 3;
+                else if (value >= 8) score += 2;
+                else if (value >= 6) score += 1;
 
                 break;
 
 
             case "VIXCLS":
 
-                if (value >= 40) {
-                    score += 3;
-                }
-
-                else if (value >= 30) {
-                    score += 2;
-                }
-
-                else if (value >= 20) {
-                    score += 1;
-                }
+                if (value >= 40) score += 3;
+                else if (value >= 30) score += 2;
+                else if (value >= 20) score += 1;
 
                 break;
 
 
             case "NFCI":
 
-                if (value >= 1) {
-                    score += 3;
-                }
-
-                else if (value >= 0.5) {
-                    score += 2;
-                }
-
-                else if (value >= 0) {
-                    score += 1;
-                }
+                if (value >= 1) score += 3;
+                else if (value >= 0.5) score += 2;
+                else if (value >= 0) score += 1;
 
                 break;
 
 
             case "T10Y2Y":
 
-                if (value <= -1) {
-                    score += 1;
-                }
+                if (value <= -1) score += 1;
 
                 break;
 
 
             case "SAHMREALTIME":
 
-                if (value >= 0.5) {
-                    score += 3;
-                }
+                if (value >= 0.5) score += 3;
 
                 break;
         }
@@ -1040,31 +905,25 @@ function calculateOverallRisk(data) {
 
 
     if (score >= 7) {
-
         return {
             text: "HIGH RISK",
             className: "danger"
         };
     }
 
-
     if (score >= 4) {
-
         return {
             text: "WARNING",
             className: "warning"
         };
     }
 
-
     if (score >= 2) {
-
         return {
             text: "CAUTION",
             className: "caution"
         };
     }
-
 
     return {
         text: "NORMAL",
@@ -1146,10 +1005,6 @@ function render(
     `;
 
 
-    /*
-       그래프 기간 버튼 이벤트
-    */
-
     document
         .querySelectorAll(".period-button")
         .forEach(button => {
@@ -1214,13 +1069,11 @@ async function loadData() {
 
         render();
 
-
     }
 
     catch (error) {
 
         console.error(error);
-
 
         app.innerHTML = `
 
