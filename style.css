@@ -13,6 +13,7 @@ body {
 
 body {
     padding: 9px;
+    padding-bottom: 70px;
 }
 
 h1 {
@@ -355,6 +356,69 @@ p {
 
 
 /* =========================
+   하단 고정 메뉴
+========================= */
+
+.bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    background: rgba(7, 16, 31, 0.97);
+    border-top: 1px solid #223451;
+    backdrop-filter: blur(10px);
+}
+
+.nav-item {
+    width: 30%;
+    max-width: 120px;
+    height: 48px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 2px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: transparent;
+    color: #627a9d;
+
+    cursor: pointer;
+}
+
+.nav-item span {
+    font-size: 17px;
+    line-height: 18px;
+}
+
+.nav-item small {
+    font-size: 8px;
+}
+
+.nav-item.active {
+    background: #102744;
+    color: #4da3ff;
+}
+
+.nav-item:hover {
+    background: #102744;
+}
+
+
+/* =========================
    모바일
 ========================= */
 
@@ -362,6 +426,7 @@ p {
 
     body {
         padding: 7px;
+        padding-bottom: 66px;
     }
 
     h1 {
@@ -466,5 +531,21 @@ p {
 
     .date {
         font-size: 7px;
+    }
+
+    .bottom-nav {
+        height: 56px;
+    }
+
+    .nav-item {
+        height: 46px;
+    }
+
+    .nav-item span {
+        font-size: 16px;
+    }
+
+    .nav-item small {
+        font-size: 8px;
     }
 }
