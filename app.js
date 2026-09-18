@@ -205,12 +205,15 @@ function getStatus(indicator, value) {
 
 
 /* ================================
-   개별 위험 점수
+   위험 점수
 ================================ */
 
 function getRiskScore(indicator, value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
         return 0;
     }
 
@@ -227,6 +230,7 @@ function getRiskScore(indicator, value) {
             if (value >= 6) return 3;
             if (value >= 5) return 2;
             if (value >= 4) return 1;
+
             return 0;
 
 
@@ -235,6 +239,7 @@ function getRiskScore(indicator, value) {
             if (value >= 10) return 3;
             if (value >= 8) return 2;
             if (value >= 6) return 1;
+
             return 0;
 
 
@@ -243,6 +248,7 @@ function getRiskScore(indicator, value) {
             if (value >= 40) return 3;
             if (value >= 30) return 2;
             if (value >= 20) return 1;
+
             return 0;
 
 
@@ -251,22 +257,26 @@ function getRiskScore(indicator, value) {
             if (value >= 1) return 3;
             if (value >= 0.5) return 2;
             if (value >= 0) return 1;
+
             return 0;
 
 
         case "T10Y2Y":
 
             if (value <= -1) return 1;
+
             return 0;
 
 
         case "SAHMREALTIME":
 
             if (value >= 0.5) return 3;
+
             return 0;
 
 
         default:
+
             return 0;
     }
 }
@@ -276,14 +286,23 @@ function getRiskScore(indicator, value) {
    변화량
 ================================ */
 
-function getChange(observations, periodsAgo) {
+function getChange(
+    observations,
+    periodsAgo
+) {
 
-    if (!observations || observations.length <= periodsAgo) {
+    if (
+        !observations ||
+        observations.length <= periodsAgo
+    ) {
         return null;
     }
 
-    const latest = Number(observations[0].value);
-    const previous = Number(observations[periodsAgo].value);
+    const latest =
+        Number(observations[0].value);
+
+    const previous =
+        Number(observations[periodsAgo].value);
 
     if (
         Number.isNaN(latest) ||
@@ -296,13 +315,18 @@ function getChange(observations, periodsAgo) {
 }
 
 
-function getChangeClass(indicator, change) {
+function getChangeClass(
+    indicator,
+    change
+) {
 
     if (change === null) {
         return "change-neutral";
     }
 
-    if (indicator.riskDirection === "higher") {
+    if (
+        indicator.riskDirection === "higher"
+    ) {
 
         if (change > 0) {
             return "change-up";
@@ -313,7 +337,10 @@ function getChangeClass(indicator, change) {
         }
     }
 
-    if (indicator.riskDirection === "lower") {
+
+    if (
+        indicator.riskDirection === "lower"
+    ) {
 
         if (change < 0) {
             return "change-up";
@@ -329,22 +356,30 @@ function getChangeClass(indicator, change) {
 
 
 /* ================================
-   날짜
+   기간
 ================================ */
 
 function getDateDaysAgo(days) {
 
     const date = new Date();
 
-    date.setDate(date.getDate() - days);
+    date.setDate(
+        date.getDate() - days
+    );
 
     return date;
 }
 
 
-function filterObservations(observations, periodKey) {
+function filterObservations(
+    observations,
+    periodKey
+) {
 
-    if (!observations || !observations.length) {
+    if (
+        !observations ||
+        !observations.length
+    ) {
         return [];
     }
 
@@ -375,38 +410,62 @@ function filterObservations(observations, periodKey) {
         case "3m":
             days = 92;
             break;
+
+        default:
+            days = 365;
     }
 
-    const startDate = getDateDaysAgo(days);
+    const startDate =
+        getDateDaysAgo(days);
 
     return observations.filter(item => {
+
         return new Date(item.date) >= startDate;
+
     });
 }
 
 
 /* ================================
-   그래프 데이터 압축
+   그래프 압축
 ================================ */
 
-function downsample(observations, maxPoints = 180) {
+function downsample(
+    observations,
+    maxPoints = 180
+) {
 
-    if (!observations || observations.length <= maxPoints) {
+    if (
+        !observations ||
+        observations.length <= maxPoints
+    ) {
         return observations;
     }
 
     const result = [];
 
     const step =
-        (observations.length - 1) /
-        (maxPoints - 1);
+        (
+            observations.length - 1
+        ) /
+        (
+            maxPoints - 1
+        );
 
-    for (let i = 0; i < maxPoints; i++) {
+    for (
+        let i = 0;
+        i < maxPoints;
+        i++
+    ) {
 
         const index =
-            Math.round(i * step);
+            Math.round(
+                i * step
+            );
 
-        result.push(observations[index]);
+        result.push(
+            observations[index]
+        );
     }
 
     return result;
@@ -417,7 +476,9 @@ function downsample(observations, maxPoints = 180) {
    날짜 표시
 ================================ */
 
-function formatChartDate(dateString) {
+function formatChartDate(
+    dateString
+) {
 
     if (!dateString) {
         return "--";
@@ -430,12 +491,18 @@ function formatChartDate(dateString) {
         return dateString;
     }
 
-    return `${parts[0]}-${parts[1]}-${parts[2]}`;
+    return (
+        parts[0] +
+        "-" +
+        parts[1] +
+        "-" +
+        parts[2]
+    );
 }
 
 
 /* ================================
-   SVG 그래프
+   그래프
 ================================ */
 
 function createChart(
@@ -459,14 +526,25 @@ function createChart(
         `;
     }
 
+
     const ordered =
-        filtered.slice().reverse();
+        filtered
+            .slice()
+            .reverse();
+
 
     const points =
-        downsample(ordered, 180);
+        downsample(
+            ordered,
+            180
+        );
+
 
     const values =
-        points.map(item => Number(item.value));
+        points.map(
+            item => Number(item.value)
+        );
+
 
     const width = 700;
     const height = 210;
@@ -476,15 +554,18 @@ function createChart(
     const paddingTop = 12;
     const paddingBottom = 28;
 
+
     const chartWidth =
         width -
         paddingLeft -
         paddingRight;
 
+
     const chartHeight =
         height -
         paddingTop -
         paddingBottom;
+
 
     let min =
         Math.min(...values);
@@ -492,64 +573,88 @@ function createChart(
     let max =
         Math.max(...values);
 
+
     if (min === max) {
+
         min -= 1;
         max += 1;
     }
 
-    const range = max - min;
+
+    const range =
+        max - min;
+
 
     min -= range * 0.08;
     max += range * 0.08;
 
-    const finalRange = max - min;
 
-    const coords = points.map((item, index) => {
+    const finalRange =
+        max - min;
 
-        const x =
-            paddingLeft +
-            (
-                index /
-                Math.max(points.length - 1, 1)
-            ) *
-            chartWidth;
 
-        const value =
-            Number(item.value);
+    const coords =
+        points.map(
+            (item, index) => {
 
-        const y =
-            paddingTop +
-            (
-                1 -
-                (value - min) /
-                finalRange
-            ) *
-            chartHeight;
+                const x =
+                    paddingLeft +
+                    (
+                        index /
+                        Math.max(
+                            points.length - 1,
+                            1
+                        )
+                    ) *
+                    chartWidth;
 
-        return {
-            x,
-            y,
-            value,
-            date: item.date
-        };
-    });
+
+                const value =
+                    Number(item.value);
+
+
+                const y =
+                    paddingTop +
+                    (
+                        1 -
+                        (
+                            value - min
+                        ) /
+                        finalRange
+                    ) *
+                    chartHeight;
+
+
+                return {
+                    x,
+                    y,
+                    value,
+                    date: item.date
+                };
+
+            }
+        );
 
 
     const linePath =
-        coords.map((point, index) => {
+        coords
+            .map(
+                (point, index) => {
 
-            return index === 0
-                ? `M ${point.x} ${point.y}`
-                : `L ${point.x} ${point.y}`;
+                    return index === 0
+                        ? `M ${point.x} ${point.y}`
+                        : `L ${point.x} ${point.y}`;
 
-        }).join(" ");
+                }
+            )
+            .join(" ");
 
 
     const areaPath =
-        `${linePath}
-         L ${coords[coords.length - 1].x} ${height - paddingBottom}
-         L ${coords[0].x} ${height - paddingBottom}
-         Z`;
+        linePath +
+        ` L ${coords[coords.length - 1].x} ${height - paddingBottom}` +
+        ` L ${coords[0].x} ${height - paddingBottom}` +
+        ` Z`;
 
 
     const first =
@@ -557,31 +662,40 @@ function createChart(
 
     const middle =
         coords[
-            Math.floor(coords.length / 2)
+            Math.floor(
+                coords.length / 2
+            )
         ];
 
     const latest =
-        coords[coords.length - 1];
+        coords[
+            coords.length - 1
+        ];
 
 
-    const formatAxisValue = value => {
+    function axisValue(value) {
 
-        return Number(value).toFixed(
-            indicator.decimals
-        );
-
-    };
+        return Number(value)
+            .toFixed(
+                indicator.decimals
+            );
+    }
 
 
     const axisTop = max;
 
     const axisMiddle =
-        min + (max - min) / 2;
+        min +
+        (
+            max - min
+        ) /
+        2;
 
     const axisBottom = min;
 
 
     return `
+
         <div
             class="chart-wrapper"
             data-ticker="${indicator.ticker}"
@@ -628,7 +742,7 @@ function createChart(
                     fill="#8da2c2"
                     font-size="10"
                 >
-                    ${formatAxisValue(axisTop)}
+                    ${axisValue(axisTop)}
                 </text>
 
 
@@ -638,7 +752,7 @@ function createChart(
                     fill="#8da2c2"
                     font-size="10"
                 >
-                    ${formatAxisValue(axisMiddle)}
+                    ${axisValue(axisMiddle)}
                 </text>
 
 
@@ -648,7 +762,7 @@ function createChart(
                     fill="#8da2c2"
                     font-size="10"
                 >
-                    ${formatAxisValue(axisBottom)}
+                    ${axisValue(axisBottom)}
                 </text>
 
 
@@ -745,7 +859,7 @@ function createChart(
                     class="chart-touch-point"
                     cx="${paddingLeft}"
                     cy="${paddingTop}"
-                    r="5"
+                    r="6"
                     fill="#ffffff"
                     stroke="#1685ff"
                     stroke-width="2"
@@ -754,15 +868,15 @@ function createChart(
                 />
 
 
-                <!-- 터치 날짜 박스 -->
+                <!-- 넓은 터치 날짜 박스 -->
 
                 <rect
                     class="chart-touch-label-bg"
                     x="0"
                     y="0"
-                    width="150"
-                    height="42"
-                    rx="7"
+                    width="210"
+                    height="58"
+                    rx="9"
                     fill="#07101f"
                     stroke="#1685ff"
                     stroke-width="1.5"
@@ -773,10 +887,10 @@ function createChart(
 
                 <text
                     class="chart-touch-date"
-                    x="10"
-                    y="17"
+                    x="0"
+                    y="0"
                     fill="#d5e3f5"
-                    font-size="10"
+                    font-size="13"
                     font-weight="bold"
                     opacity="0"
                     pointer-events="none"
@@ -787,10 +901,10 @@ function createChart(
 
                 <text
                     class="chart-touch-value"
-                    x="10"
-                    y="34"
+                    x="0"
+                    y="0"
                     fill="#ffffff"
-                    font-size="13"
+                    font-size="17"
                     font-weight="bold"
                     opacity="0"
                     pointer-events="none"
@@ -806,13 +920,15 @@ function createChart(
 
 
 /* ================================
-   그래프 터치
+   그래프 터치 이벤트
 ================================ */
 
 function setupChartTouchEvents() {
 
     document
-        .querySelectorAll(".chart-wrapper")
+        .querySelectorAll(
+            ".chart-wrapper"
+        )
         .forEach(wrapper => {
 
             const ticker =
@@ -821,10 +937,13 @@ function setupChartTouchEvents() {
             const period =
                 wrapper.dataset.period;
 
+
             const indicator =
                 indicators.find(
-                    item => item.ticker === ticker
+                    item =>
+                        item.ticker === ticker
                 );
+
 
             if (!indicator) {
                 return;
@@ -848,7 +967,9 @@ function setupChartTouchEvents() {
 
 
             const ordered =
-                filtered.slice().reverse();
+                filtered
+                    .slice()
+                    .reverse();
 
 
             const points =
@@ -859,32 +980,40 @@ function setupChartTouchEvents() {
 
 
             const svg =
-                wrapper.querySelector(".chart");
+                wrapper.querySelector(
+                    ".chart"
+                );
+
 
             const touchArea =
                 wrapper.querySelector(
                     ".chart-touch-area"
                 );
 
+
             const touchLine =
                 wrapper.querySelector(
                     ".chart-touch-line"
                 );
+
 
             const touchPoint =
                 wrapper.querySelector(
                     ".chart-touch-point"
                 );
 
+
             const labelBg =
                 wrapper.querySelector(
                     ".chart-touch-label-bg"
                 );
 
+
             const dateText =
                 wrapper.querySelector(
                     ".chart-touch-date"
                 );
+
 
             const valueText =
                 wrapper.querySelector(
@@ -913,10 +1042,12 @@ function setupChartTouchEvents() {
             const paddingTop = 12;
             const paddingBottom = 28;
 
+
             const chartWidth =
                 width -
                 paddingLeft -
                 paddingRight;
+
 
             const chartHeight =
                 height -
@@ -926,7 +1057,8 @@ function setupChartTouchEvents() {
 
             const values =
                 points.map(
-                    item => Number(item.value)
+                    item =>
+                        Number(item.value)
                 );
 
 
@@ -938,6 +1070,7 @@ function setupChartTouchEvents() {
 
 
             if (min === max) {
+
                 min -= 1;
                 max += 1;
             }
@@ -957,20 +1090,12 @@ function setupChartTouchEvents() {
 
             function showPoint(event) {
 
-                const rect =
-                    svg.getBoundingClientRect();
-
-
-                /*
-                 * 화면상의 손가락 X
-                 */
-
                 let clientX;
 
 
                 if (
                     event.touches &&
-                    event.touches.length > 0
+                    event.touches.length
                 ) {
 
                     clientX =
@@ -991,9 +1116,9 @@ function setupChartTouchEvents() {
                 }
 
 
-                /*
-                 * SVG viewBox 좌표로 변환
-                 */
+                const rect =
+                    svg.getBoundingClientRect();
+
 
                 let svgX =
                     (
@@ -1004,23 +1129,16 @@ function setupChartTouchEvents() {
                     width;
 
 
-                /*
-                 * 그래프 전체 범위
-                 */
-
                 svgX =
                     Math.max(
                         paddingLeft,
                         Math.min(
-                            width - paddingRight,
+                            width -
+                            paddingRight,
                             svgX
                         )
                     );
 
-
-                /*
-                 * 가장 가까운 데이터 찾기
-                 */
 
                 let ratio =
                     (
@@ -1063,10 +1181,6 @@ function setupChartTouchEvents() {
                     points[index];
 
 
-                /*
-                 * 실제 데이터 좌표
-                 */
-
                 const pointX =
                     paddingLeft +
                     (
@@ -1092,9 +1206,7 @@ function setupChartTouchEvents() {
                     chartHeight;
 
 
-                /*
-                 * 세로선
-                 */
+                /* 세로선 */
 
                 touchLine.setAttribute(
                     "x1",
@@ -1112,9 +1224,7 @@ function setupChartTouchEvents() {
                 );
 
 
-                /*
-                 * 점
-                 */
+                /* 점 */
 
                 touchPoint.setAttribute(
                     "cx",
@@ -1132,14 +1242,13 @@ function setupChartTouchEvents() {
                 );
 
 
-                /*
-                 * 날짜
-                 */
+                /* 날짜 */
 
                 dateText.textContent =
                     formatChartDate(
                         point.date
                     );
+
 
                 dateText.setAttribute(
                     "opacity",
@@ -1147,9 +1256,7 @@ function setupChartTouchEvents() {
                 );
 
 
-                /*
-                 * 값
-                 */
+                /* 값 */
 
                 valueText.textContent =
                     formatValue(
@@ -1158,6 +1265,7 @@ function setupChartTouchEvents() {
                         indicator.unit
                     );
 
+
                 valueText.setAttribute(
                     "opacity",
                     "1"
@@ -1165,11 +1273,12 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 날짜 박스
+                 * 가로로 넓은 박스
                  */
 
-                const labelWidth = 150;
-                const labelHeight = 42;
+                const labelWidth = 210;
+                const labelHeight = 58;
+
 
                 let labelX =
                     pointX -
@@ -1189,44 +1298,29 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 터치점 위치에 따라
-                 * 박스를 위/아래로 배치
+                 * 기본적으로 그래프 위쪽에 표시
                  */
 
-                let labelY;
-
-
-                if (
-                    pointY <
-                    height * 0.40
-                ) {
-
-                    labelY =
-                        pointY + 12;
-
-                } else {
-
-                    labelY =
-                        8;
-                }
+                let labelY = 8;
 
 
                 /*
-                 * 박스가 아래로 넘지 않도록
+                 * 터치점이 위쪽에 있으면
+                 * 터치점 아래에 표시
                  */
 
                 if (
-                    labelY +
-                    labelHeight >
-                    height -
-                    paddingBottom
+                    pointY <
+                    75
                 ) {
 
                     labelY =
-                        height -
-                        paddingBottom -
-                        labelHeight -
-                        2;
+                        Math.min(
+                            pointY + 12,
+                            height -
+                            paddingBottom -
+                            labelHeight
+                        );
                 }
 
 
@@ -1241,45 +1335,55 @@ function setupChartTouchEvents() {
                 );
 
                 labelBg.setAttribute(
+                    "width",
+                    labelWidth
+                );
+
+                labelBg.setAttribute(
+                    "height",
+                    labelHeight
+                );
+
+                labelBg.setAttribute(
                     "opacity",
                     "0.97"
                 );
 
 
                 /*
-                 * 날짜 위치
+                 * 날짜 글씨
                  */
 
                 dateText.setAttribute(
                     "x",
-                    labelX + 10
+                    labelX + 12
                 );
 
                 dateText.setAttribute(
                     "y",
-                    labelY + 17
+                    labelY + 21
                 );
 
 
                 /*
-                 * 값 위치
+                 * 값 글씨
                  */
 
                 valueText.setAttribute(
                     "x",
-                    labelX + 10
+                    labelX + 12
                 );
 
                 valueText.setAttribute(
                     "y",
-                    labelY + 34
+                    labelY + 46
                 );
 
             }
 
 
             /*
-             * 터치 시작
+             * 손가락 터치 시작
              */
 
             touchArea.addEventListener(
@@ -1303,6 +1407,8 @@ function setupChartTouchEvents() {
                     } catch (error) {
                     }
 
+
+                    event.preventDefault();
 
                     showPoint(event);
 
@@ -1329,6 +1435,8 @@ function setupChartTouchEvents() {
                     }
 
 
+                    event.preventDefault();
+
                     showPoint(event);
 
                 },
@@ -1339,7 +1447,7 @@ function setupChartTouchEvents() {
 
 
             /*
-             * 마우스 클릭 테스트도 지원
+             * 마우스 클릭
              */
 
             touchArea.addEventListener(
@@ -1365,33 +1473,41 @@ function createPeriodButtons(
 ) {
 
     return `
+
         <div
             class="period-buttons"
             data-ticker="${indicator.ticker}"
         >
 
             ${
-                periodOptions.map(option => {
+                periodOptions
+                    .map(option => {
 
-                    const active =
-                        option.key === selectedPeriod
-                            ? "active"
-                            : "";
+                        const active =
+                            option.key ===
+                            selectedPeriod
+                                ? "active"
+                                : "";
 
-                    return `
-                        <button
-                            class="period-button ${active}"
-                            data-period="${option.key}"
-                            data-ticker="${indicator.ticker}"
-                        >
-                            ${option.label}
-                        </button>
-                    `;
 
-                }).join("")
+                        return `
+
+                            <button
+                                class="period-button ${active}"
+                                data-period="${option.key}"
+                                data-ticker="${indicator.ticker}"
+                            >
+                                ${option.label}
+                            </button>
+
+                        `;
+
+                    })
+                    .join("")
             }
 
         </div>
+
     `;
 }
 
@@ -1409,15 +1525,18 @@ function createCard(
     const observations =
         data?.observations || [];
 
+
     const latest =
-        observations.length > 0
+        observations.length
             ? observations[0]
             : null;
+
 
     const value =
         latest
             ? latest.value
             : null;
+
 
     const change5 =
         getChange(
@@ -1425,11 +1544,13 @@ function createCard(
             5
         );
 
+
     const change20 =
         getChange(
             observations,
             20
         );
+
 
     const status =
         getStatus(
@@ -1439,6 +1560,7 @@ function createCard(
 
 
     return `
+
         <div
             class="card"
             data-card="${indicator.ticker}"
@@ -1462,7 +1584,10 @@ function createCard(
 
                         </div>
 
-                        <div class="status ${status.className}">
+
+                        <div
+                            class="status ${status.className}"
+                        >
                             ${status.text}
                         </div>
 
@@ -1491,10 +1616,12 @@ function createCard(
                                 5일 변화
                             </div>
 
-                            <div class="${getChangeClass(
-                                indicator,
-                                change5
-                            )}">
+                            <div
+                                class="${getChangeClass(
+                                    indicator,
+                                    change5
+                                )}"
+                            >
                                 ${formatChange(
                                     change5,
                                     indicator.decimals,
@@ -1511,10 +1638,12 @@ function createCard(
                                 20일 변화
                             </div>
 
-                            <div class="${getChangeClass(
-                                indicator,
-                                change20
-                            )}">
+                            <div
+                                class="${getChangeClass(
+                                    indicator,
+                                    change20
+                                )}"
+                            >
                                 ${formatChange(
                                     change20,
                                     indicator.decimals,
@@ -1549,14 +1678,20 @@ function createCard(
                     selectedPeriod
                 )}
 
+
                 <div class="date">
+
                     기준일:
-                    ${latest ? latest.date : "--"}
+                    ${latest
+                        ? latest.date
+                        : "--"}
+
                 </div>
 
             </div>
 
         </div>
+
     `;
 }
 
@@ -1565,28 +1700,41 @@ function createCard(
    전체 위험도
 ================================ */
 
-function calculateOverallRisk(data) {
+function calculateOverallRisk(
+    data
+) {
 
     let score = 0;
 
-    indicators.forEach(indicator => {
 
-        const observations =
-            data[indicator.ticker]?.observations || [];
+    indicators.forEach(
+        indicator => {
 
-        if (!observations.length) {
-            return;
+            const observations =
+                data[
+                    indicator.ticker
+                ]?.observations || [];
+
+
+            if (!observations.length) {
+                return;
+            }
+
+
+            const value =
+                Number(
+                    observations[0].value
+                );
+
+
+            score +=
+                getRiskScore(
+                    indicator,
+                    value
+                );
+
         }
-
-        const value =
-            Number(observations[0].value);
-
-        score += getRiskScore(
-            indicator,
-            value
-        );
-
-    });
+    );
 
 
     if (score >= 7) {
@@ -1594,7 +1742,7 @@ function calculateOverallRisk(data) {
         return {
             text: "HIGH RISK",
             className: "danger",
-            score: score
+            score
         };
 
     }
@@ -1605,7 +1753,7 @@ function calculateOverallRisk(data) {
         return {
             text: "WARNING",
             className: "warning",
-            score: score
+            score
         };
 
     }
@@ -1616,7 +1764,7 @@ function calculateOverallRisk(data) {
         return {
             text: "CAUTION",
             className: "caution",
-            score: score
+            score
         };
 
     }
@@ -1625,7 +1773,7 @@ function calculateOverallRisk(data) {
     return {
         text: "NORMAL",
         className: "safe",
-        score: score
+        score
     };
 }
 
@@ -1634,37 +1782,126 @@ function calculateOverallRisk(data) {
    이전 위험점수
 ================================ */
 
-function calculatePreviousRisk(data) {
+function calculatePreviousRisk(
+    data
+) {
 
     let score = 0;
 
-    indicators.forEach(indicator => {
 
-        const observations =
-            data[indicator.ticker]?.observations || [];
+    indicators.forEach(
+        indicator => {
 
-        if (observations.length < 2) {
-            return;
+            const observations =
+                data[
+                    indicator.ticker
+                ]?.observations || [];
+
+
+            if (observations.length < 2) {
+                return;
+            }
+
+
+            const value =
+                Number(
+                    observations[1].value
+                );
+
+
+            score +=
+                getRiskScore(
+                    indicator,
+                    value
+                );
+
         }
+    );
 
-        const previousValue =
-            Number(
-                observations[1].value
-            );
-
-        score += getRiskScore(
-            indicator,
-            previousValue
-        );
-
-    });
 
     return score;
 }
 
 
 /* ================================
-   위험지수 HTML
+   상단 메뉴
+================================ */
+
+function createTopMenu() {
+
+    return `
+
+        <div class="top-menu-row">
+
+            <div class="top-menu">
+
+                <button
+                    class="top-menu-button ${
+                        currentView === "dashboard"
+                            ? "active"
+                            : ""
+                    }"
+                    data-view="dashboard"
+                >
+                    대시보드
+                </button>
+
+
+                <button
+                    class="top-menu-button ${
+                        currentView === "risk"
+                            ? "active"
+                            : ""
+                    }"
+                    data-view="risk"
+                >
+                    위험도
+                </button>
+
+
+                <button
+                    class="top-menu-button ${
+                        currentView === "trend"
+                            ? "active"
+                            : ""
+                    }"
+                    data-view="trend"
+                >
+                    추세
+                </button>
+
+            </div>
+
+
+            <div class="top-update">
+
+                업데이트
+                ${
+                    window.marketDataUpdatedAt
+                        ? new Date(
+                            window.marketDataUpdatedAt
+                        ).toLocaleString(
+                            "ko-KR",
+                            {
+                                month: "numeric",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            }
+                        )
+                        : "--"
+                }
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+/* ================================
+   위험지수 박스
 ================================ */
 
 function createRiskScoreHTML(
@@ -1673,6 +1910,7 @@ function createRiskScoreHTML(
 ) {
 
     const maxScore = 16;
+
 
     const percentage =
         Math.min(
@@ -1718,6 +1956,7 @@ function createRiskScoreHTML(
                 위험 지수
             </div>
 
+
             <div class="risk-score-number">
 
                 <strong>
@@ -1730,6 +1969,7 @@ function createRiskScoreHTML(
 
             </div>
 
+
             <div class="risk-score-bar">
 
                 <div
@@ -1739,14 +1979,19 @@ function createRiskScoreHTML(
 
             </div>
 
+
             <div class="risk-score-change">
+
                 이전 대비
+
                 <strong>
                     ${differenceText}
                 </strong>
+
             </div>
 
         </div>
+
     `;
 }
 
@@ -1771,36 +2016,35 @@ function renderDashboard() {
 
     app.innerHTML = `
 
-        <div class="overall ${overall.className}">
+        <div
+            class="overall ${overall.className}"
+        >
 
-            <div class="overall-left">
+            <div class="overall-top">
 
-                <div class="overall-label">
-                    종합 금융시장 위험도
+                <div class="overall-left">
+
+                    <div class="overall-label">
+                        종합 금융시장 위험도
+                    </div>
+
+
+                    <div class="overall-value">
+                        ${overall.text}
+                    </div>
+
                 </div>
 
-                <div class="overall-value">
-                    ${overall.text}
-                </div>
 
-                <div class="overall-time">
-                    데이터 업데이트:
-                    ${
-                        window.marketDataUpdatedAt
-                            ? new Date(
-                                window.marketDataUpdatedAt
-                            ).toLocaleString("ko-KR")
-                            : "--"
-                    }
-                </div>
+                ${createRiskScoreHTML(
+                    overall,
+                    previousScore
+                )}
 
             </div>
 
 
-            ${createRiskScoreHTML(
-                overall,
-                previousScore
-            )}
+            ${createTopMenu()}
 
         </div>
 
@@ -1815,6 +2059,7 @@ function renderDashboard() {
                             selectedPeriods[
                                 indicator.ticker
                             ] || "all";
+
 
                         return createCard(
                             indicator,
@@ -1832,11 +2077,16 @@ function renderDashboard() {
 
 
         <div class="source">
+
             Data source:
             Federal Reserve Bank of St. Louis (FRED)
+
         </div>
+
     `;
 
+
+    attachTopMenuEvents();
 
     attachDashboardEvents();
 
@@ -1863,122 +2113,141 @@ function renderRiskView() {
 
 
     const rows =
-        indicators.map(indicator => {
+        indicators
+            .map(indicator => {
 
-            const observations =
-                allData[
-                    indicator.ticker
-                ]?.observations || [];
-
-            const latest =
-                observations.length
-                    ? observations[0]
-                    : null;
-
-            const value =
-                latest
-                    ? Number(latest.value)
-                    : null;
-
-            const status =
-                getStatus(
-                    indicator,
-                    value
-                );
-
-            const score =
-                getRiskScore(
-                    indicator,
-                    value
-                );
+                const observations =
+                    allData[
+                        indicator.ticker
+                    ]?.observations || [];
 
 
-            return `
-                <div class="risk-row">
+                const latest =
+                    observations.length
+                        ? observations[0]
+                        : null;
 
-                    <div class="risk-row-top">
 
-                        <div>
+                const value =
+                    latest
+                        ? Number(latest.value)
+                        : null;
 
-                            <div class="risk-name">
-                                ${indicator.name}
+
+                const status =
+                    getStatus(
+                        indicator,
+                        value
+                    );
+
+
+                const score =
+                    getRiskScore(
+                        indicator,
+                        value
+                    );
+
+
+                return `
+
+                    <div class="risk-row">
+
+                        <div class="risk-row-top">
+
+                            <div>
+
+                                <div class="risk-name">
+                                    ${indicator.name}
+                                </div>
+
+                                <div class="risk-description">
+                                    ${indicator.description}
+                                </div>
+
                             </div>
 
-                            <div class="risk-description">
-                                ${indicator.description}
+
+                            <div
+                                class="status ${status.className}"
+                            >
+                                ${status.text}
                             </div>
 
                         </div>
 
-                        <div class="status ${status.className}">
-                            ${status.text}
+
+                        <div class="risk-row-bottom">
+
+                            <span>
+                                현재값
+                                <strong>
+                                    ${formatValue(
+                                        value,
+                                        indicator.decimals,
+                                        indicator.unit
+                                    )}
+                                </strong>
+                            </span>
+
+
+                            <span>
+                                위험점수
+                                <strong>
+                                    ${score}
+                                </strong>
+                            </span>
+
+
+                            <span>
+                                기준일
+                                <strong>
+                                    ${latest
+                                        ? latest.date
+                                        : "--"}
+                                </strong>
+                            </span>
+
                         </div>
 
                     </div>
 
+                `;
 
-                    <div class="risk-row-bottom">
-
-                        <span>
-                            현재값
-                            <strong>
-                                ${formatValue(
-                                    value,
-                                    indicator.decimals,
-                                    indicator.unit
-                                )}
-                            </strong>
-                        </span>
-
-                        <span>
-                            위험점수
-                            <strong>
-                                ${score}
-                            </strong>
-                        </span>
-
-                        <span>
-                            기준일
-                            <strong>
-                                ${latest
-                                    ? latest.date
-                                    : "--"}
-                            </strong>
-                        </span>
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
+            })
+            .join("");
 
 
     app.innerHTML = `
 
-        <div class="overall ${overall.className}">
+        <div
+            class="overall ${overall.className}"
+        >
 
-            <div class="overall-left">
+            <div class="overall-top">
 
-                <div class="overall-label">
-                    현재 종합 위험도
+                <div class="overall-left">
+
+                    <div class="overall-label">
+                        현재 종합 위험도
+                    </div>
+
+
+                    <div class="overall-value">
+                        ${overall.text}
+                    </div>
+
                 </div>
 
-                <div class="overall-value">
-                    ${overall.text}
-                </div>
 
-                <div class="overall-time">
-                    총 위험 점수:
-                    ${overall.score} / 16
-                </div>
+                ${createRiskScoreHTML(
+                    overall,
+                    previousScore
+                )}
 
             </div>
 
-            ${createRiskScoreHTML(
-                overall,
-                previousScore
-            )}
+
+            ${createTopMenu()}
 
         </div>
 
@@ -1989,9 +2258,11 @@ function renderRiskView() {
                 지표별 위험도
             </div>
 
+
             <div class="panel-subtitle">
                 현재 데이터 기준
             </div>
+
 
             ${rows}
 
@@ -1999,10 +2270,16 @@ function renderRiskView() {
 
 
         <div class="source">
+
             Data source:
             Federal Reserve Bank of St. Louis (FRED)
+
         </div>
+
     `;
+
+
+    attachTopMenuEvents();
 }
 
 
@@ -2025,104 +2302,124 @@ function renderTrendView() {
 
 
     const trendCards =
-        indicators.map(indicator => {
+        indicators
+            .map(indicator => {
 
-            const observations =
-                allData[
-                    indicator.ticker
-                ]?.observations || [];
-
-            const period =
-                selectedPeriods[
-                    indicator.ticker
-                ] || "1y";
-
-            const latest =
-                observations.length
-                    ? observations[0]
-                    : null;
-
-            const value =
-                latest
-                    ? latest.value
-                    : null;
-
-            const status =
-                getStatus(
-                    indicator,
-                    value
-                );
+                const observations =
+                    allData[
+                        indicator.ticker
+                    ]?.observations || [];
 
 
-            return `
-                <div class="trend-card">
-
-                    <div class="trend-header">
-
-                        <div>
-
-                            <div class="trend-name">
-                                ${indicator.name}
-                            </div>
-
-                            <div class="trend-ticker">
-                                ${indicator.ticker}
-                            </div>
-
-                        </div>
-
-                        <div class="status ${status.className}">
-                            ${status.text}
-                        </div>
-
-                    </div>
+                const period =
+                    selectedPeriods[
+                        indicator.ticker
+                    ] || "1y";
 
 
-                    <div class="trend-value">
-                        ${formatValue(
-                            value,
-                            indicator.decimals,
-                            indicator.unit
-                        )}
-                    </div>
+                const latest =
+                    observations.length
+                        ? observations[0]
+                        : null;
 
 
-                    ${createChart(
+                const value =
+                    latest
+                        ? latest.value
+                        : null;
+
+
+                const status =
+                    getStatus(
                         indicator,
-                        observations,
-                        period
-                    )}
+                        value
+                    );
 
-                </div>
-            `;
 
-        }).join("");
+                return `
+
+                    <div class="trend-card">
+
+                        <div class="trend-header">
+
+                            <div>
+
+                                <div class="trend-name">
+                                    ${indicator.name}
+                                </div>
+
+                                <div class="trend-ticker">
+                                    ${indicator.ticker}
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="status ${status.className}"
+                            >
+                                ${status.text}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trend-value">
+
+                            ${formatValue(
+                                value,
+                                indicator.decimals,
+                                indicator.unit
+                            )}
+
+                        </div>
+
+
+                        ${createChart(
+                            indicator,
+                            observations,
+                            period
+                        )}
+
+                    </div>
+
+                `;
+
+            })
+            .join("");
 
 
     app.innerHTML = `
 
-        <div class="overall ${overall.className}">
+        <div
+            class="overall ${overall.className}"
+        >
 
-            <div class="overall-left">
+            <div class="overall-top">
 
-                <div class="overall-label">
-                    시장 추세
+                <div class="overall-left">
+
+                    <div class="overall-label">
+                        시장 추세
+                    </div>
+
+
+                    <div class="overall-value">
+                        ${overall.text}
+                    </div>
+
                 </div>
 
-                <div class="overall-value">
-                    ${overall.text}
-                </div>
 
-                <div class="overall-time">
-                    기본 추세 기간: 1년
-                </div>
+                ${createRiskScoreHTML(
+                    overall,
+                    previousScore
+                )}
 
             </div>
 
-            ${createRiskScoreHTML(
-                overall,
-                previousScore
-            )}
+
+            ${createTopMenu()}
 
         </div>
 
@@ -2133,9 +2430,11 @@ function renderTrendView() {
                 주요 위험지표 추세
             </div>
 
+
             <div class="panel-subtitle">
                 최근 1년
             </div>
+
 
             ${trendCards}
 
@@ -2143,44 +2442,59 @@ function renderTrendView() {
 
 
         <div class="source">
+
             Data source:
             Federal Reserve Bank of St. Louis (FRED)
+
         </div>
+
     `;
 
+
+    attachTopMenuEvents();
 
     setupChartTouchEvents();
 }
 
 
 /* ================================
-   화면 전환
+   상단 메뉴 이벤트
 ================================ */
 
-function renderCurrentView() {
+function attachTopMenuEvents() {
 
-    if (currentView === "risk") {
-        renderRiskView();
-        return;
-    }
+    document
+        .querySelectorAll(
+            ".top-menu-button"
+        )
+        .forEach(button => {
 
-    if (currentView === "trend") {
-        renderTrendView();
-        return;
-    }
+            button.addEventListener(
+                "click",
+                () => {
 
-    renderDashboard();
+                    currentView =
+                        button.dataset.view;
+
+                    renderCurrentView();
+
+                }
+            );
+
+        });
 }
 
 
 /* ================================
-   대시보드 이벤트
+   기간 버튼 이벤트
 ================================ */
 
 function attachDashboardEvents() {
 
     document
-        .querySelectorAll(".period-button")
+        .querySelectorAll(
+            ".period-button"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -2190,11 +2504,14 @@ function attachDashboardEvents() {
                     const ticker =
                         button.dataset.ticker;
 
+
                     const period =
                         button.dataset.period;
 
+
                     selectedPeriods[ticker] =
                         period;
+
 
                     renderDashboard();
 
@@ -2206,47 +2523,28 @@ function attachDashboardEvents() {
 
 
 /* ================================
-   하단 메뉴
+   현재 화면
 ================================ */
 
-function setupBottomNavigation() {
+function renderCurrentView() {
 
-    const navItems =
-        document.querySelectorAll(".nav-item");
+    if (currentView === "risk") {
 
+        renderRiskView();
 
-    navItems.forEach((item, index) => {
-
-        item.addEventListener(
-            "click",
-            () => {
-
-                navItems.forEach(nav => {
-                    nav.classList.remove("active");
-                });
-
-                item.classList.add("active");
+        return;
+    }
 
 
-                if (index === 0) {
-                    currentView = "dashboard";
-                }
+    if (currentView === "trend") {
 
-                if (index === 1) {
-                    currentView = "risk";
-                }
+        renderTrendView();
 
-                if (index === 2) {
-                    currentView = "trend";
-                }
+        return;
+    }
 
 
-                renderCurrentView();
-
-            }
-        );
-
-    });
+    renderDashboard();
 }
 
 
@@ -2294,6 +2592,7 @@ async function loadData() {
 
         console.error(error);
 
+
         app.innerHTML = `
 
             <div class="error">
@@ -2315,7 +2614,5 @@ async function loadData() {
 /* ================================
    시작
 ================================ */
-
-setupBottomNavigation();
 
 loadData();
