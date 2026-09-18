@@ -711,14 +711,14 @@ function createChart(
                 </text>
 
 
-                <!-- 터치 감지 영역 -->
+                <!-- 터치 영역 -->
 
                 <rect
                     class="chart-touch-area"
-                    x="${paddingLeft}"
-                    y="${paddingTop}"
-                    width="${chartWidth}"
-                    height="${chartHeight}"
+                    x="0"
+                    y="0"
+                    width="${width}"
+                    height="${height}"
                     fill="transparent"
                 />
 
@@ -735,10 +735,11 @@ function createChart(
                     stroke-width="1.5"
                     stroke-dasharray="4 4"
                     opacity="0"
+                    pointer-events="none"
                 />
 
 
-                <!-- 터치 위치 -->
+                <!-- 터치점 -->
 
                 <circle
                     class="chart-touch-point"
@@ -746,29 +747,58 @@ function createChart(
                     cy="${paddingTop}"
                     r="5"
                     fill="#ffffff"
-                    stroke="#4f9cff"
+                    stroke="#1685ff"
                     stroke-width="2"
                     opacity="0"
+                    pointer-events="none"
                 />
 
+
+                <!-- 터치 날짜 박스 -->
+
+                <rect
+                    class="chart-touch-label-bg"
+                    x="0"
+                    y="0"
+                    width="150"
+                    height="42"
+                    rx="7"
+                    fill="#07101f"
+                    stroke="#1685ff"
+                    stroke-width="1.5"
+                    opacity="0"
+                    pointer-events="none"
+                />
+
+
+                <text
+                    class="chart-touch-date"
+                    x="10"
+                    y="17"
+                    fill="#d5e3f5"
+                    font-size="10"
+                    font-weight="bold"
+                    opacity="0"
+                    pointer-events="none"
+                >
+                    날짜
+                </text>
+
+
+                <text
+                    class="chart-touch-value"
+                    x="10"
+                    y="34"
+                    fill="#ffffff"
+                    font-size="13"
+                    font-weight="bold"
+                    opacity="0"
+                    pointer-events="none"
+                >
+                    값
+                </text>
+
             </svg>
-
-
-            <div class="chart-tooltip">
-
-                <div class="chart-tooltip-date">
-                    ${formatChartDate(latest.date)}
-                </div>
-
-                <div class="chart-tooltip-value">
-                    ${formatValue(
-                        latest.value,
-                        indicator.decimals,
-                        indicator.unit
-                    )}
-                </div>
-
-            </div>
 
         </div>
     `;
@@ -776,7 +806,7 @@ function createChart(
 
 
 /* ================================
-   그래프 터치 기능
+   그래프 터치
 ================================ */
 
 function setupChartTouchEvents() {
@@ -831,6 +861,11 @@ function setupChartTouchEvents() {
             const svg =
                 wrapper.querySelector(".chart");
 
+            const touchArea =
+                wrapper.querySelector(
+                    ".chart-touch-area"
+                );
+
             const touchLine =
                 wrapper.querySelector(
                     ".chart-touch-line"
@@ -841,24 +876,36 @@ function setupChartTouchEvents() {
                     ".chart-touch-point"
                 );
 
-            const tooltip =
+            const labelBg =
                 wrapper.querySelector(
-                    ".chart-tooltip"
+                    ".chart-touch-label-bg"
+                );
+
+            const dateText =
+                wrapper.querySelector(
+                    ".chart-touch-date"
+                );
+
+            const valueText =
+                wrapper.querySelector(
+                    ".chart-touch-value"
                 );
 
 
             if (
                 !svg ||
+                !touchArea ||
                 !touchLine ||
                 !touchPoint ||
-                !tooltip
+                !labelBg ||
+                !dateText ||
+                !valueText
             ) {
                 return;
             }
 
 
             const width = 700;
-
             const height = 210;
 
             const paddingLeft = 42;
@@ -876,10 +923,6 @@ function setupChartTouchEvents() {
                 paddingTop -
                 paddingBottom;
 
-
-            /*
-             * 그래프의 실제 값 범위
-             */
 
             const values =
                 points.map(
@@ -912,29 +955,31 @@ function setupChartTouchEvents() {
                 max - min;
 
 
-            /*
-             * 손가락 위치를 그래프 데이터 위치로 변환
-             */
-
             function showPoint(event) {
-
-                event.preventDefault();
-
 
                 const rect =
                     svg.getBoundingClientRect();
 
 
-                let clientX =
-                    event.clientX;
+                /*
+                 * 화면상의 손가락 X
+                 */
+
+                let clientX;
 
 
                 if (
                     event.touches &&
                     event.touches.length > 0
                 ) {
+
                     clientX =
                         event.touches[0].clientX;
+
+                } else {
+
+                    clientX =
+                        event.clientX;
                 }
 
 
@@ -947,28 +992,20 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 화면상의 X 좌표
-                 */
-
-                let screenX =
-                    clientX -
-                    rect.left;
-
-
-                /*
-                 * SVG 내부 좌표로 변환
+                 * SVG viewBox 좌표로 변환
                  */
 
                 let svgX =
                     (
-                        screenX /
-                        rect.width
-                    ) *
+                        clientX -
+                        rect.left
+                    ) /
+                    rect.width *
                     width;
 
 
                 /*
-                 * 그래프 영역 안으로 제한
+                 * 그래프 전체 범위
                  */
 
                 svgX =
@@ -982,7 +1019,7 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 가장 가까운 데이터 위치 계산
+                 * 가장 가까운 데이터 찾기
                  */
 
                 let ratio =
@@ -1027,7 +1064,7 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 실제 SVG 좌표
+                 * 실제 데이터 좌표
                  */
 
                 const pointX =
@@ -1056,7 +1093,7 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 세로 가이드선
+                 * 세로선
                  */
 
                 touchLine.setAttribute(
@@ -1070,23 +1107,13 @@ function setupChartTouchEvents() {
                 );
 
                 touchLine.setAttribute(
-                    "y1",
-                    paddingTop
-                );
-
-                touchLine.setAttribute(
-                    "y2",
-                    height - paddingBottom
-                );
-
-                touchLine.setAttribute(
                     "opacity",
                     "1"
                 );
 
 
                 /*
-                 * 터치점
+                 * 점
                  */
 
                 touchPoint.setAttribute(
@@ -1106,123 +1133,156 @@ function setupChartTouchEvents() {
 
 
                 /*
-                 * 툴팁 내용
+                 * 날짜
                  */
 
-                tooltip.innerHTML = `
+                dateText.textContent =
+                    formatChartDate(
+                        point.date
+                    );
 
-                    <div class="chart-tooltip-date">
-                        ${formatChartDate(
-                            point.date
-                        )}
-                    </div>
-
-                    <div class="chart-tooltip-value">
-                        ${formatValue(
-                            point.value,
-                            indicator.decimals,
-                            indicator.unit
-                        )}
-                    </div>
-
-                `;
+                dateText.setAttribute(
+                    "opacity",
+                    "1"
+                );
 
 
                 /*
-                 * 툴팁 위치
+                 * 값
                  */
 
-                const wrapperWidth =
-                    wrapper.clientWidth;
+                valueText.textContent =
+                    formatValue(
+                        point.value,
+                        indicator.decimals,
+                        indicator.unit
+                    );
 
-
-                const pointScreenX =
-                    (
-                        pointX /
-                        width
-                    ) *
-                    wrapperWidth;
-
-
-                let tooltipWidth = 120;
-
-
-                let tooltipLeft =
-                    pointScreenX -
-                    tooltipWidth / 2;
-
-
-                if (
-                    tooltipLeft < 4
-                ) {
-                    tooltipLeft = 4;
-                }
-
-
-                if (
-                    tooltipLeft +
-                    tooltipWidth >
-                    wrapperWidth - 4
-                ) {
-
-                    tooltipLeft =
-                        wrapperWidth -
-                        tooltipWidth -
-                        4;
-                }
-
-
-                tooltip.style.left =
-                    tooltipLeft + "px";
+                valueText.setAttribute(
+                    "opacity",
+                    "1"
+                );
 
 
                 /*
-                 * 위쪽/아래쪽 위치 자동 결정
+                 * 날짜 박스
                  */
 
-                const pointScreenY =
-                    (
-                        pointY /
-                        height
-                    ) *
-                    wrapper.clientHeight;
+                const labelWidth = 150;
+                const labelHeight = 42;
+
+                let labelX =
+                    pointX -
+                    labelWidth / 2;
+
+
+                labelX =
+                    Math.max(
+                        paddingLeft,
+                        Math.min(
+                            width -
+                            paddingRight -
+                            labelWidth,
+                            labelX
+                        )
+                    );
+
+
+                /*
+                 * 터치점 위치에 따라
+                 * 박스를 위/아래로 배치
+                 */
+
+                let labelY;
 
 
                 if (
-                    pointScreenY >
-                    wrapper.clientHeight * 0.55
+                    pointY <
+                    height * 0.40
                 ) {
 
-                    tooltip.style.top =
-                        "8px";
+                    labelY =
+                        pointY + 12;
 
                 } else {
 
-                    tooltip.style.top =
-                        Math.max(
-                            8,
-                            pointScreenY + 12
-                        ) + "px";
+                    labelY =
+                        8;
                 }
 
 
-                tooltip.classList.add(
-                    "visible"
+                /*
+                 * 박스가 아래로 넘지 않도록
+                 */
+
+                if (
+                    labelY +
+                    labelHeight >
+                    height -
+                    paddingBottom
+                ) {
+
+                    labelY =
+                        height -
+                        paddingBottom -
+                        labelHeight -
+                        2;
+                }
+
+
+                labelBg.setAttribute(
+                    "x",
+                    labelX
+                );
+
+                labelBg.setAttribute(
+                    "y",
+                    labelY
+                );
+
+                labelBg.setAttribute(
+                    "opacity",
+                    "0.97"
+                );
+
+
+                /*
+                 * 날짜 위치
+                 */
+
+                dateText.setAttribute(
+                    "x",
+                    labelX + 10
+                );
+
+                dateText.setAttribute(
+                    "y",
+                    labelY + 17
+                );
+
+
+                /*
+                 * 값 위치
+                 */
+
+                valueText.setAttribute(
+                    "x",
+                    labelX + 10
+                );
+
+                valueText.setAttribute(
+                    "y",
+                    labelY + 34
                 );
 
             }
 
 
             /*
-             * 핵심:
-             * rect가 아니라 chart-wrapper 전체에서
-             * pointer 이벤트를 받는다.
-             *
-             * 모바일에서 손가락을 움직여도
-             * 계속 날짜를 계산한다.
+             * 터치 시작
              */
 
-            wrapper.addEventListener(
+            touchArea.addEventListener(
                 "pointerdown",
                 event => {
 
@@ -1233,13 +1293,16 @@ function setupChartTouchEvents() {
                         return;
                     }
 
+
                     try {
-                        wrapper.setPointerCapture(
+
+                        touchArea.setPointerCapture(
                             event.pointerId
                         );
+
                     } catch (error) {
-                        // 일부 브라우저에서는 필요 없음
                     }
+
 
                     showPoint(event);
 
@@ -1250,7 +1313,11 @@ function setupChartTouchEvents() {
             );
 
 
-            wrapper.addEventListener(
+            /*
+             * 손가락 이동
+             */
+
+            touchArea.addEventListener(
                 "pointermove",
                 event => {
 
@@ -1261,6 +1328,7 @@ function setupChartTouchEvents() {
                         return;
                     }
 
+
                     showPoint(event);
 
                 },
@@ -1270,27 +1338,15 @@ function setupChartTouchEvents() {
             );
 
 
-            wrapper.addEventListener(
-                "pointerup",
+            /*
+             * 마우스 클릭 테스트도 지원
+             */
+
+            touchArea.addEventListener(
+                "click",
                 event => {
 
-                    try {
-                        wrapper.releasePointerCapture(
-                            event.pointerId
-                        );
-                    } catch (error) {
-                        // 무시
-                    }
-
-                }
-            );
-
-
-            wrapper.addEventListener(
-                "pointercancel",
-                () => {
-
-                    // 마지막 선택 위치는 유지
+                    showPoint(event);
 
                 }
             );
@@ -1575,7 +1631,7 @@ function calculateOverallRisk(data) {
 
 
 /* ================================
-   이전 위험점수 계산
+   이전 위험점수
 ================================ */
 
 function calculatePreviousRisk(data) {
@@ -1586,11 +1642,6 @@ function calculatePreviousRisk(data) {
 
         const observations =
             data[indicator.ticker]?.observations || [];
-
-        /*
-         * observations[1] =
-         * 최신 데이터 바로 이전 데이터
-         */
 
         if (observations.length < 2) {
             return;
@@ -1645,13 +1696,17 @@ function createRiskScoreHTML(
 
 
     if (difference > 0) {
+
         differenceText =
             `▲ +${difference}`;
+
     }
 
     else if (difference < 0) {
+
         differenceText =
             `▼ ${difference}`;
+
     }
 
 
@@ -1697,7 +1752,7 @@ function createRiskScoreHTML(
 
 
 /* ================================
-   대시보드 화면
+   대시보드
 ================================ */
 
 function renderDashboard() {
