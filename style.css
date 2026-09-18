@@ -101,22 +101,39 @@ p {
 ========================= */
 
 .card {
-    padding: 9px 10px;
+    padding: 8px;
     background: #111b2e;
     border: 1px solid #223451;
     border-radius: 12px;
     min-width: 0;
 }
 
+.card-main {
+    display: grid;
+    grid-template-columns: 34% 66%;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.card-info {
+    min-width: 0;
+}
+
+.card-chart {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+
 .card-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 6px;
+    gap: 5px;
 }
 
 .card-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     letter-spacing: -0.3px;
 }
@@ -124,28 +141,30 @@ p {
 .ticker {
     margin-top: 1px;
     color: #627a9d;
-    font-size: 9px;
+    font-size: 8px;
 }
 
 .description {
-    margin-top: 3px;
+    margin-top: 4px;
     color: #8298b8;
-    font-size: 10px;
+    font-size: 9px;
+    line-height: 1.3;
 }
 
 .value {
-    margin-top: 5px;
-    font-size: 25px;
+    margin-top: 8px;
+    font-size: 24px;
     font-weight: bold;
     letter-spacing: -0.5px;
 }
 
 .status {
     flex-shrink: 0;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 12px;
-    font-size: 9px;
+    font-size: 8px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .safe {
@@ -175,33 +194,33 @@ p {
 
 
 /* =========================
-   변화율
+   변화량
 ========================= */
 
 .changes {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 4px;
     margin-top: 7px;
 }
 
 .change-box {
-    padding: 6px 8px;
+    padding: 5px 6px;
     background: #0a1424;
     border: 1px solid #17263d;
-    border-radius: 8px;
+    border-radius: 7px;
 }
 
 .change-label {
     margin-bottom: 1px;
     color: #627896;
-    font-size: 8px;
+    font-size: 7px;
 }
 
 .change-up,
 .change-down,
 .change-neutral {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
 }
 
@@ -225,7 +244,7 @@ p {
 .chart-wrapper {
     width: 100%;
     height: 112px;
-    margin-top: 7px;
+    margin-top: 0;
     padding: 1px 0;
     background: #0a1424;
     border: 1px solid #15263f;
@@ -240,8 +259,9 @@ p {
 }
 
 .chart-empty {
+    width: 100%;
     height: 112px;
-    margin-top: 7px;
+    margin-top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -254,13 +274,22 @@ p {
 
 
 /* =========================
+   카드 하단
+========================= */
+
+.card-bottom {
+    margin-top: 6px;
+}
+
+
+/* =========================
    기간 버튼
 ========================= */
 
 .period-buttons {
     display: flex;
-    gap: 4px;
-    margin-top: 5px;
+    gap: 3px;
+    margin-top: 0;
     overflow-x: auto;
     scrollbar-width: none;
 }
@@ -271,13 +300,13 @@ p {
 
 .period-button {
     flex: 1;
-    min-width: 45px;
-    padding: 4px 4px;
+    min-width: 42px;
+    padding: 4px 3px;
     border: 1px solid #263a58;
-    border-radius: 12px;
+    border-radius: 11px;
     background: #0a1424;
     color: #7e95b6;
-    font-size: 9px;
+    font-size: 8px;
     cursor: pointer;
     white-space: nowrap;
 }
@@ -295,13 +324,13 @@ p {
 
 
 /* =========================
-   날짜
+   날짜 / 출처
 ========================= */
 
 .date {
-    margin-top: 4px;
+    margin-top: 3px;
     color: #5f7492;
-    font-size: 8px;
+    font-size: 7px;
 }
 
 .source {
@@ -332,7 +361,7 @@ p {
 @media (max-width: 700px) {
 
     body {
-        padding: 8px;
+        padding: 7px;
     }
 
     h1 {
@@ -340,16 +369,16 @@ p {
     }
 
     p {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     #app {
-        margin-top: 9px;
+        margin-top: 8px;
     }
 
     .overall {
         padding: 8px 10px;
-        margin-bottom: 7px;
+        margin-bottom: 6px;
         border-radius: 11px;
     }
 
@@ -358,7 +387,7 @@ p {
     }
 
     .overall-value {
-        font-size: 24px;
+        font-size: 23px;
     }
 
     .overall-time {
@@ -370,61 +399,72 @@ p {
     }
 
     .card {
-        padding: 9px;
+        padding: 7px;
         border-radius: 11px;
     }
 
+    .card-main {
+        grid-template-columns: 36% 64%;
+        gap: 6px;
+    }
+
     .card-title {
-        font-size: 15px;
+        font-size: 14px;
+    }
+
+    .ticker {
+        font-size: 7px;
     }
 
     .description {
-        font-size: 9px;
+        font-size: 8px;
     }
 
     .value {
-        font-size: 24px;
-        margin-top: 4px;
+        margin-top: 7px;
+        font-size: 22px;
+    }
+
+    .status {
+        padding: 3px 6px;
+        font-size: 8px;
     }
 
     .changes {
         margin-top: 6px;
-        gap: 5px;
+        gap: 3px;
     }
 
     .change-box {
-        padding: 5px 7px;
+        padding: 4px 5px;
     }
 
     .change-label {
-        font-size: 8px;
+        font-size: 7px;
     }
 
     .change-up,
     .change-down,
     .change-neutral {
-        font-size: 11px;
+        font-size: 9px;
     }
 
     .chart-wrapper,
     .chart-empty {
         height: 105px;
-        margin-top: 6px;
     }
 
     .period-buttons {
         gap: 3px;
-        margin-top: 5px;
     }
 
     .period-button {
-        min-width: 44px;
-        padding: 4px 3px;
+        min-width: 42px;
+        padding: 4px 2px;
         font-size: 8px;
     }
 
     .date {
-        margin-top: 4px;
-        font-size: 8px;
+        font-size: 7px;
     }
 }
