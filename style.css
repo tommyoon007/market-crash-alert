@@ -2,10 +2,14 @@
     box-sizing: border-box;
 }
 
+html {
+    background: #07101f;
+}
+
 body {
     margin: 0;
     padding: 14px;
-    background: #0b1120;
+    background: #07101f;
     color: #f8fafc;
     font-family: Arial, sans-serif;
 }
@@ -14,79 +18,95 @@ h1 {
     margin: 0;
     font-size: 23px;
     line-height: 1.2;
+    letter-spacing: -0.5px;
 }
 
 p {
-    margin: 6px 0 0;
-    color: #94a3b8;
+    margin: 5px 0 0;
+    color: #8fa6c8;
     font-size: 13px;
 }
 
 #app {
-    max-width: 1150px;
-    margin: 16px auto 0;
+    width: 100%;
+    max-width: 1100px;
+    margin: 15px auto 0;
 }
 
-/* ================================
+/* =========================
    종합 위험도
-================================ */
+========================= */
 
 .overall {
-    margin-bottom: 12px;
-    padding: 13px 16px;
-    border-radius: 13px;
+    margin-bottom: 10px;
+    padding: 12px 15px;
+    border-radius: 14px;
     text-align: center;
+    border: 1px solid transparent;
 }
 
 .overall-label {
+    color: #b9c8df;
     font-size: 12px;
-    color: #cbd5e1;
 }
 
 .overall-value {
-    margin-top: 4px;
-    font-size: 28px;
+    margin-top: 3px;
+    font-size: 27px;
     font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
 .overall-time {
-    margin-top: 4px;
-    color: #94a3b8;
+    margin-top: 3px;
+    color: #91a1b8;
     font-size: 10px;
 }
 
 .overall.safe {
-    background: #14532d;
+    background: #103b2a;
+    border-color: #176644;
 }
 
 .overall.caution {
-    background: #713f12;
+    background: #5b320e;
+    border-color: #8b4e14;
 }
 
 .overall.warning {
-    background: #7c2d12;
+    background: #5a2412;
+    border-color: #963c1d;
 }
 
 .overall.danger {
-    background: #7f1d1d;
+    background: #54171b;
+    border-color: #a32932;
 }
 
-/* ================================
-   카드
-================================ */
+
+/* =========================
+   대시보드
+========================= */
 
 .dashboard {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 9px;
 }
 
+
+/* =========================
+   지표 카드
+========================= */
+
 .card {
+    position: relative;
     padding: 13px;
-    background: #172033;
-    border: 1px solid #26334a;
-    border-radius: 12px;
+    background: #111b2e;
+    border: 1px solid #233654;
+    border-radius: 14px;
     min-width: 0;
+    overflow: hidden;
 }
 
 .card-header {
@@ -99,80 +119,84 @@ p {
 .card-title {
     font-size: 17px;
     font-weight: bold;
+    letter-spacing: -0.3px;
 }
 
 .ticker {
     margin-top: 2px;
-    color: #64748b;
+    color: #6681a9;
     font-size: 10px;
 }
 
 .description {
-    margin-top: 6px;
-    color: #94a3b8;
+    margin-top: 5px;
+    color: #8da3c4;
     font-size: 11px;
 }
 
 .value {
-    margin-top: 10px;
-    font-size: 25px;
+    margin-top: 7px;
+    font-size: 27px;
     font-weight: bold;
+    letter-spacing: -0.5px;
 }
 
 .status {
     flex-shrink: 0;
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 15px;
+    padding: 4px 9px;
+    border-radius: 14px;
     font-size: 10px;
     font-weight: bold;
 }
 
 .safe {
-    background: #166534;
-    color: #dcfce7;
+    background: #087d59;
+    color: #d9fff2;
 }
 
 .caution {
-    background: #854d0e;
-    color: #fef9c3;
+    background: #85630b;
+    color: #fff6c7;
 }
 
 .warning {
-    background: #9a3412;
-    color: #ffedd5;
+    background: #9a3c19;
+    color: #ffe8dc;
 }
 
 .danger {
-    background: #991b1b;
-    color: #fee2e2;
+    background: #b21d2a;
+    color: #ffe2e5;
 }
 
 .unknown {
-    background: #374151;
-    color: #d1d5db;
+    background: #36445a;
+    color: #d2d9e4;
 }
 
-/* ================================
-   5일 / 20일 변화
-================================ */
+
+/* =========================
+   변화율
+========================= */
 
 .changes {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 7px;
-    margin-top: 10px;
+    margin-top: 9px;
 }
 
 .change-box {
     padding: 7px 9px;
-    background: #111827;
-    border-radius: 8px;
+    background: #0b1424;
+    border: 1px solid #17253b;
+    border-radius: 9px;
 }
 
 .change-label {
     margin-bottom: 2px;
-    color: #64748b;
+    color: #667c9e;
     font-size: 9px;
 }
 
@@ -184,27 +208,29 @@ p {
 }
 
 .change-up {
-    color: #4ade80;
+    color: #ff5363;
 }
 
 .change-down {
-    color: #f87171;
+    color: #55d88b;
 }
 
 .change-neutral {
-    color: #cbd5e1;
+    color: #c4d0e1;
 }
 
-/* ================================
+
+/* =========================
    그래프
-================================ */
+========================= */
 
 .chart-wrapper {
     width: 100%;
-    height: 155px;
-    margin-top: 12px;
-    padding: 4px 0;
-    background: #111827;
+    height: 150px;
+    margin-top: 9px;
+    padding: 2px 0;
+    background: #0b1424;
+    border: 1px solid #15263f;
     border-radius: 9px;
     overflow: hidden;
 }
@@ -216,25 +242,27 @@ p {
 }
 
 .chart-empty {
-    height: 155px;
-    margin-top: 12px;
+    height: 150px;
+    margin-top: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #111827;
+    background: #0b1424;
+    border: 1px solid #15263f;
     border-radius: 9px;
-    color: #64748b;
+    color: #647a9b;
     font-size: 11px;
 }
 
-/* ================================
+
+/* =========================
    기간 버튼
-================================ */
+========================= */
 
 .period-buttons {
     display: flex;
-    gap: 4px;
-    margin-top: 8px;
+    gap: 5px;
+    margin-top: 7px;
     overflow-x: auto;
     scrollbar-width: none;
 }
@@ -245,62 +273,65 @@ p {
 
 .period-button {
     flex: 1;
-    min-width: 54px;
-    padding: 6px 5px;
-    border: 1px solid #334155;
-    border-radius: 7px;
-    background: #111827;
-    color: #94a3b8;
+    min-width: 50px;
+    padding: 5px 6px;
+    border: 1px solid #263b5c;
+    border-radius: 14px;
+    background: #0c1729;
+    color: #7f97bb;
     font-size: 9px;
     cursor: pointer;
+    white-space: nowrap;
+    transition: 0.15s;
 }
 
 .period-button:hover {
-    background: #1e293b;
+    background: #15253c;
+    border-color: #38567f;
 }
 
 .period-button.active {
-    background: #334155;
-    border-color: #60a5fa;
-    color: #f8fafc;
+    background: #123b68;
+    border-color: #2185ff;
+    color: #ffffff;
     font-weight: bold;
 }
 
-/* ================================
-   기준일
-================================ */
+
+/* =========================
+   날짜 / 출처
+========================= */
 
 .date {
-    margin-top: 7px;
-    color: #64748b;
+    margin-top: 6px;
+    color: #607695;
     font-size: 9px;
 }
-
-/* ================================
-   출처
-================================ */
 
 .source {
-    margin-top: 12px;
+    margin-top: 10px;
     text-align: center;
-    color: #64748b;
+    color: #526886;
     font-size: 9px;
 }
 
-/* ================================
+
+/* =========================
    오류
-================================ */
+========================= */
 
 .error {
-    padding: 24px;
-    background: #7f1d1d;
+    padding: 20px;
+    background: #5a171c;
+    border: 1px solid #92232c;
     border-radius: 12px;
     text-align: center;
 }
 
-/* ================================
+
+/* =========================
    모바일
-================================ */
+========================= */
 
 @media (max-width: 700px) {
 
@@ -317,12 +348,13 @@ p {
     }
 
     #app {
-        margin-top: 13px;
+        margin-top: 12px;
     }
 
     .overall {
-        padding: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 9px;
+        padding: 11px 12px;
+        border-radius: 13px;
     }
 
     .overall-value {
@@ -330,30 +362,57 @@ p {
     }
 
     .dashboard {
-        grid-template-columns: 1fr;
         gap: 8px;
     }
 
     .card {
         padding: 11px;
+        border-radius: 13px;
     }
 
     .card-title {
         font-size: 16px;
     }
 
+    .description {
+        font-size: 10px;
+    }
+
     .value {
-        font-size: 24px;
+        margin-top: 6px;
+        font-size: 25px;
+    }
+
+    .changes {
+        margin-top: 8px;
+    }
+
+    .change-box {
+        padding: 6px 8px;
     }
 
     .chart-wrapper,
     .chart-empty {
-        height: 145px;
+        height: 135px;
+        margin-top: 8px;
+    }
+
+    .period-buttons {
+        gap: 4px;
+        margin-top: 6px;
     }
 
     .period-button {
-        min-width: 50px;
-        padding: 6px 3px;
+        min-width: 48px;
+        padding: 5px 4px;
         font-size: 9px;
+    }
+
+    .date {
+        margin-top: 5px;
+    }
+
+    .source {
+        margin-top: 8px;
     }
 }
