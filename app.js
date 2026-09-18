@@ -305,22 +305,22 @@ function getChangeClass(indicator, change) {
     if (indicator.riskDirection === "higher") {
 
         if (change > 0) {
-            return "change-down";
+            return "change-up";
         }
 
         if (change < 0) {
-            return "change-up";
+            return "change-down";
         }
     }
 
     if (indicator.riskDirection === "lower") {
 
         if (change < 0) {
-            return "change-down";
+            return "change-up";
         }
 
         if (change > 0) {
-            return "change-up";
+            return "change-down";
         }
     }
 
@@ -711,9 +711,8 @@ function createChart(
                 </text>
 
 
-                <!--
-                    터치 감지 영역
-                -->
+                <!-- 터치 감지 영역 -->
+
                 <rect
                     class="chart-touch-area"
                     x="${paddingLeft}"
@@ -724,9 +723,8 @@ function createChart(
                 />
 
 
-                <!--
-                    터치 위치 세로선
-                -->
+                <!-- 터치 세로선 -->
+
                 <line
                     class="chart-touch-line"
                     x1="${paddingLeft}"
@@ -739,6 +737,8 @@ function createChart(
                     opacity="0"
                 />
 
+
+                <!-- 터치 위치 -->
 
                 <circle
                     class="chart-touch-point"
@@ -831,11 +831,6 @@ function setupChartTouchEvents() {
             const svg =
                 wrapper.querySelector(".chart");
 
-            const touchArea =
-                wrapper.querySelector(
-                    ".chart-touch-area"
-                );
-
             const touchLine =
                 wrapper.querySelector(
                     ".chart-touch-line"
@@ -854,7 +849,6 @@ function setupChartTouchEvents() {
 
             if (
                 !svg ||
-                !touchArea ||
                 !touchLine ||
                 !touchPoint ||
                 !tooltip
@@ -865,19 +859,71 @@ function setupChartTouchEvents() {
 
             const width = 700;
 
+            const height = 210;
+
             const paddingLeft = 42;
             const paddingRight = 8;
+            const paddingTop = 12;
+            const paddingBottom = 28;
 
             const chartWidth =
                 width -
                 paddingLeft -
                 paddingRight;
 
+            const chartHeight =
+                height -
+                paddingTop -
+                paddingBottom;
+
+
+            /*
+             * 그래프의 실제 값 범위
+             */
+
+            const values =
+                points.map(
+                    item => Number(item.value)
+                );
+
+
+            let min =
+                Math.min(...values);
+
+            let max =
+                Math.max(...values);
+
+
+            if (min === max) {
+                min -= 1;
+                max += 1;
+            }
+
+
+            const range =
+                max - min;
+
+
+            min -= range * 0.08;
+            max += range * 0.08;
+
+
+            const finalRange =
+                max - min;
+
+
+            /*
+             * 손가락 위치를 그래프 데이터 위치로 변환
+             */
 
             function showPoint(event) {
 
+                event.preventDefault();
+
+
                 const rect =
                     svg.getBoundingClientRect();
+
 
                 let clientX =
                     event.clientX;
@@ -885,45 +931,75 @@ function setupChartTouchEvents() {
 
                 if (
                     event.touches &&
-                    event.touches.length
+                    event.touches.length > 0
                 ) {
                     clientX =
                         event.touches[0].clientX;
                 }
 
 
-                let x =
+                if (
+                    typeof clientX !== "number" ||
+                    Number.isNaN(clientX)
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * 화면상의 X 좌표
+                 */
+
+                let screenX =
                     clientX -
                     rect.left;
 
 
-                if (x < paddingLeft) {
-                    x = paddingLeft;
-                }
+                /*
+                 * SVG 내부 좌표로 변환
+                 */
 
-                if (
-                    x >
-                    rect.width - paddingRight
-                ) {
-                    x =
-                        rect.width -
-                        paddingRight;
-                }
-
-
-                const ratio =
+                let svgX =
                     (
-                        x -
-                        (
-                            paddingLeft *
-                            rect.width /
-                            width
+                        screenX /
+                        rect.width
+                    ) *
+                    width;
+
+
+                /*
+                 * 그래프 영역 안으로 제한
+                 */
+
+                svgX =
+                    Math.max(
+                        paddingLeft,
+                        Math.min(
+                            width - paddingRight,
+                            svgX
                         )
-                    ) /
+                    );
+
+
+                /*
+                 * 가장 가까운 데이터 위치 계산
+                 */
+
+                let ratio =
                     (
-                        chartWidth *
-                        rect.width /
-                        width
+                        svgX -
+                        paddingLeft
+                    ) /
+                    chartWidth;
+
+
+                ratio =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            ratio
+                        )
                     );
 
 
@@ -950,7 +1026,11 @@ function setupChartTouchEvents() {
                     points[index];
 
 
-                const svgX =
+                /*
+                 * 실제 SVG 좌표
+                 */
+
+                const pointX =
                     paddingLeft +
                     (
                         index /
@@ -962,50 +1042,7 @@ function setupChartTouchEvents() {
                     chartWidth;
 
 
-                const values =
-                    points.map(
-                        item =>
-                            Number(item.value)
-                    );
-
-
-                let min =
-                    Math.min(...values);
-
-                let max =
-                    Math.max(...values);
-
-
-                if (min === max) {
-                    min -= 1;
-                    max += 1;
-                }
-
-
-                const range =
-                    max - min;
-
-
-                min -= range * 0.08;
-                max += range * 0.08;
-
-
-                const finalRange =
-                    max - min;
-
-
-                const height = 210;
-
-                const paddingTop = 12;
-                const paddingBottom = 28;
-
-                const chartHeight =
-                    height -
-                    paddingTop -
-                    paddingBottom;
-
-
-                const svgY =
+                const pointY =
                     paddingTop +
                     (
                         1 -
@@ -1018,14 +1055,28 @@ function setupChartTouchEvents() {
                     chartHeight;
 
 
+                /*
+                 * 세로 가이드선
+                 */
+
                 touchLine.setAttribute(
                     "x1",
-                    svgX
+                    pointX
                 );
 
                 touchLine.setAttribute(
                     "x2",
-                    svgX
+                    pointX
+                );
+
+                touchLine.setAttribute(
+                    "y1",
+                    paddingTop
+                );
+
+                touchLine.setAttribute(
+                    "y2",
+                    height - paddingBottom
                 );
 
                 touchLine.setAttribute(
@@ -1034,14 +1085,18 @@ function setupChartTouchEvents() {
                 );
 
 
+                /*
+                 * 터치점
+                 */
+
                 touchPoint.setAttribute(
                     "cx",
-                    svgX
+                    pointX
                 );
 
                 touchPoint.setAttribute(
                     "cy",
-                    svgY
+                    pointY
                 );
 
                 touchPoint.setAttribute(
@@ -1049,6 +1104,10 @@ function setupChartTouchEvents() {
                     "1"
                 );
 
+
+                /*
+                 * 툴팁 내용
+                 */
 
                 tooltip.innerHTML = `
 
@@ -1069,39 +1128,82 @@ function setupChartTouchEvents() {
                 `;
 
 
+                /*
+                 * 툴팁 위치
+                 */
+
                 const wrapperWidth =
                     wrapper.clientWidth;
 
 
                 const pointScreenX =
                     (
-                        svgX /
+                        pointX /
                         width
                     ) *
                     wrapperWidth;
 
 
+                let tooltipWidth = 120;
+
+
                 let tooltipLeft =
                     pointScreenX -
-                    60;
+                    tooltipWidth / 2;
 
 
-                if (tooltipLeft < 4) {
+                if (
+                    tooltipLeft < 4
+                ) {
                     tooltipLeft = 4;
                 }
 
 
                 if (
-                    tooltipLeft + 120 >
+                    tooltipLeft +
+                    tooltipWidth >
                     wrapperWidth - 4
                 ) {
+
                     tooltipLeft =
-                        wrapperWidth - 124;
+                        wrapperWidth -
+                        tooltipWidth -
+                        4;
                 }
 
 
                 tooltip.style.left =
                     tooltipLeft + "px";
+
+
+                /*
+                 * 위쪽/아래쪽 위치 자동 결정
+                 */
+
+                const pointScreenY =
+                    (
+                        pointY /
+                        height
+                    ) *
+                    wrapper.clientHeight;
+
+
+                if (
+                    pointScreenY >
+                    wrapper.clientHeight * 0.55
+                ) {
+
+                    tooltip.style.top =
+                        "8px";
+
+                } else {
+
+                    tooltip.style.top =
+                        Math.max(
+                            8,
+                            pointScreenY + 12
+                        ) + "px";
+                }
 
 
                 tooltip.classList.add(
@@ -1111,25 +1213,84 @@ function setupChartTouchEvents() {
             }
 
 
-            touchArea.addEventListener(
+            /*
+             * 핵심:
+             * rect가 아니라 chart-wrapper 전체에서
+             * pointer 이벤트를 받는다.
+             *
+             * 모바일에서 손가락을 움직여도
+             * 계속 날짜를 계산한다.
+             */
+
+            wrapper.addEventListener(
                 "pointerdown",
                 event => {
 
+                    if (
+                        event.pointerType === "mouse" &&
+                        event.button !== 0
+                    ) {
+                        return;
+                    }
+
+                    try {
+                        wrapper.setPointerCapture(
+                            event.pointerId
+                        );
+                    } catch (error) {
+                        // 일부 브라우저에서는 필요 없음
+                    }
+
                     showPoint(event);
+
+                },
+                {
+                    passive: false
+                }
+            );
+
+
+            wrapper.addEventListener(
+                "pointermove",
+                event => {
+
+                    if (
+                        event.pointerType === "mouse" &&
+                        event.buttons === 0
+                    ) {
+                        return;
+                    }
+
+                    showPoint(event);
+
+                },
+                {
+                    passive: false
+                }
+            );
+
+
+            wrapper.addEventListener(
+                "pointerup",
+                event => {
+
+                    try {
+                        wrapper.releasePointerCapture(
+                            event.pointerId
+                        );
+                    } catch (error) {
+                        // 무시
+                    }
 
                 }
             );
 
 
-            touchArea.addEventListener(
-                "pointermove",
-                event => {
+            wrapper.addEventListener(
+                "pointercancel",
+                () => {
 
-                    if (
-                        event.buttons
-                    ) {
-                        showPoint(event);
-                    }
+                    // 마지막 선택 위치는 유지
 
                 }
             );
@@ -1414,10 +1575,51 @@ function calculateOverallRisk(data) {
 
 
 /* ================================
+   이전 위험점수 계산
+================================ */
+
+function calculatePreviousRisk(data) {
+
+    let score = 0;
+
+    indicators.forEach(indicator => {
+
+        const observations =
+            data[indicator.ticker]?.observations || [];
+
+        /*
+         * observations[1] =
+         * 최신 데이터 바로 이전 데이터
+         */
+
+        if (observations.length < 2) {
+            return;
+        }
+
+        const previousValue =
+            Number(
+                observations[1].value
+            );
+
+        score += getRiskScore(
+            indicator,
+            previousValue
+        );
+
+    });
+
+    return score;
+}
+
+
+/* ================================
    위험지수 HTML
 ================================ */
 
-function createRiskScoreHTML(overall) {
+function createRiskScoreHTML(
+    overall,
+    previousScore
+) {
 
     const maxScore = 16;
 
@@ -1432,6 +1634,25 @@ function createRiskScoreHTML(overall) {
                 100
             )
         );
+
+
+    const difference =
+        overall.score -
+        previousScore;
+
+
+    let differenceText = "0";
+
+
+    if (difference > 0) {
+        differenceText =
+            `▲ +${difference}`;
+    }
+
+    else if (difference < 0) {
+        differenceText =
+            `▼ ${difference}`;
+    }
 
 
     return `
@@ -1463,6 +1684,13 @@ function createRiskScoreHTML(overall) {
 
             </div>
 
+            <div class="risk-score-change">
+                이전 대비
+                <strong>
+                    ${differenceText}
+                </strong>
+            </div>
+
         </div>
     `;
 }
@@ -1476,6 +1704,12 @@ function renderDashboard() {
 
     const overall =
         calculateOverallRisk(
+            allData
+        );
+
+
+    const previousScore =
+        calculatePreviousRisk(
             allData
         );
 
@@ -1508,7 +1742,10 @@ function renderDashboard() {
             </div>
 
 
-            ${createRiskScoreHTML(overall)}
+            ${createRiskScoreHTML(
+                overall,
+                previousScore
+            )}
 
         </div>
 
@@ -1560,6 +1797,12 @@ function renderRiskView() {
 
     const overall =
         calculateOverallRisk(
+            allData
+        );
+
+
+    const previousScore =
+        calculatePreviousRisk(
             allData
         );
 
@@ -1677,7 +1920,10 @@ function renderRiskView() {
 
             </div>
 
-            ${createRiskScoreHTML(overall)}
+            ${createRiskScoreHTML(
+                overall,
+                previousScore
+            )}
 
         </div>
 
@@ -1713,6 +1959,12 @@ function renderTrendView() {
 
     const overall =
         calculateOverallRisk(
+            allData
+        );
+
+
+    const previousScore =
+        calculatePreviousRisk(
             allData
         );
 
@@ -1812,7 +2064,10 @@ function renderTrendView() {
 
             </div>
 
-            ${createRiskScoreHTML(overall)}
+            ${createRiskScoreHTML(
+                overall,
+                previousScore
+            )}
 
         </div>
 
