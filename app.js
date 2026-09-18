@@ -53,6 +53,10 @@ const app = document.getElementById("app");
 
 let allData = {};
 
+let currentView = "dashboard";
+
+let selectedPeriods = {};
+
 const periodOptions = [
     { key: "all", label: "전체" },
     { key: "10y", label: "10년" },
@@ -196,6 +200,74 @@ function getStatus(indicator, value) {
                 text: "확인",
                 className: "unknown"
             };
+    }
+}
+
+
+/* ================================
+   개별 위험 점수
+================================ */
+
+function getRiskScore(indicator, value) {
+
+    if (value === null || value === undefined) {
+        return 0;
+    }
+
+    value = Number(value);
+
+    if (Number.isNaN(value)) {
+        return 0;
+    }
+
+    switch (indicator.ticker) {
+
+        case "BAMLH0A0HYM2":
+
+            if (value >= 6) return 3;
+            if (value >= 5) return 2;
+            if (value >= 4) return 1;
+            return 0;
+
+
+        case "BAMLH0A3HYC":
+
+            if (value >= 10) return 3;
+            if (value >= 8) return 2;
+            if (value >= 6) return 1;
+            return 0;
+
+
+        case "VIXCLS":
+
+            if (value >= 40) return 3;
+            if (value >= 30) return 2;
+            if (value >= 20) return 1;
+            return 0;
+
+
+        case "NFCI":
+
+            if (value >= 1) return 3;
+            if (value >= 0.5) return 2;
+            if (value >= 0) return 1;
+            return 0;
+
+
+        case "T10Y2Y":
+
+            if (value <= -1) return 1;
+            return 0;
+
+
+        case "SAHMREALTIME":
+
+            if (value >= 0.5) return 3;
+            return 0;
+
+
+        default:
+            return 0;
     }
 }
 
@@ -522,7 +594,6 @@ function createChart(
                     stroke-width="1"
                 />
 
-
                 <text
                     x="2"
                     y="${paddingTop + 4}"
@@ -550,13 +621,11 @@ function createChart(
                     ${formatAxisValue(axisBottom)}
                 </text>
 
-
                 <path
                     d="${areaPath}"
                     fill="rgba(59,130,246,0.07)"
                     stroke="none"
                 />
-
 
                 <path
                     d="${linePath}"
@@ -567,14 +636,12 @@ function createChart(
                     stroke-linecap="round"
                 />
 
-
                 <circle
                     cx="${latest.x}"
                     cy="${latest.y}"
                     r="3.5"
                     fill="#63a8ff"
                 />
-
 
                 <text
                     x="${first.x}"
@@ -695,11 +762,6 @@ function createCard(
             value
         );
 
-
-    /*
-       핵심 변경:
-       왼쪽 정보 영역 + 오른쪽 그래프 영역
-    */
 
     return `
         <div
@@ -844,62 +906,10 @@ function calculateOverallRisk(data) {
         const value =
             Number(observations[0].value);
 
-        if (Number.isNaN(value)) {
-            return;
-        }
-
-
-        switch (indicator.ticker) {
-
-            case "BAMLH0A0HYM2":
-
-                if (value >= 6) score += 3;
-                else if (value >= 5) score += 2;
-                else if (value >= 4) score += 1;
-
-                break;
-
-
-            case "BAMLH0A3HYC":
-
-                if (value >= 10) score += 3;
-                else if (value >= 8) score += 2;
-                else if (value >= 6) score += 1;
-
-                break;
-
-
-            case "VIXCLS":
-
-                if (value >= 40) score += 3;
-                else if (value >= 30) score += 2;
-                else if (value >= 20) score += 1;
-
-                break;
-
-
-            case "NFCI":
-
-                if (value >= 1) score += 3;
-                else if (value >= 0.5) score += 2;
-                else if (value >= 0) score += 1;
-
-                break;
-
-
-            case "T10Y2Y":
-
-                if (value <= -1) score += 1;
-
-                break;
-
-
-            case "SAHMREALTIME":
-
-                if (value >= 0.5) score += 3;
-
-                break;
-        }
+        score += getRiskScore(
+            indicator,
+            value
+        );
 
     });
 
@@ -907,38 +917,40 @@ function calculateOverallRisk(data) {
     if (score >= 7) {
         return {
             text: "HIGH RISK",
-            className: "danger"
+            className: "danger",
+            score: score
         };
     }
 
     if (score >= 4) {
         return {
             text: "WARNING",
-            className: "warning"
+            className: "warning",
+            score: score
         };
     }
 
     if (score >= 2) {
         return {
             text: "CAUTION",
-            className: "caution"
+            className: "caution",
+            score: score
         };
     }
 
     return {
         text: "NORMAL",
-        className: "safe"
+        className: "safe",
+        score: score
     };
 }
 
 
 /* ================================
-   화면 표시
+   대시보드 화면
 ================================ */
 
-function render(
-    selectedPeriods = {}
-) {
+function renderDashboard() {
 
     const overall =
         calculateOverallRisk(
@@ -956,6 +968,11 @@ function render(
 
             <div class="overall-value">
                 ${overall.text}
+            </div>
+
+            <div class="overall-time">
+                위험 점수:
+                ${overall.score}
             </div>
 
             <div class="overall-time">
@@ -1004,6 +1021,306 @@ function render(
         </div>
     `;
 
+    attachDashboardEvents();
+}
+
+
+/* ================================
+   위험도 화면
+================================ */
+
+function renderRiskView() {
+
+    const overall =
+        calculateOverallRisk(
+            allData
+        );
+
+
+    const rows =
+        indicators.map(indicator => {
+
+            const observations =
+                allData[
+                    indicator.ticker
+                ]?.observations || [];
+
+            const latest =
+                observations.length
+                    ? observations[0]
+                    : null;
+
+            const value =
+                latest
+                    ? Number(latest.value)
+                    : null;
+
+            const status =
+                getStatus(
+                    indicator,
+                    value
+                );
+
+            const score =
+                getRiskScore(
+                    indicator,
+                    value
+                );
+
+            return `
+                <div class="risk-row">
+
+                    <div class="risk-row-top">
+
+                        <div>
+                            <div class="risk-name">
+                                ${indicator.name}
+                            </div>
+
+                            <div class="risk-description">
+                                ${indicator.description}
+                            </div>
+                        </div>
+
+                        <div class="status ${status.className}">
+                            ${status.text}
+                        </div>
+
+                    </div>
+
+                    <div class="risk-row-bottom">
+
+                        <span>
+                            현재값
+                            <strong>
+                                ${formatValue(
+                                    value,
+                                    indicator.decimals,
+                                    indicator.unit
+                                )}
+                            </strong>
+                        </span>
+
+                        <span>
+                            위험점수
+                            <strong>
+                                ${score}
+                            </strong>
+                        </span>
+
+                        <span>
+                            기준일
+                            <strong>
+                                ${latest
+                                    ? latest.date
+                                    : "--"}
+                            </strong>
+                        </span>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+
+
+    app.innerHTML = `
+
+        <div class="overall ${overall.className}">
+
+            <div class="overall-label">
+                현재 종합 위험도
+            </div>
+
+            <div class="overall-value">
+                ${overall.text}
+            </div>
+
+            <div class="overall-time">
+                총 위험 점수:
+                ${overall.score}
+            </div>
+
+        </div>
+
+
+        <div class="risk-panel">
+
+            <div class="panel-title">
+                지표별 위험도
+            </div>
+
+            <div class="panel-subtitle">
+                현재 데이터 기준
+            </div>
+
+            ${rows}
+
+        </div>
+
+        <div class="source">
+            Data source:
+            Federal Reserve Bank of St. Louis (FRED)
+        </div>
+    `;
+}
+
+
+/* ================================
+   추세 화면
+================================ */
+
+function renderTrendView() {
+
+    const overall =
+        calculateOverallRisk(
+            allData
+        );
+
+
+    const trendCards =
+        indicators.map(indicator => {
+
+            const observations =
+                allData[
+                    indicator.ticker
+                ]?.observations || [];
+
+            const period =
+                selectedPeriods[
+                    indicator.ticker
+                ] || "1y";
+
+            const latest =
+                observations.length
+                    ? observations[0]
+                    : null;
+
+            const value =
+                latest
+                    ? latest.value
+                    : null;
+
+            const status =
+                getStatus(
+                    indicator,
+                    value
+                );
+
+
+            return `
+                <div class="trend-card">
+
+                    <div class="trend-header">
+
+                        <div>
+
+                            <div class="trend-name">
+                                ${indicator.name}
+                            </div>
+
+                            <div class="trend-ticker">
+                                ${indicator.ticker}
+                            </div>
+
+                        </div>
+
+                        <div class="status ${status.className}">
+                            ${status.text}
+                        </div>
+
+                    </div>
+
+
+                    <div class="trend-value">
+                        ${formatValue(
+                            value,
+                            indicator.decimals,
+                            indicator.unit
+                        )}
+                    </div>
+
+
+                    ${createChart(
+                        indicator,
+                        observations,
+                        period
+                    )}
+
+                </div>
+            `;
+
+        }).join("");
+
+
+    app.innerHTML = `
+
+        <div class="overall ${overall.className}">
+
+            <div class="overall-label">
+                시장 추세
+            </div>
+
+            <div class="overall-value">
+                ${overall.text}
+            </div>
+
+            <div class="overall-time">
+                기본 추세 기간: 1년
+            </div>
+
+        </div>
+
+
+        <div class="trend-panel">
+
+            <div class="panel-title">
+                주요 위험지표 추세
+            </div>
+
+            <div class="panel-subtitle">
+                최근 1년
+            </div>
+
+            ${trendCards}
+
+        </div>
+
+
+        <div class="source">
+            Data source:
+            Federal Reserve Bank of St. Louis (FRED)
+        </div>
+    `;
+}
+
+
+/* ================================
+   화면 전환
+================================ */
+
+function renderCurrentView() {
+
+    if (currentView === "risk") {
+        renderRiskView();
+        return;
+    }
+
+    if (currentView === "trend") {
+        renderTrendView();
+        return;
+    }
+
+    renderDashboard();
+}
+
+
+/* ================================
+   대시보드 이벤트
+================================ */
+
+function attachDashboardEvents() {
 
     document
         .querySelectorAll(".period-button")
@@ -1022,13 +1339,56 @@ function render(
                     selectedPeriods[ticker] =
                         period;
 
-                    render(
-                        selectedPeriods
-                    );
+                    renderDashboard();
                 }
             );
 
         });
+}
+
+
+/* ================================
+   하단 메뉴
+================================ */
+
+function setupBottomNavigation() {
+
+    const navItems =
+        document.querySelectorAll(".nav-item");
+
+
+    navItems.forEach((item, index) => {
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                navItems.forEach(nav => {
+                    nav.classList.remove("active");
+                });
+
+                item.classList.add("active");
+
+
+                if (index === 0) {
+                    currentView = "dashboard";
+                }
+
+                if (index === 1) {
+                    currentView = "risk";
+                }
+
+                if (index === 2) {
+                    currentView = "trend";
+                }
+
+
+                renderCurrentView();
+
+            }
+        );
+
+    });
 }
 
 
@@ -1067,7 +1427,7 @@ async function loadData() {
             json.updated_at || null;
 
 
-        render();
+        renderCurrentView();
 
     }
 
@@ -1090,5 +1450,11 @@ async function loadData() {
     }
 }
 
+
+/* ================================
+   시작
+================================ */
+
+setupBottomNavigation();
 
 loadData();
