@@ -2,65 +2,66 @@
     box-sizing: border-box;
 }
 
-html {
-    background: #07101f;
-}
-
+html,
 body {
     margin: 0;
-    padding: 14px;
+    padding: 0;
     background: #07101f;
     color: #f8fafc;
     font-family: Arial, sans-serif;
 }
 
+body {
+    padding: 9px;
+}
+
 h1 {
     margin: 0;
-    font-size: 23px;
-    line-height: 1.2;
-    letter-spacing: -0.5px;
+    font-size: 21px;
+    line-height: 1.15;
+    letter-spacing: -0.6px;
 }
 
 p {
-    margin: 5px 0 0;
-    color: #8fa6c8;
-    font-size: 13px;
+    margin: 4px 0 0;
+    color: #8399b9;
+    font-size: 11px;
 }
 
 #app {
     width: 100%;
     max-width: 1100px;
-    margin: 15px auto 0;
+    margin: 10px auto 0;
 }
+
 
 /* =========================
    종합 위험도
 ========================= */
 
 .overall {
-    margin-bottom: 10px;
-    padding: 12px 15px;
-    border-radius: 14px;
+    margin-bottom: 8px;
+    padding: 9px 12px;
+    border-radius: 12px;
     text-align: center;
     border: 1px solid transparent;
 }
 
 .overall-label {
-    color: #b9c8df;
-    font-size: 12px;
+    color: #b7c5da;
+    font-size: 11px;
 }
 
 .overall-value {
-    margin-top: 3px;
-    font-size: 27px;
+    margin-top: 2px;
+    font-size: 25px;
     font-weight: bold;
-    letter-spacing: 0.5px;
 }
 
 .overall-time {
-    margin-top: 3px;
-    color: #91a1b8;
-    font-size: 10px;
+    margin-top: 2px;
+    color: #8291a8;
+    font-size: 9px;
 }
 
 .overall.safe {
@@ -91,62 +92,59 @@ p {
 .dashboard {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 9px;
+    gap: 7px;
 }
 
 
 /* =========================
-   지표 카드
+   카드
 ========================= */
 
 .card {
-    position: relative;
-    padding: 13px;
+    padding: 9px 10px;
     background: #111b2e;
-    border: 1px solid #233654;
-    border-radius: 14px;
+    border: 1px solid #223451;
+    border-radius: 12px;
     min-width: 0;
-    overflow: hidden;
 }
 
 .card-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
 }
 
 .card-title {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
     letter-spacing: -0.3px;
 }
 
 .ticker {
-    margin-top: 2px;
-    color: #6681a9;
-    font-size: 10px;
+    margin-top: 1px;
+    color: #627a9d;
+    font-size: 9px;
 }
 
 .description {
-    margin-top: 5px;
-    color: #8da3c4;
-    font-size: 11px;
+    margin-top: 3px;
+    color: #8298b8;
+    font-size: 10px;
 }
 
 .value {
-    margin-top: 7px;
-    font-size: 27px;
+    margin-top: 5px;
+    font-size: 25px;
     font-weight: bold;
     letter-spacing: -0.5px;
 }
 
 .status {
     flex-shrink: 0;
-    display: inline-block;
-    padding: 4px 9px;
-    border-radius: 14px;
-    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 9px;
     font-weight: bold;
 }
 
@@ -183,27 +181,27 @@ p {
 .changes {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 7px;
-    margin-top: 9px;
+    gap: 6px;
+    margin-top: 7px;
 }
 
 .change-box {
-    padding: 7px 9px;
-    background: #0b1424;
-    border: 1px solid #17253b;
-    border-radius: 9px;
+    padding: 6px 8px;
+    background: #0a1424;
+    border: 1px solid #17263d;
+    border-radius: 8px;
 }
 
 .change-label {
-    margin-bottom: 2px;
-    color: #667c9e;
-    font-size: 9px;
+    margin-bottom: 1px;
+    color: #627896;
+    font-size: 8px;
 }
 
 .change-up,
 .change-down,
 .change-neutral {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
 }
 
@@ -226,12 +224,12 @@ p {
 
 .chart-wrapper {
     width: 100%;
-    height: 150px;
-    margin-top: 9px;
-    padding: 2px 0;
-    background: #0b1424;
+    height: 112px;
+    margin-top: 7px;
+    padding: 1px 0;
+    background: #0a1424;
     border: 1px solid #15263f;
-    border-radius: 9px;
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -242,16 +240,16 @@ p {
 }
 
 .chart-empty {
-    height: 150px;
-    margin-top: 9px;
+    height: 112px;
+    margin-top: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0b1424;
+    background: #0a1424;
     border: 1px solid #15263f;
-    border-radius: 9px;
-    color: #647a9b;
-    font-size: 11px;
+    border-radius: 8px;
+    color: #607695;
+    font-size: 10px;
 }
 
 
@@ -261,8 +259,8 @@ p {
 
 .period-buttons {
     display: flex;
-    gap: 5px;
-    margin-top: 7px;
+    gap: 4px;
+    margin-top: 5px;
     overflow-x: auto;
     scrollbar-width: none;
 }
@@ -273,21 +271,19 @@ p {
 
 .period-button {
     flex: 1;
-    min-width: 50px;
-    padding: 5px 6px;
-    border: 1px solid #263b5c;
-    border-radius: 14px;
-    background: #0c1729;
-    color: #7f97bb;
+    min-width: 45px;
+    padding: 4px 4px;
+    border: 1px solid #263a58;
+    border-radius: 12px;
+    background: #0a1424;
+    color: #7e95b6;
     font-size: 9px;
     cursor: pointer;
     white-space: nowrap;
-    transition: 0.15s;
 }
 
 .period-button:hover {
-    background: #15253c;
-    border-color: #38567f;
+    background: #142238;
 }
 
 .period-button.active {
@@ -299,20 +295,20 @@ p {
 
 
 /* =========================
-   날짜 / 출처
+   날짜
 ========================= */
 
 .date {
-    margin-top: 6px;
-    color: #607695;
-    font-size: 9px;
+    margin-top: 4px;
+    color: #5f7492;
+    font-size: 8px;
 }
 
 .source {
-    margin-top: 10px;
+    margin-top: 7px;
     text-align: center;
     color: #526886;
-    font-size: 9px;
+    font-size: 8px;
 }
 
 
@@ -321,10 +317,10 @@ p {
 ========================= */
 
 .error {
-    padding: 20px;
+    padding: 18px;
     background: #5a171c;
     border: 1px solid #92232c;
-    border-radius: 12px;
+    border-radius: 10px;
     text-align: center;
 }
 
@@ -336,83 +332,99 @@ p {
 @media (max-width: 700px) {
 
     body {
-        padding: 10px;
+        padding: 8px;
     }
 
     h1 {
-        font-size: 21px;
+        font-size: 20px;
     }
 
     p {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     #app {
-        margin-top: 12px;
+        margin-top: 9px;
     }
 
     .overall {
-        margin-bottom: 9px;
-        padding: 11px 12px;
-        border-radius: 13px;
+        padding: 8px 10px;
+        margin-bottom: 7px;
+        border-radius: 11px;
     }
 
-    .overall-value {
-        font-size: 26px;
-    }
-
-    .dashboard {
-        gap: 8px;
-    }
-
-    .card {
-        padding: 11px;
-        border-radius: 13px;
-    }
-
-    .card-title {
-        font-size: 16px;
-    }
-
-    .description {
+    .overall-label {
         font-size: 10px;
     }
 
+    .overall-value {
+        font-size: 24px;
+    }
+
+    .overall-time {
+        font-size: 8px;
+    }
+
+    .dashboard {
+        gap: 6px;
+    }
+
+    .card {
+        padding: 9px;
+        border-radius: 11px;
+    }
+
+    .card-title {
+        font-size: 15px;
+    }
+
+    .description {
+        font-size: 9px;
+    }
+
     .value {
-        margin-top: 6px;
-        font-size: 25px;
+        font-size: 24px;
+        margin-top: 4px;
     }
 
     .changes {
-        margin-top: 8px;
+        margin-top: 6px;
+        gap: 5px;
     }
 
     .change-box {
-        padding: 6px 8px;
+        padding: 5px 7px;
+    }
+
+    .change-label {
+        font-size: 8px;
+    }
+
+    .change-up,
+    .change-down,
+    .change-neutral {
+        font-size: 11px;
     }
 
     .chart-wrapper,
     .chart-empty {
-        height: 135px;
-        margin-top: 8px;
-    }
-
-    .period-buttons {
-        gap: 4px;
+        height: 105px;
         margin-top: 6px;
     }
 
-    .period-button {
-        min-width: 48px;
-        padding: 5px 4px;
-        font-size: 9px;
-    }
-
-    .date {
+    .period-buttons {
+        gap: 3px;
         margin-top: 5px;
     }
 
-    .source {
-        margin-top: 8px;
+    .period-button {
+        min-width: 44px;
+        padding: 4px 3px;
+        font-size: 8px;
+    }
+
+    .date {
+        margin-top: 4px;
+        font-size: 8px;
     }
 }
