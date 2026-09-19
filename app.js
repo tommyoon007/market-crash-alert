@@ -452,17 +452,16 @@ function createChart(
     const width = 700;
 
     /*
-       실제 창 높이는 렌더링 후
-       왼쪽 정보 영역 높이에 맞춘다.
+       모든 그래프가 동일한
+       세로 크기를 사용한다.
     */
-    const baseHeight = 180;
+    const baseHeight = 300;
 
     const paddingLeft = 8;
     const paddingRight = 8;
 
     /*
-       그래프 선이 창의 위/아래에
-       같은 간격으로 들어가도록 한다.
+       위/아래 동일한 여백
     */
     const paddingTop = 12;
     const paddingBottom = 12;
@@ -494,10 +493,6 @@ function createChart(
         max += 1;
     }
 
-    /*
-       실제 데이터 범위를 거의 그대로 사용.
-       그래프가 위아래 여백 안에서 최대한 꽉 찬다.
-    */
     const range =
         max - min;
 
@@ -564,26 +559,13 @@ function createChart(
                 class="chart chart-touch-area"
                 id="${chartId}"
                 viewBox="0 0 ${width} ${baseHeight}"
-                preserveAspectRatio="xMidYMid meet"
-                data-base-height="${baseHeight}"
+                preserveAspectRatio="none"
                 data-chart-height="${baseHeight}"
             >
 
                 <g
                     class="chart-content"
-                    id="${chartId}-content"
                 >
-
-                    <!-- 그래프 전체 터치 영역 -->
-                    <rect
-                        class="chart-interaction-area"
-                        x="0"
-                        y="0"
-                        width="${width}"
-                        height="${baseHeight}"
-                        fill="transparent"
-                        pointer-events="all"
-                    />
 
                     <line
                         x1="${paddingLeft}"
@@ -649,6 +631,19 @@ function createChart(
                         )}
                     </text>
 
+                    <!--
+                       그래프 전체 터치 영역
+                       실제 그래프보다 넓게 잡는다.
+                    -->
+                    <rect
+                        class="chart-interaction-area"
+                        x="0"
+                        y="0"
+                        width="${width}"
+                        height="${baseHeight}"
+                        fill="transparent"
+                    />
+
                     <!-- 터치 정보창 -->
 
                     <g
@@ -661,8 +656,8 @@ function createChart(
                             id="${chartId}-label-bg"
                             x="0"
                             y="0"
-                            width="180"
-                            height="42"
+                            width="190"
+                            height="40"
                             rx="7"
                             fill="#07101f"
                             fill-opacity="0.97"
@@ -673,13 +668,15 @@ function createChart(
                         <text
                             class="chart-touch-date"
                             id="${chartId}-date"
-                            x="90"
-                            y="16"
+                            x="95"
+                            y="15"
                             text-anchor="middle"
                             fill="#dcecff"
                             font-family="Arial, sans-serif"
                             font-size="13"
                             font-weight="700"
+                            textLength="135"
+                            lengthAdjust="spacingAndGlyphs"
                         >
                             ${formatDate(
                                 last.date
@@ -689,13 +686,15 @@ function createChart(
                         <text
                             class="chart-touch-value"
                             id="${chartId}-value"
-                            x="90"
-                            y="35"
+                            x="95"
+                            y="33"
                             text-anchor="middle"
                             fill="#ffffff"
                             font-family="Arial, sans-serif"
                             font-size="16"
                             font-weight="800"
+                            textLength="72"
+                            lengthAdjust="spacingAndGlyphs"
                         >
                             ${formatValue(
                                 last.value,
@@ -723,10 +722,10 @@ function createChart(
                         id="${chartId}-point"
                         cx="${lastX}"
                         cy="${lastY}"
-                        r="5"
+                        r="6"
                         fill="#ffffff"
                         stroke="#45a9ff"
-                        stroke-width="2"
+                        stroke-width="2.5"
                         visibility="hidden"
                     />
 
@@ -736,104 +735,6 @@ function createChart(
 
         </div>
     `;
-}
-
-
-/* =========================
-   그래프 높이 맞추기
-========================= */
-
-function fitChartsToCards() {
-
-    document
-        .querySelectorAll(
-            ".chart-wrapper"
-        )
-        .forEach(
-            wrapper => {
-
-                const svg =
-                    wrapper.querySelector(
-                        "svg.chart"
-                    );
-
-                if (!svg) {
-                    return;
-                }
-
-                const card =
-                    wrapper.closest(
-                        ".card"
-                    );
-
-                if (!card) {
-                    return;
-                }
-
-                const info =
-                    card.querySelector(
-                        ".card-info"
-                    );
-
-                if (!info) {
-                    return;
-                }
-
-                const wrapperWidth =
-                    wrapper.getBoundingClientRect()
-                        .width;
-
-                const targetHeight =
-                    info.getBoundingClientRect()
-                        .height;
-
-                if (
-                    wrapperWidth <= 0 ||
-                    targetHeight <= 0
-                ) {
-                    return;
-                }
-
-                const width = 700;
-                const baseHeight = 180;
-
-                /*
-                   실제 창 비율과 SVG viewBox 비율을
-                   똑같이 만들어서 빈 공간이 생기지 않게 한다.
-                */
-                const svgHeight =
-                    Math.max(
-                        baseHeight,
-                        width *
-                        targetHeight /
-                        wrapperWidth
-                    );
-
-                svg.setAttribute(
-                    "viewBox",
-                    `0 0 ${width} ${svgHeight}`
-                );
-
-                svg.dataset.chartHeight =
-                    String(svgHeight);
-
-                const content =
-                    svg.querySelector(
-                        ".chart-content"
-                    );
-
-                if (content) {
-
-                    content.setAttribute(
-                        "transform",
-                        `scale(1, ${
-                            svgHeight /
-                            baseHeight
-                        })`
-                    );
-                }
-            }
-        );
 }
 
 
@@ -890,13 +791,7 @@ function setupChartTouchEvents(
         );
 
     const width = 700;
-
-    const height =
-        Number(
-            svg.dataset.chartHeight
-        ) || 180;
-
-    const baseHeight = 180;
+    const height = 300;
 
     const paddingLeft = 8;
     const paddingRight = 8;
@@ -909,13 +804,9 @@ function setupChartTouchEvents(
         paddingRight;
 
     const chartHeight =
-        height *
-        (
-            (baseHeight -
-                paddingTop -
-                paddingBottom) /
-            baseHeight
-        );
+        height -
+        paddingTop -
+        paddingBottom;
 
     const values =
         data.map(
@@ -944,9 +835,7 @@ function setupChartTouchEvents(
     function y(value) {
 
         return (
-            paddingTop *
-                (height / baseHeight) +
-
+            paddingTop +
             (max - value) *
             chartHeight /
             (max - min)
@@ -954,7 +843,7 @@ function setupChartTouchEvents(
     }
 
 
-    function getClientXFromTouch(event) {
+    function getClientX(event) {
 
         if (
             event.touches &&
@@ -968,6 +857,12 @@ function setupChartTouchEvents(
             event.changedTouches.length
         ) {
             return event.changedTouches[0].clientX;
+        }
+
+        if (
+            event.clientX !== undefined
+        ) {
+            return event.clientX;
         }
 
         return null;
@@ -1072,10 +967,8 @@ function setupChartTouchEvents(
             );
 
 
-        /*
-           터치한 위치의 날짜와 값을
-           항상 새로 표시한다.
-        */
+        /* 날짜 / 값 */
+
         dateText.textContent =
             dateString;
 
@@ -1084,8 +977,31 @@ function setupChartTouchEvents(
 
 
         /*
-           세로 점선
+           글자 가로 비율 고정
         */
+        dateText.setAttribute(
+            "textLength",
+            "135"
+        );
+
+        dateText.setAttribute(
+            "lengthAdjust",
+            "spacingAndGlyphs"
+        );
+
+        valueText.setAttribute(
+            "textLength",
+            "72"
+        );
+
+        valueText.setAttribute(
+            "lengthAdjust",
+            "spacingAndGlyphs"
+        );
+
+
+        /* 세로 점선 */
+
         line.setAttribute(
             "x1",
             pointX
@@ -1098,15 +1014,13 @@ function setupChartTouchEvents(
 
         line.setAttribute(
             "y1",
-            paddingTop *
-                (height / baseHeight)
+            paddingTop
         );
 
         line.setAttribute(
             "y2",
             height -
-                paddingBottom *
-                (height / baseHeight)
+            paddingBottom
         );
 
         line.setAttribute(
@@ -1115,9 +1029,8 @@ function setupChartTouchEvents(
         );
 
 
-        /*
-           터치한 데이터 위치에 점 표시
-        */
+        /* 터치된 포인트 */
+
         point.setAttribute(
             "cx",
             pointX
@@ -1135,25 +1048,10 @@ function setupChartTouchEvents(
 
 
         /*
-           문자 길이에 맞춰
-           정보창 폭을 자동 조절
+           정보창은 항상 동일한 크기
         */
-        const labelWidth =
-            Math.max(
-                145,
-                Math.min(
-                    200,
-                    Math.max(
-                        dateString.length * 9,
-                        valueString.length * 10
-                    ) + 26
-                )
-            );
-
-        /*
-           기존 52px → 42px
-        */
-        const labelHeight = 42;
+        const labelWidth = 190;
+        const labelHeight = 40;
 
         labelBg.setAttribute(
             "width",
@@ -1165,25 +1063,14 @@ function setupChartTouchEvents(
             labelHeight
         );
 
-
         dateText.setAttribute(
             "x",
             labelWidth / 2
         );
 
-        dateText.setAttribute(
-            "y",
-            16
-        );
-
         valueText.setAttribute(
             "x",
             labelWidth / 2
-        );
-
-        valueText.setAttribute(
-            "y",
-            35
         );
 
 
@@ -1207,19 +1094,21 @@ function setupChartTouchEvents(
         }
 
 
-        let labelY = 4;
+        /*
+           점이 위쪽이면 정보창을 아래쪽,
+           점이 아래쪽이면 정보창을 위쪽에 표시
+        */
+        let labelY = 5;
 
-        const topThreshold =
-            70 *
-            (height / baseHeight);
-
-        if (pointY < topThreshold) {
+        if (
+            pointY <
+            height * 0.30
+        ) {
 
             labelY =
                 height -
-                labelHeight *
-                    (height / baseHeight) -
-                4;
+                labelHeight -
+                5;
         }
 
 
@@ -1235,9 +1124,29 @@ function setupChartTouchEvents(
     }
 
 
-    /*
-       일반 마우스 / 펜 / 최신 터치
-    */
+    /* =========================
+       Pointer 이벤트
+    ========================= */
+
+    svg.addEventListener(
+        "pointerdown",
+        event => {
+
+            event.preventDefault();
+
+            try {
+                svg.setPointerCapture(
+                    event.pointerId
+                );
+            } catch (error) {}
+
+            showTouch(
+                event.clientX
+            );
+        }
+    );
+
+
     svg.addEventListener(
         "pointermove",
         event => {
@@ -1250,35 +1159,38 @@ function setupChartTouchEvents(
 
 
     svg.addEventListener(
-        "pointerdown",
+        "pointerup",
         event => {
 
-            event.preventDefault();
+            try {
 
-            showTouch(
-                event.clientX
-            );
+                if (
+                    svg.hasPointerCapture(
+                        event.pointerId
+                    )
+                ) {
+                    svg.releasePointerCapture(
+                        event.pointerId
+                    );
+                }
+
+            } catch (error) {}
         }
     );
 
 
-    /*
-       안드로이드 일부 환경에서
-       pointer 이벤트가 제대로 전달되지 않을 경우 대비
-    */
+    /* =========================
+       Android Touch 이벤트
+    ========================= */
+
     svg.addEventListener(
         "touchstart",
         event => {
 
             event.preventDefault();
 
-            const clientX =
-                getClientXFromTouch(
-                    event
-                );
-
             showTouch(
-                clientX
+                getClientX(event)
             );
         },
         {
@@ -1293,17 +1205,27 @@ function setupChartTouchEvents(
 
             event.preventDefault();
 
-            const clientX =
-                getClientXFromTouch(
-                    event
-                );
-
             showTouch(
-                clientX
+                getClientX(event)
             );
         },
         {
             passive: false
+        }
+    );
+
+
+    /*
+       일부 모바일 브라우저에서
+       click으로만 전달되는 경우 대비
+    */
+    svg.addEventListener(
+        "click",
+        event => {
+
+            showTouch(
+                event.clientX
+            );
         }
     );
 }
@@ -2153,8 +2075,6 @@ function render() {
     app.innerHTML =
         createOverallHTML() +
         content;
-
-    fitChartsToCards();
 
     setupTopMenu();
     setupPeriodButtons();
