@@ -17,7 +17,7 @@ body {
 
 h1 {
     margin: 0;
-    font-size: 21px;
+    font-size: 22px;
     line-height: 1.15;
     letter-spacing: -0.6px;
 }
@@ -40,7 +40,7 @@ p {
 
 .overall {
     margin-bottom: 8px;
-    padding: 10px 12px;
+    padding: 12px 13px;
 
     border-radius: 12px;
     border: 1px solid transparent;
@@ -59,13 +59,13 @@ p {
 
 .overall-label {
     color: #d4deed;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
 }
 
 .overall-value {
     margin-top: 2px;
-    font-size: 26px;
+    font-size: 29px;
     font-weight: 800;
     letter-spacing: -0.5px;
 }
@@ -97,28 +97,28 @@ p {
 .top-menu-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
 
-    margin-top: 7px;
+    margin-top: 8px;
 
     min-width: 0;
 }
 
 .top-menu {
     display: flex;
-    gap: 3px;
+    gap: 4px;
 
     min-width: 0;
 }
 
 .top-menu-button {
-    padding: 5px 9px;
+    padding: 6px 10px;
 
-    background: rgba(7, 16, 31, 0.55);
+    background: rgba(7, 16, 31, 0.58);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 7px;
 
-    color: #9eb0c9;
+    color: #a9bad3;
 
     font-size: 9px;
     font-weight: bold;
@@ -133,7 +133,7 @@ p {
 }
 
 .top-menu-button.active {
-    background: rgba(7, 16, 31, 0.9);
+    background: rgba(7, 16, 31, 0.92);
     border-color: #6487b3;
     color: #ffffff;
 }
@@ -153,9 +153,9 @@ p {
 ========================= */
 
 .risk-score-box {
-    min-width: 82px;
+    min-width: 94px;
 
-    padding: 6px 10px;
+    padding: 7px 10px;
 
     background: rgba(5, 12, 24, 0.55);
 
@@ -178,7 +178,7 @@ p {
 
     color: #ffffff;
 
-    font-size: 24px;
+    font-size: 26px;
     line-height: 1.05;
 
     font-weight: 900;
@@ -189,7 +189,7 @@ p {
 .risk-score-number span {
     color: #aabbd0;
 
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .risk-score-bar {
@@ -218,7 +218,7 @@ p {
 
     color: #8fa3c0;
 
-    font-size: 7px;
+    font-size: 8px;
 }
 
 .risk-score-change strong {
@@ -234,13 +234,13 @@ p {
 
     grid-template-columns: 1fr;
 
-    gap: 7px;
+    gap: 8px;
 }
 
 .card {
     min-width: 0;
 
-    padding: 8px;
+    padding: 9px;
 
     background: #111b2e;
 
@@ -252,9 +252,9 @@ p {
 .card-main {
     display: grid;
 
-    grid-template-columns: 30% 70%;
+    grid-template-columns: 28% 72%;
 
-    gap: 8px;
+    gap: 9px;
 
     align-items: stretch;
 }
@@ -278,11 +278,11 @@ p {
 
     justify-content: space-between;
 
-    gap: 5px;
+    gap: 6px;
 }
 
 .card-title {
-    font-size: 15px;
+    font-size: 16px;
 
     font-weight: bold;
 
@@ -290,29 +290,29 @@ p {
 }
 
 .ticker {
-    margin-top: 1px;
+    margin-top: 2px;
 
     color: #8298b8;
 
-    font-size: 8px;
+    font-size: 9px;
 }
 
 .description {
-    margin-top: 4px;
+    margin-top: 5px;
 
     color: #a6b7cf;
 
-    font-size: 9px;
+    font-size: 10px;
 
-    line-height: 1.35;
+    line-height: 1.4;
 }
 
 .value {
-    margin-top: 8px;
+    margin-top: 9px;
 
     color: #ffffff;
 
-    font-size: 24px;
+    font-size: 27px;
 
     font-weight: 800;
 
@@ -322,11 +322,11 @@ p {
 .status {
     flex-shrink: 0;
 
-    padding: 3px 7px;
+    padding: 4px 8px;
 
     border-radius: 12px;
 
-    font-size: 8px;
+    font-size: 9px;
 
     font-weight: bold;
 
@@ -367,13 +367,13 @@ p {
 
     grid-template-columns: 1fr 1fr;
 
-    gap: 4px;
+    gap: 5px;
 
-    margin-top: 7px;
+    margin-top: 8px;
 }
 
 .change-box {
-    padding: 5px 6px;
+    padding: 6px 7px;
 
     background: #0a1424;
 
@@ -383,17 +383,17 @@ p {
 }
 
 .change-label {
-    margin-bottom: 1px;
+    margin-bottom: 2px;
 
     color: #8fa3c0;
 
-    font-size: 7px;
+    font-size: 8px;
 }
 
 .change-up,
 .change-down,
 .change-neutral {
-    font-size: 10px;
+    font-size: 11px;
 
     font-weight: bold;
 }
@@ -418,7 +418,7 @@ p {
     position: relative;
 
     width: 100%;
-    height: 165px;
+    height: 180px;
 
     margin-top: 0;
 
@@ -444,7 +444,7 @@ p {
 
 .chart-empty {
     width: 100%;
-    height: 165px;
+    height: 180px;
 
     display: flex;
 
@@ -485,7 +485,7 @@ p {
 }
 
 .chart-touch-date {
-    font-size: 15px;
+    font-size: 16px;
 
     font-weight: bold;
 
@@ -493,7 +493,7 @@ p {
 }
 
 .chart-touch-value {
-    font-size: 18px;
+    font-size: 19px;
 
     font-weight: bold;
 
@@ -505,13 +505,13 @@ p {
 ========================= */
 
 .card-bottom {
-    margin-top: 6px;
+    margin-top: 7px;
 }
 
 .period-buttons {
     display: flex;
 
-    gap: 3px;
+    gap: 4px;
 
     margin-top: 0;
 
@@ -527,9 +527,9 @@ p {
 .period-button {
     flex: 1;
 
-    min-width: 42px;
+    min-width: 44px;
 
-    padding: 5px 3px;
+    padding: 6px 3px;
 
     border: 1px solid #304665;
 
@@ -539,7 +539,7 @@ p {
 
     color: #9aacca;
 
-    font-size: 8px;
+    font-size: 9px;
 
     cursor: pointer;
 
@@ -565,15 +565,15 @@ p {
 ========================= */
 
 .date {
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: #8298b6;
 
-    font-size: 7px;
+    font-size: 8px;
 }
 
 .source {
-    margin-top: 7px;
+    margin-top: 8px;
 
     text-align: center;
 
@@ -603,33 +603,33 @@ p {
 .risk-panel {
     display: grid;
 
-    gap: 7px;
+    gap: 8px;
 }
 
 .risk-row {
-    padding: 10px;
+    padding: 13px;
 
     background: #111b2e;
 
     border: 1px solid #2a3d5b;
 
-    border-radius: 10px;
+    border-radius: 11px;
 }
 
 .panel-title {
     color: #ffffff;
 
-    font-size: 14px;
+    font-size: 16px;
 
     font-weight: bold;
 }
 
 .panel-subtitle {
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: #9eb1ca;
 
-    font-size: 9px;
+    font-size: 10px;
 }
 
 .risk-row-top {
@@ -639,23 +639,25 @@ p {
 
     justify-content: space-between;
 
-    gap: 8px;
+    gap: 9px;
 }
 
 .risk-name {
     color: #ffffff;
 
-    font-size: 13px;
+    font-size: 15px;
 
     font-weight: bold;
 }
 
 .risk-description {
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: #9eb1ca;
 
-    font-size: 8px;
+    font-size: 10px;
+
+    line-height: 1.35;
 }
 
 .risk-row-bottom {
@@ -665,11 +667,11 @@ p {
 
     gap: 8px;
 
-    margin-top: 9px;
+    margin-top: 10px;
 
     color: #8fa3c0;
 
-    font-size: 8px;
+    font-size: 9px;
 }
 
 .risk-row-bottom strong {
@@ -685,17 +687,17 @@ p {
 .trend-panel {
     display: grid;
 
-    gap: 7px;
+    gap: 8px;
 }
 
 .trend-card {
-    padding: 10px;
+    padding: 12px;
 
     background: #111b2e;
 
     border: 1px solid #2a3d5b;
 
-    border-radius: 10px;
+    border-radius: 11px;
 }
 
 .trend-header {
@@ -711,7 +713,7 @@ p {
 .trend-name {
     color: #ffffff;
 
-    font-size: 14px;
+    font-size: 15px;
 
     font-weight: bold;
 }
@@ -721,15 +723,15 @@ p {
 
     color: #8298b8;
 
-    font-size: 8px;
+    font-size: 9px;
 }
 
 .trend-value {
-    margin: 6px 0;
+    margin: 7px 0;
 
     color: #ffffff;
 
-    font-size: 20px;
+    font-size: 22px;
 
     font-weight: 800;
 }
@@ -757,7 +759,7 @@ p {
     }
 
     .overall {
-        padding: 9px 10px;
+        padding: 10px 11px;
 
         margin-bottom: 6px;
 
@@ -769,25 +771,25 @@ p {
     }
 
     .overall-label {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .overall-value {
-        font-size: 24px;
+        font-size: 26px;
     }
 
     .top-menu-row {
         gap: 4px;
 
-        margin-top: 6px;
+        margin-top: 7px;
     }
 
     .top-menu {
-        gap: 2px;
+        gap: 3px;
     }
 
     .top-menu-button {
-        padding: 5px 7px;
+        padding: 6px 8px;
 
         font-size: 8px;
     }
@@ -797,9 +799,9 @@ p {
     }
 
     .risk-score-box {
-        min-width: 76px;
+        min-width: 82px;
 
-        padding: 5px 8px;
+        padding: 6px 8px;
     }
 
     .risk-score-label {
@@ -807,7 +809,7 @@ p {
     }
 
     .risk-score-number {
-        font-size: 22px;
+        font-size: 23px;
     }
 
     .risk-score-number span {
@@ -815,11 +817,11 @@ p {
     }
 
     .dashboard {
-        gap: 6px;
+        gap: 7px;
     }
 
     .card {
-        padding: 7px;
+        padding: 8px;
 
         border-radius: 11px;
     }
@@ -827,41 +829,43 @@ p {
     .card-main {
         grid-template-columns: 29% 71%;
 
-        gap: 6px;
+        gap: 7px;
     }
 
     .card-title {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .ticker {
-        font-size: 7px;
-    }
-
-    .description {
         font-size: 8px;
     }
 
-    .value {
-        margin-top: 7px;
+    .description {
+        font-size: 9px;
 
-        font-size: 22px;
+        line-height: 1.4;
+    }
+
+    .value {
+        margin-top: 8px;
+
+        font-size: 24px;
     }
 
     .status {
-        padding: 3px 6px;
+        padding: 4px 7px;
 
         font-size: 8px;
     }
 
     .changes {
-        margin-top: 6px;
+        margin-top: 7px;
 
-        gap: 3px;
+        gap: 4px;
     }
 
     .change-box {
-        padding: 4px 5px;
+        padding: 5px 6px;
     }
 
     .change-label {
@@ -871,19 +875,19 @@ p {
     .change-up,
     .change-down,
     .change-neutral {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .chart-wrapper {
-        height: 155px;
+        height: 175px;
     }
 
     .chart-empty {
-        height: 155px;
+        height: 175px;
     }
 
     .chart-touch-date {
-        font-size: 15px;
+        font-size: 16px;
     }
 
     .chart-touch-value {
@@ -895,18 +899,50 @@ p {
     }
 
     .period-button {
-        min-width: 42px;
+        min-width: 43px;
 
-        padding: 4px 2px;
+        padding: 5px 2px;
 
         font-size: 8px;
     }
 
     .date {
-        font-size: 7px;
+        font-size: 8px;
+    }
+
+    .risk-row {
+        padding: 12px;
+    }
+
+    .panel-title {
+        font-size: 15px;
+    }
+
+    .panel-subtitle {
+        font-size: 9px;
+    }
+
+    .risk-name {
+        font-size: 14px;
+    }
+
+    .risk-description {
+        font-size: 9px;
     }
 
     .risk-row-bottom {
-        font-size: 7px;
+        font-size: 8px;
+    }
+
+    .trend-card {
+        padding: 11px;
+    }
+
+    .trend-name {
+        font-size: 14px;
+    }
+
+    .trend-value {
+        font-size: 21px;
     }
 }
