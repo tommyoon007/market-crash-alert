@@ -451,15 +451,15 @@ function createChart(
 
     const width = 700;
 
-    /* 그래프 창 높이 축소 */
-    const height = 145;
+    /* 그래프 창 자체를 짧게 */
+    const height = 130;
 
     const paddingLeft = 8;
     const paddingRight = 8;
 
-    /* 그래프 위아래 여백 최소 */
-    const paddingTop = 2;
-    const paddingBottom = 5;
+    /* 선이 위아래에 최대한 붙도록 */
+    const paddingTop = 3;
+    const paddingBottom = 3;
 
     const chartWidth =
         width -
@@ -488,13 +488,10 @@ function createChart(
         max += 1;
     }
 
+    /* 데이터 범위를 거의 그대로 사용 */
     const range =
         max - min;
 
-    /*
-       실제 데이터가 그래프 창을
-       최대한 꽉 채우도록 여백 최소화
-    */
     min -= range * 0.005;
     max += range * 0.005;
 
@@ -539,7 +536,9 @@ function createChart(
         x(data.length - 1);
 
     const lastY =
-        y(Number(last.value));
+        y(
+            Number(last.value)
+        );
 
     return `
         <div
@@ -592,7 +591,7 @@ function createChart(
 
                 <text
                     x="${paddingLeft}"
-                    y="${height - 3}"
+                    y="${height - 4}"
                     fill="#7187a5"
                     font-size="8"
                     font-family="Arial, sans-serif"
@@ -604,18 +603,20 @@ function createChart(
 
                 <text
                     x="${width - paddingRight}"
-                    y="${height - 3}"
+                    y="${height - 4}"
                     text-anchor="end"
                     fill="#7187a5"
                     font-size="8"
                     font-family="Arial, sans-serif"
                 >
                     ${formatDate(
-                        data[data.length - 1].date
+                        data[
+                            data.length - 1
+                        ].date
                     )}
                 </text>
 
-                <!-- 터치 정보 -->
+                <!-- 터치 정보창 -->
 
                 <g
                     class="chart-touch-label-bg"
@@ -624,14 +625,13 @@ function createChart(
                 >
 
                     <rect
-                        id="${chartId}-rect"
                         x="0"
                         y="0"
-                        width="150"
-                        height="58"
-                        rx="9"
+                        width="180"
+                        height="52"
+                        rx="8"
                         fill="#07101f"
-                        fill-opacity="0.96"
+                        fill-opacity="0.97"
                         stroke="#3a9aff"
                         stroke-width="1"
                     />
@@ -639,17 +639,13 @@ function createChart(
                     <text
                         class="chart-touch-date"
                         id="${chartId}-date"
-                        x="75"
-                        y="22"
+                        x="90"
+                        y="20"
                         text-anchor="middle"
                         fill="#dcecff"
                         font-family="Arial, sans-serif"
-                        font-size="18"
+                        font-size="16"
                         font-weight="700"
-                        style="
-                            font-size:18px;
-                            letter-spacing:0.8px;
-                        "
                     >
                         ${formatDate(
                             last.date
@@ -659,17 +655,13 @@ function createChart(
                     <text
                         class="chart-touch-value"
                         id="${chartId}-value"
-                        x="75"
-                        y="47"
+                        x="90"
+                        y="43"
                         text-anchor="middle"
                         fill="#ffffff"
                         font-family="Arial, sans-serif"
-                        font-size="21"
+                        font-size="19"
                         font-weight="800"
-                        style="
-                            font-size:21px;
-                            letter-spacing:0.8px;
-                        "
                     >
                         ${formatValue(
                             last.value,
@@ -737,11 +729,6 @@ function setupChartTouchEvents(
             `${chartId}-label`
         );
 
-    const labelRect =
-        document.getElementById(
-            `${chartId}-rect`
-        );
-
     const line =
         document.getElementById(
             `${chartId}-line`
@@ -764,13 +751,13 @@ function setupChartTouchEvents(
 
     const width = 700;
 
-    const height = 145;
+    const height = 130;
 
     const paddingLeft = 8;
     const paddingRight = 8;
 
-    const paddingTop = 2;
-    const paddingBottom = 5;
+    const paddingTop = 3;
+    const paddingBottom = 3;
 
     const chartWidth =
         width -
@@ -893,79 +880,6 @@ function setupChartTouchEvents(
                 indicator
             );
 
-        /*
-           글자 실제 길이에 맞춰
-           터치 정보창 크기 자동 계산
-        */
-        const dateWidth =
-            dateText.getComputedTextLength();
-
-        const valueWidth =
-            valueText.getComputedTextLength();
-
-        const labelWidth =
-            Math.max(
-                120,
-                Math.ceil(
-                    Math.max(
-                        dateWidth,
-                        valueWidth
-                    ) + 28
-                )
-            );
-
-        labelRect.setAttribute(
-            "width",
-            labelWidth
-        );
-
-        dateText.setAttribute(
-            "x",
-            labelWidth / 2
-        );
-
-        valueText.setAttribute(
-            "x",
-            labelWidth / 2
-        );
-
-        let labelX =
-            pointX -
-            labelWidth / 2;
-
-        if (labelX < 4) {
-            labelX = 4;
-        }
-
-        if (
-            labelX +
-                labelWidth >
-            width - 4
-        ) {
-            labelX =
-                width -
-                labelWidth -
-                4;
-        }
-
-        let labelY = 4;
-
-        if (pointY < 65) {
-            labelY =
-                height -
-                62;
-        }
-
-        label.setAttribute(
-            "transform",
-            `translate(${labelX},${labelY})`
-        );
-
-        label.setAttribute(
-            "visibility",
-            "visible"
-        );
-
         line.setAttribute(
             "x1",
             pointX
@@ -992,6 +906,48 @@ function setupChartTouchEvents(
         );
 
         point.setAttribute(
+            "visibility",
+            "visible"
+        );
+
+        /* 터치 정보창 크기 */
+        const labelWidth = 180;
+        const labelHeight = 52;
+
+        let labelX =
+            pointX -
+            labelWidth / 2;
+
+        if (labelX < 4) {
+            labelX = 4;
+        }
+
+        if (
+            labelX +
+                labelWidth >
+            width - 4
+        ) {
+            labelX =
+                width -
+                labelWidth -
+                4;
+        }
+
+        let labelY = 4;
+
+        if (pointY < 55) {
+            labelY =
+                height -
+                labelHeight -
+                4;
+        }
+
+        label.setAttribute(
+            "transform",
+            `translate(${labelX},${labelY})`
+        );
+
+        label.setAttribute(
             "visibility",
             "visible"
         );
@@ -1027,40 +983,44 @@ function setupChartTouchEvents(
 function createTopMenu() {
 
     return `
-        <div class="top-menu">
+        <div class="top-menu-row">
 
-            <button
-                class="top-menu-button ${
-                    currentPage === "dashboard"
-                        ? "active"
-                        : ""
-                }"
-                data-page="dashboard"
-            >
-                대시보드
-            </button>
+            <div class="top-menu">
 
-            <button
-                class="top-menu-button ${
-                    currentPage === "risk"
-                        ? "active"
-                        : ""
-                }"
-                data-page="risk"
-            >
-                위험도
-            </button>
+                <button
+                    class="top-menu-button ${
+                        currentPage === "dashboard"
+                            ? "active"
+                            : ""
+                    }"
+                    data-page="dashboard"
+                >
+                    대시보드
+                </button>
 
-            <button
-                class="top-menu-button ${
-                    currentPage === "trend"
-                        ? "active"
-                        : ""
-                }"
-                data-page="trend"
-            >
-                추세
-            </button>
+                <button
+                    class="top-menu-button ${
+                        currentPage === "risk"
+                            ? "active"
+                            : ""
+                    }"
+                    data-page="risk"
+                >
+                    위험도
+                </button>
+
+                <button
+                    class="top-menu-button ${
+                        currentPage === "trend"
+                            ? "active"
+                            : ""
+                    }"
+                    data-page="trend"
+                >
+                    추세
+                </button>
+
+            </div>
 
         </div>
     `;
@@ -1148,24 +1108,32 @@ function createRiskScoreHTML() {
         );
 
     return `
-        <div class="risk-score-box">
+        <div class="overall-right">
 
-            <div class="risk-score-label">
-                위험지수
+            <div class="risk-score-box">
+
+                <div class="risk-score-label">
+                    위험지수
+                </div>
+
+                <div class="risk-score-number">
+                    ${score}
+                    <span>/ ${maxScore}</span>
+                </div>
+
+                <div class="risk-score-bar">
+
+                    <div
+                        class="risk-score-fill"
+                        style="width:${percentage}%"
+                    ></div>
+
+                </div>
+
             </div>
 
-            <div class="risk-score-number">
-                ${score}
-                <span>/ ${maxScore}</span>
-            </div>
-
-            <div class="risk-score-bar">
-
-                <div
-                    class="risk-score-fill"
-                    style="width:${percentage}%"
-                ></div>
-
+            <div class="top-update">
+                업데이트 ${formatUpdateTime()}
             </div>
 
         </div>
@@ -1208,15 +1176,7 @@ function createOverallHTML() {
 
                 </div>
 
-                <div class="score-column">
-
-                    ${createRiskScoreHTML()}
-
-                    <div class="top-update">
-                        업데이트 ${formatUpdateTime()}
-                    </div>
-
-                </div>
+                ${createRiskScoreHTML()}
 
             </div>
 
