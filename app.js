@@ -451,13 +451,14 @@ function createChart(
 
     const width = 700;
 
-    /* 그래프 창 자체를 짧게 */
-    const height = 130;
+    /*
+       실제 창 높이는 렌더링 후
+       왼쪽 정보 영역 높이에 맞춘다.
+    */
+    const baseHeight = 180;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-
-    /* 선이 위아래에 최대한 붙도록 */
     const paddingTop = 3;
     const paddingBottom = 3;
 
@@ -467,7 +468,7 @@ function createChart(
         paddingRight;
 
     const chartHeight =
-        height -
+        baseHeight -
         paddingTop -
         paddingBottom;
 
@@ -488,12 +489,16 @@ function createChart(
         max += 1;
     }
 
-    /* 데이터 범위를 거의 그대로 사용 */
+    /*
+       실제 데이터 범위를 거의 그대로 사용.
+       그래프가 위아래를 최대한 꽉 채운다.
+    */
     const range =
         max - min;
 
     min -= range * 0.005;
     max += range * 0.005;
+
 
     function x(index) {
 
@@ -509,6 +514,7 @@ function createChart(
         );
     }
 
+
     function y(value) {
 
         return (
@@ -519,6 +525,7 @@ function createChart(
         );
     }
 
+
     const points =
         data
             .map(
@@ -528,6 +535,7 @@ function createChart(
                     )}`
             )
             .join(" ");
+
 
     const last =
         data[data.length - 1];
@@ -540,6 +548,7 @@ function createChart(
             Number(last.value)
         );
 
+
     return `
         <div
             class="chart-wrapper"
@@ -549,156 +558,266 @@ function createChart(
             <svg
                 class="chart chart-touch-area"
                 id="${chartId}"
-                viewBox="0 0 ${width} ${height}"
+                viewBox="0 0 ${width} ${baseHeight}"
+                preserveAspectRatio="xMidYMid meet"
+                data-base-height="${baseHeight}"
+                data-chart-height="${baseHeight}"
             >
 
-                <line
-                    x1="${paddingLeft}"
-                    y1="${paddingTop}"
-                    x2="${width - paddingRight}"
-                    y2="${paddingTop}"
-                    stroke="#263b59"
-                    stroke-width="1"
-                />
-
-                <line
-                    x1="${paddingLeft}"
-                    y1="${height - paddingBottom}"
-                    x2="${width - paddingRight}"
-                    y2="${height - paddingBottom}"
-                    stroke="#263b59"
-                    stroke-width="1"
-                />
-
-                <polyline
-                    points="${points}"
-                    fill="none"
-                    stroke="#45a9ff"
-                    stroke-width="2.5"
-                    vector-effect="non-scaling-stroke"
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                />
-
-                <circle
-                    cx="${lastX}"
-                    cy="${lastY}"
-                    r="3.5"
-                    fill="#ffffff"
-                    stroke="#45a9ff"
-                    stroke-width="2"
-                />
-
-                <text
-                    x="${paddingLeft}"
-                    y="${height - 4}"
-                    fill="#7187a5"
-                    font-size="8"
-                    font-family="Arial, sans-serif"
-                >
-                    ${formatDate(
-                        data[0].date
-                    )}
-                </text>
-
-                <text
-                    x="${width - paddingRight}"
-                    y="${height - 4}"
-                    text-anchor="end"
-                    fill="#7187a5"
-                    font-size="8"
-                    font-family="Arial, sans-serif"
-                >
-                    ${formatDate(
-                        data[
-                            data.length - 1
-                        ].date
-                    )}
-                </text>
-
-                <!-- 터치 정보창 -->
-
                 <g
-                    class="chart-touch-label-bg"
-                    id="${chartId}-label"
-                    visibility="hidden"
+                    class="chart-content"
+                    id="${chartId}-content"
                 >
 
-                    <rect
-                        x="0"
-                        y="0"
-                        width="180"
-                        height="52"
-                        rx="8"
-                        fill="#07101f"
-                        fill-opacity="0.97"
-                        stroke="#3a9aff"
+                    <line
+                        x1="${paddingLeft}"
+                        y1="${paddingTop}"
+                        x2="${width - paddingRight}"
+                        y2="${paddingTop}"
+                        stroke="#263b59"
                         stroke-width="1"
                     />
 
+                    <line
+                        x1="${paddingLeft}"
+                        y1="${baseHeight - paddingBottom}"
+                        x2="${width - paddingRight}"
+                        y2="${baseHeight - paddingBottom}"
+                        stroke="#263b59"
+                        stroke-width="1"
+                    />
+
+                    <polyline
+                        points="${points}"
+                        fill="none"
+                        stroke="#45a9ff"
+                        stroke-width="2.5"
+                        vector-effect="non-scaling-stroke"
+                        stroke-linejoin="round"
+                        stroke-linecap="round"
+                    />
+
+                    <circle
+                        cx="${lastX}"
+                        cy="${lastY}"
+                        r="3.5"
+                        fill="#ffffff"
+                        stroke="#45a9ff"
+                        stroke-width="2"
+                    />
+
                     <text
-                        class="chart-touch-date"
-                        id="${chartId}-date"
-                        x="90"
-                        y="20"
-                        text-anchor="middle"
-                        fill="#dcecff"
+                        x="${paddingLeft}"
+                        y="${baseHeight - 4}"
+                        fill="#7187a5"
+                        font-size="8"
                         font-family="Arial, sans-serif"
-                        font-size="16"
-                        font-weight="700"
                     >
                         ${formatDate(
-                            last.date
+                            data[0].date
                         )}
                     </text>
 
                     <text
-                        class="chart-touch-value"
-                        id="${chartId}-value"
-                        x="90"
-                        y="43"
-                        text-anchor="middle"
-                        fill="#ffffff"
+                        x="${width - paddingRight}"
+                        y="${baseHeight - 4}"
+                        text-anchor="end"
+                        fill="#7187a5"
+                        font-size="8"
                         font-family="Arial, sans-serif"
-                        font-size="19"
-                        font-weight="800"
                     >
-                        ${formatValue(
-                            last.value,
-                            indicator
+                        ${formatDate(
+                            data[
+                                data.length - 1
+                            ].date
                         )}
                     </text>
+
+                    <!-- 터치 정보창 -->
+
+                    <g
+                        class="chart-touch-label-bg"
+                        id="${chartId}-label"
+                        visibility="hidden"
+                    >
+
+                        <rect
+                            id="${chartId}-label-bg"
+                            x="0"
+                            y="0"
+                            width="180"
+                            height="52"
+                            rx="8"
+                            fill="#07101f"
+                            fill-opacity="0.97"
+                            stroke="#3a9aff"
+                            stroke-width="1"
+                        />
+
+                        <text
+                            class="chart-touch-date"
+                            id="${chartId}-date"
+                            x="90"
+                            y="20"
+                            text-anchor="middle"
+                            fill="#dcecff"
+                            font-family="Arial, sans-serif"
+                            font-size="16"
+                            font-weight="700"
+                        >
+                            ${formatDate(
+                                last.date
+                            )}
+                        </text>
+
+                        <text
+                            class="chart-touch-value"
+                            id="${chartId}-value"
+                            x="90"
+                            y="43"
+                            text-anchor="middle"
+                            fill="#ffffff"
+                            font-family="Arial, sans-serif"
+                            font-size="19"
+                            font-weight="800"
+                        >
+                            ${formatValue(
+                                last.value,
+                                indicator
+                            )}
+                        </text>
+
+                    </g>
+
+                    <line
+                        class="chart-touch-line"
+                        id="${chartId}-line"
+                        x1="${lastX}"
+                        y1="${paddingTop}"
+                        x2="${lastX}"
+                        y2="${baseHeight - paddingBottom}"
+                        stroke="#8ecbff"
+                        stroke-width="1"
+                        stroke-dasharray="4 4"
+                        visibility="hidden"
+                    />
+
+                    <circle
+                        class="chart-touch-point"
+                        id="${chartId}-point"
+                        cx="${lastX}"
+                        cy="${lastY}"
+                        r="5"
+                        fill="#ffffff"
+                        stroke="#45a9ff"
+                        stroke-width="2"
+                        visibility="hidden"
+                    />
 
                 </g>
 
-                <line
-                    class="chart-touch-line"
-                    id="${chartId}-line"
-                    x1="${lastX}"
-                    y1="${paddingTop}"
-                    x2="${lastX}"
-                    y2="${height - paddingBottom}"
-                    stroke="#8ecbff"
-                    stroke-width="1"
-                    stroke-dasharray="4 4"
-                    visibility="hidden"
-                />
-
-                <circle
-                    class="chart-touch-point"
-                    id="${chartId}-point"
-                    cx="${lastX}"
-                    cy="${lastY}"
-                    r="5"
-                    fill="#ffffff"
-                    stroke="#45a9ff"
-                    stroke-width="2"
-                    visibility="hidden"
-                />
-
             </svg>
+
         </div>
     `;
+}
+
+
+/* =========================
+   그래프 높이 맞추기
+========================= */
+
+function fitChartsToCards() {
+
+    document
+        .querySelectorAll(
+            ".chart-wrapper"
+        )
+        .forEach(
+            wrapper => {
+
+                const svg =
+                    wrapper.querySelector(
+                        "svg.chart"
+                    );
+
+                if (!svg) {
+                    return;
+                }
+
+                const card =
+                    wrapper.closest(
+                        ".card"
+                    );
+
+                if (!card) {
+                    return;
+                }
+
+                const info =
+                    card.querySelector(
+                        ".card-info"
+                    );
+
+                if (!info) {
+                    return;
+                }
+
+                const wrapperWidth =
+                    wrapper.getBoundingClientRect()
+                        .width;
+
+                const targetHeight =
+                    info.getBoundingClientRect()
+                        .height;
+
+                if (
+                    wrapperWidth <= 0 ||
+                    targetHeight <= 0
+                ) {
+                    return;
+                }
+
+                const width = 700;
+                const baseHeight = 180;
+
+                /*
+                   실제 창 비율과 SVG viewBox 비율을
+                   똑같이 만들어서 빈 공간이 생기지 않게 한다.
+                */
+                const svgHeight =
+                    Math.max(
+                        baseHeight,
+                        width *
+                        targetHeight /
+                        wrapperWidth
+                    );
+
+                svg.setAttribute(
+                    "viewBox",
+                    `0 0 ${width} ${svgHeight}`
+                );
+
+                svg.dataset.chartHeight =
+                    String(svgHeight);
+
+                const content =
+                    svg.querySelector(
+                        ".chart-content"
+                    );
+
+                if (content) {
+
+                    content.setAttribute(
+                        "transform",
+                        `scale(1, ${
+                            svgHeight /
+                            baseHeight
+                        })`
+                    );
+                }
+            }
+        );
 }
 
 
@@ -729,6 +848,11 @@ function setupChartTouchEvents(
             `${chartId}-label`
         );
 
+    const labelBg =
+        document.getElementById(
+            `${chartId}-label-bg`
+        );
+
     const line =
         document.getElementById(
             `${chartId}-line`
@@ -751,11 +875,15 @@ function setupChartTouchEvents(
 
     const width = 700;
 
-    const height = 130;
+    const height =
+        Number(
+            svg.dataset.chartHeight
+        ) || 180;
+
+    const baseHeight = 180;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-
     const paddingTop = 3;
     const paddingBottom = 3;
 
@@ -765,9 +893,13 @@ function setupChartTouchEvents(
         paddingRight;
 
     const chartHeight =
-        height -
-        paddingTop -
-        paddingBottom;
+        height *
+        (
+            (baseHeight -
+                paddingTop -
+                paddingBottom) /
+            baseHeight
+        );
 
     const values =
         data.map(
@@ -792,15 +924,19 @@ function setupChartTouchEvents(
     min -= range * 0.005;
     max += range * 0.005;
 
+
     function y(value) {
 
         return (
-            paddingTop +
+            paddingTop *
+                (height / baseHeight) +
+
             (max - value) *
             chartHeight /
             (max - min)
         );
     }
+
 
     function showTouch(clientX) {
 
@@ -869,16 +1005,25 @@ function setupChartTouchEvents(
                 )
             );
 
-        dateText.textContent =
+
+        const dateString =
             formatDate(
                 item.date
             );
 
-        valueText.textContent =
+        const valueString =
             formatValue(
                 item.value,
                 indicator
             );
+
+
+        dateText.textContent =
+            dateString;
+
+        valueText.textContent =
+            valueString;
+
 
         line.setAttribute(
             "x1",
@@ -891,9 +1036,23 @@ function setupChartTouchEvents(
         );
 
         line.setAttribute(
+            "y1",
+            paddingTop *
+                (height / baseHeight)
+        );
+
+        line.setAttribute(
+            "y2",
+            height -
+                paddingBottom *
+                (height / baseHeight)
+        );
+
+        line.setAttribute(
             "visibility",
             "visible"
         );
+
 
         point.setAttribute(
             "cx",
@@ -910,9 +1069,41 @@ function setupChartTouchEvents(
             "visible"
         );
 
-        /* 터치 정보창 크기 */
-        const labelWidth = 180;
+
+        /*
+           문자 길이에 맞춰
+           터치 정보창 폭을 자동 조절
+        */
+        const labelWidth =
+            Math.max(
+                145,
+                Math.min(
+                    200,
+                    Math.max(
+                        dateString.length * 10,
+                        valueString.length * 11
+                    ) + 28
+                )
+            );
+
         const labelHeight = 52;
+
+        labelBg.setAttribute(
+            "width",
+            labelWidth
+        );
+
+
+        dateText.setAttribute(
+            "x",
+            labelWidth / 2
+        );
+
+        valueText.setAttribute(
+            "x",
+            labelWidth / 2
+        );
+
 
         let labelX =
             pointX -
@@ -933,14 +1124,22 @@ function setupChartTouchEvents(
                 4;
         }
 
+
         let labelY = 4;
 
-        if (pointY < 55) {
+        const topThreshold =
+            70 *
+            (height / baseHeight);
+
+        if (pointY < topThreshold) {
+
             labelY =
                 height -
-                labelHeight -
+                labelHeight *
+                    (height / baseHeight) -
                 4;
         }
+
 
         label.setAttribute(
             "transform",
@@ -953,14 +1152,17 @@ function setupChartTouchEvents(
         );
     }
 
+
     svg.addEventListener(
         "pointermove",
         event => {
+
             showTouch(
                 event.clientX
             );
         }
     );
+
 
     svg.addEventListener(
         "pointerdown",
@@ -1820,6 +2022,12 @@ function render() {
     app.innerHTML =
         createOverallHTML() +
         content;
+
+    /*
+       먼저 왼쪽 정보창과 그래프창의
+       실제 높이를 맞춘다.
+    */
+    fitChartsToCards();
 
     setupTopMenu();
     setupPeriodButtons();
