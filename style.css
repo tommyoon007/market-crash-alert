@@ -48,8 +48,8 @@ p {
 
 .overall-top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
+    grid-template-columns: minmax(0, 1fr) 170px;
+    align-items: start;
     gap: 10px;
 }
 
@@ -111,12 +111,18 @@ p {
 
 .top-menu-button {
     padding: 6px 10px;
+
     background: rgba(7, 16, 31, 0.58);
+
     border: 1px solid rgba(255, 255, 255, 0.16);
+
     border-radius: 7px;
+
     color: #a9bad3;
+
     font-size: 9px;
     font-weight: bold;
+
     cursor: pointer;
     white-space: nowrap;
 }
@@ -134,44 +140,48 @@ p {
 
 
 /* =========================
-   오른쪽 위험지수 영역
+   위험지수
 ========================= */
 
 .overall-right {
-    width: 155px;
-    min-width: 155px;
+    width: 170px;
+    min-width: 170px;
+
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
 
 .risk-score-box {
-    width: 155px;
-    min-width: 155px;
-    padding: 8px 12px;
+    width: 170px;
+    min-width: 170px;
+
+    padding: 10px 12px;
 
     background: rgba(5, 12, 24, 0.55);
 
     border: 1px solid rgba(255, 255, 255, 0.18);
 
-    border-radius: 9px;
+    border-radius: 10px;
 
     text-align: center;
 }
 
 .risk-score-label {
     color: #d7e1ef;
-    font-size: 20px;
+
+    font-size: 22px;
     line-height: 1.1;
+
     font-weight: bold;
 }
 
 .risk-score-number {
-    margin-top: 2px;
+    margin-top: 3px;
 
     color: #ffffff;
 
-    font-size: 27px;
+    font-size: 30px;
     line-height: 1.05;
 
     font-weight: 900;
@@ -181,14 +191,14 @@ p {
 
 .risk-score-number span {
     color: #aabbd0;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .risk-score-bar {
     width: 100%;
-    height: 4px;
+    height: 5px;
 
-    margin-top: 6px;
+    margin-top: 7px;
 
     overflow: hidden;
 
@@ -208,11 +218,13 @@ p {
 .top-update {
     width: 100%;
 
-    margin-top: 5px;
+    margin-top: 6px;
 
-    color: #9eb0c9;
+    color: #aebed2;
 
-    font-size: 8px;
+    font-size: 10px;
+
+    line-height: 1.2;
 
     text-align: center;
 
@@ -232,6 +244,7 @@ p {
 
 .card {
     min-width: 0;
+
     padding: 9px;
 
     background: #111b2e;
@@ -244,7 +257,7 @@ p {
 .card-main {
     display: grid;
 
-    grid-template-columns: 28% 72%;
+    grid-template-columns: 29% 71%;
 
     gap: 9px;
 
@@ -257,8 +270,14 @@ p {
 
 .card-chart {
     min-width: 0;
+
     display: flex;
+
     align-items: stretch;
+
+    align-self: stretch;
+
+    min-height: 0;
 }
 
 .card-header {
@@ -273,13 +292,17 @@ p {
 
 .card-title {
     font-size: 16px;
+
     font-weight: bold;
+
     letter-spacing: -0.3px;
 }
 
 .ticker {
     margin-top: 2px;
+
     color: #8298b8;
+
     font-size: 9px;
 }
 
@@ -381,6 +404,7 @@ p {
 .change-down,
 .change-neutral {
     font-size: 11px;
+
     font-weight: bold;
 }
 
@@ -405,13 +429,11 @@ p {
     position: relative;
 
     width: 100%;
+    height: 100%;
 
-    /*
-      모바일 화면에서 기존 175px 때문에
-      위아래 빈 공간이 너무 커졌음.
-      실제 SVG 비율에 맞춰 130px로 축소.
-    */
-    height: 130px;
+    flex: 1 1 auto;
+
+    min-height: 0;
 
     margin-top: 0;
 
@@ -437,7 +459,9 @@ p {
 
 .chart-empty {
     width: 100%;
-    height: 130px;
+    height: 100%;
+
+    min-height: 100%;
 
     display: flex;
 
@@ -479,13 +503,17 @@ p {
 
 .chart-touch-date {
     font-size: 16px;
+
     font-weight: bold;
+
     letter-spacing: 0.2px;
 }
 
 .chart-touch-value {
     font-size: 19px;
+
     font-weight: bold;
+
     letter-spacing: 0.2px;
 }
 
@@ -678,6 +706,7 @@ p {
 
 .trend-panel {
     display: grid;
+
     gap: 8px;
 }
 
@@ -752,11 +781,17 @@ p {
 
     .overall {
         padding: 10px 11px;
+
         margin-bottom: 6px;
+
         border-radius: 11px;
     }
 
     .overall-top {
+        grid-template-columns:
+            minmax(0, 1fr)
+            170px;
+
         gap: 7px;
     }
 
@@ -768,8 +803,12 @@ p {
         font-size: 26px;
     }
 
+
+    /* 상단 메뉴 */
+
     .top-menu-row {
         gap: 4px;
+
         margin-top: 7px;
     }
 
@@ -779,40 +818,50 @@ p {
 
     .top-menu-button {
         padding: 6px 8px;
+
         font-size: 8px;
     }
 
 
-    /* 위험지수 박스 */
+    /* 위험지수 */
+
     .overall-right {
-        width: 145px;
-        min-width: 145px;
+        width: 170px;
+        min-width: 170px;
     }
 
     .risk-score-box {
-        width: 145px;
-        min-width: 145px;
+        width: 170px;
+        min-width: 170px;
 
-        padding: 7px 9px;
+        padding: 9px 10px;
     }
 
     .risk-score-label {
-        font-size: 20px;
+        font-size: 21px;
     }
 
     .risk-score-number {
-        font-size: 24px;
+        font-size: 29px;
     }
 
     .risk-score-number span {
-        font-size: 13px;
+        font-size: 15px;
+    }
+
+    .risk-score-bar {
+        height: 5px;
+        margin-top: 7px;
     }
 
     .top-update {
-        font-size: 7px;
-        margin-top: 5px;
+        font-size: 10px;
+
+        margin-top: 6px;
     }
 
+
+    /* 대시보드 */
 
     .dashboard {
         gap: 7px;
@@ -820,11 +869,15 @@ p {
 
     .card {
         padding: 8px;
+
         border-radius: 11px;
     }
 
     .card-main {
-        grid-template-columns: 29% 71%;
+        grid-template-columns:
+            29%
+            71%;
+
         gap: 7px;
     }
 
@@ -838,21 +891,28 @@ p {
 
     .description {
         font-size: 9px;
+
         line-height: 1.4;
     }
 
     .value {
         margin-top: 8px;
+
         font-size: 24px;
     }
 
     .status {
         padding: 4px 7px;
+
         font-size: 8px;
     }
 
+
+    /* 변화량 */
+
     .changes {
         margin-top: 7px;
+
         gap: 4px;
     }
 
@@ -872,18 +932,22 @@ p {
 
 
     /*
-       핵심:
-       기존 175px → 130px
-       viewBox 700×130과 거의 같은 비율이라
-       위아래 빈 공간이 크게 줄어듦.
+       그래프 높이는 고정하지 않는다.
+       왼쪽 정보 영역 높이에 맞춰
+       JavaScript가 자동으로 맞춘다.
     */
+
     .chart-wrapper {
-        height: 130px;
+        height: 100%;
     }
 
     .chart-empty {
-        height: 130px;
+        height: 100%;
+        min-height: 100%;
     }
+
+
+    /* 터치 표시 */
 
     .chart-touch-date {
         font-size: 16px;
@@ -894,19 +958,26 @@ p {
     }
 
 
+    /* 기간 */
+
     .period-buttons {
         gap: 3px;
     }
 
     .period-button {
         min-width: 43px;
+
         padding: 5px 2px;
+
         font-size: 8px;
     }
 
     .date {
         font-size: 8px;
     }
+
+
+    /* 위험도 */
 
     .risk-row {
         padding: 12px;
@@ -931,6 +1002,9 @@ p {
     .risk-row-bottom {
         font-size: 8px;
     }
+
+
+    /* 추세 */
 
     .trend-card {
         padding: 11px;
