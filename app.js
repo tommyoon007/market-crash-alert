@@ -96,7 +96,12 @@ function getIndicator(id) {
 
 
 function getObservations(id) {
-    if (!marketData || !marketData.data || !marketData.data[id]) {
+
+    if (
+        !marketData ||
+        !marketData.data ||
+        !marketData.data[id]
+    ) {
         return [];
     }
 
@@ -106,11 +111,17 @@ function getObservations(id) {
 
 function formatValue(value, indicator) {
 
-    if (value === null || value === undefined || Number.isNaN(value)) {
+    if (
+        value === null ||
+        value === undefined ||
+        Number.isNaN(value)
+    ) {
         return "—";
     }
 
-    return Number(value).toFixed(indicator.decimals) + indicator.unit;
+    return Number(value).toFixed(
+        indicator.decimals
+    ) + indicator.unit;
 }
 
 
@@ -126,7 +137,8 @@ function formatDate(dateString) {
 
 function getLatestObservation(id) {
 
-    const observations = getObservations(id);
+    const observations =
+        getObservations(id);
 
     if (!observations.length) {
         return null;
@@ -142,7 +154,11 @@ function getLatestObservation(id) {
 
 function getStatus(value, indicator) {
 
-    if (value === null || value === undefined || Number.isNaN(value)) {
+    if (
+        value === null ||
+        value === undefined ||
+        Number.isNaN(value)
+    ) {
         return "unknown";
     }
 
@@ -200,16 +216,20 @@ function calculateRisk() {
 
     for (const indicator of INDICATORS) {
 
-        const latest = getLatestObservation(indicator.id);
+        const latest =
+            getLatestObservation(
+                indicator.id
+            );
 
         if (!latest) {
             continue;
         }
 
-        const status = getStatus(
-            latest.value,
-            indicator
-        );
+        const status =
+            getStatus(
+                latest.value,
+                indicator
+            );
 
         score += statusScore(status);
     }
@@ -242,16 +262,23 @@ function overallStatus(score) {
 
 function getChange(id, observationCount) {
 
-    const observations = getObservations(id);
+    const observations =
+        getObservations(id);
 
-    if (observations.length <= observationCount) {
+    if (
+        observations.length <=
+        observationCount
+    ) {
         return null;
     }
 
-    const latest = Number(observations[0].value);
-    const previous = Number(
-        observations[observationCount].value
-    );
+    const latest =
+        Number(observations[0].value);
+
+    const previous =
+        Number(
+            observations[observationCount].value
+        );
 
     if (
         Number.isNaN(latest) ||
@@ -288,10 +315,13 @@ function formatChange(change, indicator) {
         return "—";
     }
 
-    const sign = change > 0 ? "+" : "";
+    const sign =
+        change > 0 ? "+" : "";
 
     return sign +
-        change.toFixed(indicator.decimals) +
+        change.toFixed(
+            indicator.decimals
+        ) +
         indicator.unit;
 }
 
@@ -300,40 +330,61 @@ function formatChange(change, indicator) {
    데이터 기간 필터
 ========================= */
 
-function filterByPeriod(observations, periodKey) {
+function filterByPeriod(
+    observations,
+    periodKey
+) {
 
     if (!observations.length) {
         return [];
     }
 
-    const period = PERIODS.find(
-        item => item.key === periodKey
-    );
-
-    if (!period || period.days === Infinity) {
-        return [...observations].reverse();
-    }
-
-    const latestDate = new Date(
-        observations[0].date + "T00:00:00"
-    );
-
-    const startDate = new Date(latestDate);
-
-    startDate.setDate(
-        startDate.getDate() - period.days
-    );
-
-    const filtered = observations.filter(item => {
-
-        const date = new Date(
-            item.date + "T00:00:00"
+    const period =
+        PERIODS.find(
+            item =>
+                item.key === periodKey
         );
 
-        return date >= startDate;
-    });
+    if (
+        !period ||
+        period.days === Infinity
+    ) {
+        return [
+            ...observations
+        ].reverse();
+    }
 
-    return [...filtered].reverse();
+    const latestDate =
+        new Date(
+            observations[0].date +
+            "T00:00:00"
+        );
+
+    const startDate =
+        new Date(latestDate);
+
+    startDate.setDate(
+        startDate.getDate() -
+        period.days
+    );
+
+    const filtered =
+        observations.filter(
+            item => {
+
+                const date =
+                    new Date(
+                        item.date +
+                        "T00:00:00"
+                    );
+
+                return date >= startDate;
+            }
+        );
+
+    return [
+        ...filtered
+    ].reverse();
 }
 
 
@@ -341,7 +392,10 @@ function filterByPeriod(observations, periodKey) {
    그래프 데이터 축소
 ========================= */
 
-function downsample(data, maxPoints = 180) {
+function downsample(
+    data,
+    maxPoints = 180
+) {
 
     if (data.length <= maxPoints) {
         return data;
@@ -353,11 +407,20 @@ function downsample(data, maxPoints = 180) {
         (data.length - 1) /
         (maxPoints - 1);
 
-    for (let i = 0; i < maxPoints; i++) {
+    for (
+        let i = 0;
+        i < maxPoints;
+        i++
+    ) {
 
-        const index = Math.round(i * step);
+        const index =
+            Math.round(
+                i * step
+            );
 
-        result.push(data[index]);
+        result.push(
+            data[index]
+        );
     }
 
     return result;
@@ -383,7 +446,8 @@ function createChart(
         `;
     }
 
-    const data = downsample(observations);
+    const data =
+        downsample(observations);
 
     const width = 700;
     const height = 165;
@@ -403,19 +467,25 @@ function createChart(
         paddingTop -
         paddingBottom;
 
-    let values = data.map(
-        item => Number(item.value)
-    );
+    let values =
+        data.map(
+            item =>
+                Number(item.value)
+        );
 
-    let min = Math.min(...values);
-    let max = Math.max(...values);
+    let min =
+        Math.min(...values);
+
+    let max =
+        Math.max(...values);
 
     if (min === max) {
         min -= 1;
         max += 1;
     }
 
-    const range = max - min;
+    const range =
+        max - min;
 
     min -= range * 0.08;
     max += range * 0.08;
@@ -444,17 +514,24 @@ function createChart(
         );
     }
 
-    const points = data
-        .map(
-            (item, index) =>
-                `${x(index)},${y(item.value)}`
-        )
-        .join(" ");
+    const points =
+        data
+            .map(
+                (item, index) =>
+                    `${x(index)},${y(
+                        item.value
+                    )}`
+            )
+            .join(" ");
 
-    const last = data[data.length - 1];
+    const last =
+        data[data.length - 1];
 
-    const lastX = x(data.length - 1);
-    const lastY = y(last.value);
+    const lastX =
+        x(data.length - 1);
+
+    const lastY =
+        y(last.value);
 
     return `
         <div
@@ -466,7 +543,6 @@ function createChart(
                 class="chart chart-touch-area"
                 id="${chartId}"
                 viewBox="0 0 ${width} ${height}"
-                preserveAspectRatio="none"
             >
 
                 <line
@@ -513,7 +589,9 @@ function createChart(
                     font-size="8"
                     font-family="Arial, sans-serif"
                 >
-                    ${formatDate(data[0].date)}
+                    ${formatDate(
+                        data[0].date
+                    )}
                 </text>
 
                 <text
@@ -525,10 +603,13 @@ function createChart(
                     font-family="Arial, sans-serif"
                 >
                     ${formatDate(
-                        data[data.length - 1].date
+                        data[
+                            data.length - 1
+                        ].date
                     )}
                 </text>
 
+                <!-- 터치 정보 -->
                 <g
                     class="chart-touch-label-bg"
                     id="${chartId}-label"
@@ -557,9 +638,10 @@ function createChart(
                         font-family="Arial, sans-serif"
                         font-size="17"
                         font-weight="700"
-                        lengthAdjust="spacing"
                     >
-                        ${formatDate(last.date)}
+                        ${formatDate(
+                            last.date
+                        )}
                     </text>
 
                     <text
@@ -572,7 +654,6 @@ function createChart(
                         font-family="Arial, sans-serif"
                         font-size="20"
                         font-weight="800"
-                        lengthAdjust="spacing"
                     >
                         ${formatValue(
                             last.value,
@@ -624,9 +705,14 @@ function setupChartTouchEvents(
 ) {
 
     const svg =
-        document.getElementById(chartId);
+        document.getElementById(
+            chartId
+        );
 
-    if (!svg || !data.length) {
+    if (
+        !svg ||
+        !data.length
+    ) {
         return;
     }
 
@@ -675,18 +761,23 @@ function setupChartTouchEvents(
 
     const values =
         data.map(
-            item => Number(item.value)
+            item =>
+                Number(item.value)
         );
 
-    let min = Math.min(...values);
-    let max = Math.max(...values);
+    let min =
+        Math.min(...values);
+
+    let max =
+        Math.max(...values);
 
     if (min === max) {
         min -= 1;
         max += 1;
     }
 
-    const range = max - min;
+    const range =
+        max - min;
 
     min -= range * 0.08;
     max += range * 0.08;
@@ -701,31 +792,14 @@ function setupChartTouchEvents(
         );
     }
 
-    function hideTouch() {
-
-        label.setAttribute(
-            "visibility",
-            "hidden"
-        );
-
-        line.setAttribute(
-            "visibility",
-            "hidden"
-        );
-
-        point.setAttribute(
-            "visibility",
-            "hidden"
-        );
-    }
-
     function showTouch(clientX) {
 
         const rect =
             svg.getBoundingClientRect();
 
         let relativeX =
-            clientX - rect.left;
+            clientX -
+            rect.left;
 
         relativeX =
             Math.max(
@@ -749,22 +823,26 @@ function setupChartTouchEvents(
 
         } else {
 
-            index = Math.round(
-                (svgX - paddingLeft) /
-                chartWidth *
-                (data.length - 1)
-            );
+            index =
+                Math.round(
+                    (svgX -
+                        paddingLeft) /
+                    chartWidth *
+                    (data.length - 1)
+                );
 
-            index = Math.max(
-                0,
-                Math.min(
-                    data.length - 1,
-                    index
-                )
-            );
+            index =
+                Math.max(
+                    0,
+                    Math.min(
+                        data.length - 1,
+                        index
+                    )
+                );
         }
 
-        const item = data[index];
+        const item =
+            data[index];
 
         const pointX =
             data.length === 1
@@ -775,10 +853,16 @@ function setupChartTouchEvents(
                   (data.length - 1);
 
         const pointY =
-            y(Number(item.value));
+            y(
+                Number(
+                    item.value
+                )
+            );
 
         dateText.textContent =
-            formatDate(item.date);
+            formatDate(
+                item.date
+            );
 
         valueText.textContent =
             formatValue(
@@ -816,22 +900,19 @@ function setupChartTouchEvents(
             "visible"
         );
 
-        /*
-         * 라벨은 그래프의 현재 위치를
-         * 가리지 않도록 좌우 자동 배치
-         */
-
         const labelWidth = 260;
 
         let labelX =
-            pointX - labelWidth / 2;
+            pointX -
+            labelWidth / 2;
 
         if (labelX < 4) {
             labelX = 4;
         }
 
         if (
-            labelX + labelWidth >
+            labelX +
+                labelWidth >
             width - 4
         ) {
             labelX =
@@ -842,13 +923,9 @@ function setupChartTouchEvents(
 
         let labelY = 5;
 
-        /*
-         * 그래프 위쪽 공간을 활용해
-         * 날짜와 값을 가로로 크게 표시
-         */
-
         if (pointY < 70) {
-            labelY = height - 68;
+            labelY =
+                height - 68;
         }
 
         label.setAttribute(
@@ -865,24 +942,31 @@ function setupChartTouchEvents(
     svg.addEventListener(
         "pointermove",
         event => {
-            showTouch(event.clientX);
+            showTouch(
+                event.clientX
+            );
         }
     );
 
     svg.addEventListener(
         "pointerdown",
         event => {
+
             event.preventDefault();
-            showTouch(event.clientX);
+
+            showTouch(
+                event.clientX
+            );
         }
     );
 
-    svg.addEventListener(
-        "pointerleave",
-        () => {
-            hideTouch();
-        }
-    );
+    /*
+     * pointerleave에서 라벨을 숨기지 않는다.
+     *
+     * 휴대폰에서 손가락을 떼도
+     * 마지막으로 선택한 날짜와 값이
+     * 화면에 남도록 한다.
+     */
 }
 
 
@@ -943,7 +1027,9 @@ function createTopMenu() {
 
 function formatUpdateTime() {
 
-    if (!window.marketDataUpdatedAt) {
+    if (
+        !window.marketDataUpdatedAt
+    ) {
         return "—";
     }
 
@@ -952,7 +1038,11 @@ function formatUpdateTime() {
             window.marketDataUpdatedAt
         );
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return "—";
     }
 
@@ -1013,9 +1103,6 @@ function createRiskScoreHTML() {
             )
         );
 
-    const status =
-        overallStatus(score);
-
     return `
         <div class="risk-score-box">
 
@@ -1029,10 +1116,12 @@ function createRiskScoreHTML() {
             </div>
 
             <div class="risk-score-bar">
+
                 <div
                     class="risk-score-fill"
                     style="width:${percentage}%"
                 ></div>
+
             </div>
 
         </div>
@@ -1066,7 +1155,9 @@ function createOverallHTML() {
                     </div>
 
                     <div class="overall-value">
-                        ${statusText(status)}
+                        ${statusText(
+                            status
+                        )}
                     </div>
 
                     ${createTopMenu()}
@@ -1176,7 +1267,9 @@ function createCard(
                         <div
                             class="status ${status}"
                         >
-                            ${statusText(status)}
+                            ${statusText(
+                                status
+                            )}
                         </div>
 
                     </div>
@@ -1214,6 +1307,7 @@ function createCard(
                                         ? "▼ "
                                         : ""
                                 }
+
                                 ${formatChange(
                                     change5,
                                     indicator
@@ -1242,6 +1336,7 @@ function createCard(
                                         ? "▼ "
                                         : ""
                                 }
+
                                 ${formatChange(
                                     change20,
                                     indicator
@@ -1264,24 +1359,28 @@ function createCard(
 
                 <div class="period-buttons">
 
-                    ${PERIODS.map(period => `
-                        <button
-                            class="period-button ${
-                                period.key === periodKey
-                                    ? "active"
-                                    : ""
-                            }"
-                            data-indicator="${indicator.id}"
-                            data-period="${period.key}"
-                        >
-                            ${period.label}
-                        </button>
-                    `).join("")}
+                    ${PERIODS.map(
+                        period => `
+                            <button
+                                class="period-button ${
+                                    period.key ===
+                                    periodKey
+                                        ? "active"
+                                        : ""
+                                }"
+                                data-indicator="${indicator.id}"
+                                data-period="${period.key}"
+                            >
+                                ${period.label}
+                            </button>
+                        `
+                    ).join("")}
 
                 </div>
 
                 <div class="date">
-                    최근 데이터: ${formatDate(
+                    최근 데이터:
+                    ${formatDate(
                         latest.date
                     )}
                 </div>
@@ -1300,26 +1399,37 @@ function createCard(
 function renderDashboard() {
 
     const cards =
-        INDICATORS.map(indicator => {
+        INDICATORS.map(
+            indicator => {
 
-            if (!selectedPeriods[indicator.id]) {
-                selectedPeriods[indicator.id] = "1Y";
+                if (
+                    !selectedPeriods[
+                        indicator.id
+                    ]
+                ) {
+                    selectedPeriods[
+                        indicator.id
+                    ] = "1Y";
+                }
+
+                return createCard(
+                    indicator,
+                    selectedPeriods[
+                        indicator.id
+                    ]
+                );
             }
-
-            return createCard(
-                indicator,
-                selectedPeriods[indicator.id]
-            );
-
-        }).join("");
+        ).join("");
 
     return `
         <div class="dashboard">
+
             ${cards}
 
             <div class="source">
                 Source: Federal Reserve Bank of St. Louis · FRED
             </div>
+
         </div>
     `;
 }
@@ -1332,72 +1442,78 @@ function renderDashboard() {
 function renderRiskPanel() {
 
     const rows =
-        INDICATORS.map(indicator => {
+        INDICATORS.map(
+            indicator => {
 
-            const latest =
-                getLatestObservation(
-                    indicator.id
-                );
+                const latest =
+                    getLatestObservation(
+                        indicator.id
+                    );
 
-            if (!latest) {
-                return "";
+                if (!latest) {
+                    return "";
+                }
+
+                const status =
+                    getStatus(
+                        latest.value,
+                        indicator
+                    );
+
+                return `
+                    <div class="risk-row">
+
+                        <div class="risk-row-top">
+
+                            <div>
+
+                                <div class="risk-name">
+                                    ${indicator.name}
+                                </div>
+
+                                <div class="risk-description">
+                                    ${indicator.description}
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="status ${status}"
+                            >
+                                ${statusText(
+                                    status
+                                )}
+                            </div>
+
+                        </div>
+
+                        <div class="risk-row-bottom">
+
+                            <div>
+                                현재값
+                                <strong>
+                                    ${formatValue(
+                                        latest.value,
+                                        indicator
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div>
+                                최근일
+                                <strong>
+                                    ${formatDate(
+                                        latest.date
+                                    )}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
             }
-
-            const status =
-                getStatus(
-                    latest.value,
-                    indicator
-                );
-
-            return `
-                <div class="risk-row">
-
-                    <div class="risk-row-top">
-
-                        <div>
-
-                            <div class="risk-name">
-                                ${indicator.name}
-                            </div>
-
-                            <div class="risk-description">
-                                ${indicator.description}
-                            </div>
-
-                        </div>
-
-                        <div class="status ${status}">
-                            ${statusText(status)}
-                        </div>
-
-                    </div>
-
-                    <div class="risk-row-bottom">
-
-                        <div>
-                            현재값
-                            <strong>
-                                ${formatValue(
-                                    latest.value,
-                                    indicator
-                                )}
-                            </strong>
-                        </div>
-
-                        <div>
-                            최근일
-                            <strong>
-                                ${formatDate(
-                                    latest.date
-                                )}
-                            </strong>
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-        }).join("");
+        ).join("");
 
     return `
         <div class="risk-panel">
@@ -1432,101 +1548,114 @@ function renderRiskPanel() {
 function renderTrendPanel() {
 
     const cards =
-        INDICATORS.map(indicator => {
+        INDICATORS.map(
+            indicator => {
 
-            const observations =
-                getObservations(
-                    indicator.id
-                );
+                const observations =
+                    getObservations(
+                        indicator.id
+                    );
 
-            if (!observations.length) {
-                return "";
-            }
+                if (
+                    !observations.length
+                ) {
+                    return "";
+                }
 
-            const latest =
-                observations[0];
+                const latest =
+                    observations[0];
 
-            const old =
-                observations[
-                    Math.min(
-                        observations.length - 1,
-                        20
-                    )
-                ];
+                const old =
+                    observations[
+                        Math.min(
+                            observations.length - 1,
+                            20
+                        )
+                    ];
 
-            const change =
-                Number(latest.value) -
-                Number(old.value);
+                const change =
+                    Number(
+                        latest.value
+                    ) -
+                    Number(
+                        old.value
+                    );
 
-            return `
-                <div class="trend-card">
+                return `
+                    <div class="trend-card">
 
-                    <div class="trend-header">
+                        <div class="trend-header">
 
-                        <div>
+                            <div>
 
-                            <div class="trend-name">
-                                ${indicator.name}
+                                <div class="trend-name">
+                                    ${indicator.name}
+                                </div>
+
+                                <div class="trend-ticker">
+                                    ${indicator.id}
+                                </div>
+
                             </div>
 
-                            <div class="trend-ticker">
-                                ${indicator.id}
+                            <div
+                                class="status ${
+                                    getStatus(
+                                        latest.value,
+                                        indicator
+                                    )
+                                }"
+                            >
+                                ${statusText(
+                                    getStatus(
+                                        latest.value,
+                                        indicator
+                                    )
+                                )}
                             </div>
 
                         </div>
 
-                        <div class="status ${
-                            getStatus(
+                        <div class="trend-value">
+                            ${formatValue(
                                 latest.value,
                                 indicator
-                            )
-                        }">
-                            ${statusText(
-                                getStatus(
-                                    latest.value,
-                                    indicator
-                                )
                             )}
                         </div>
 
-                    </div>
-
-                    <div class="trend-value">
-                        ${formatValue(
-                            latest.value,
-                            indicator
-                        )}
-                    </div>
-
-                    <div
-                        class="${getChangeClass(
-                            change
-                        )}"
-                    >
-                        ${
-                            change > 0
-                                ? "▲ "
-                                : change < 0
-                                ? "▼ "
-                                : ""
-                        }
-                        ${formatChange(
-                            change,
-                            indicator
-                        )}
-                        <span
-                            style="
-                                color:#7187a5;
-                                font-weight:normal;
-                            "
+                        <div
+                            class="${getChangeClass(
+                                change
+                            )}"
                         >
-                            · 최근 20개 관측치
-                        </span>
-                    </div>
+                            ${
+                                change > 0
+                                    ? "▲ "
+                                    : change < 0
+                                    ? "▼ "
+                                    : ""
+                            }
 
-                </div>
-            `;
-        }).join("");
+                            ${formatChange(
+                                change,
+                                indicator
+                            )}
+
+                            <span
+                                style="
+                                    color:#7187a5;
+                                    font-weight:normal;
+                                "
+                            >
+                                · 최근 20개 관측치
+                            </span>
+
+                        </div>
+
+                    </div>
+                `;
+            }
+        ).join("");
 
     return `
         <div class="trend-panel">
@@ -1560,26 +1689,30 @@ function setupPeriodButtons() {
         .querySelectorAll(
             ".period-button"
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    const indicatorId =
-                        button.dataset.indicator;
+                        const indicatorId =
+                            button.dataset
+                                .indicator;
 
-                    const period =
-                        button.dataset.period;
+                        const period =
+                            button.dataset
+                                .period;
 
-                    selectedPeriods[
-                        indicatorId
-                    ] = period;
+                        selectedPeriods[
+                            indicatorId
+                        ] = period;
 
-                    render();
-                }
-            );
-        });
+                        render();
+                    }
+                );
+            }
+        );
 }
 
 
@@ -1589,7 +1722,10 @@ function setupPeriodButtons() {
 
 function setupAllChartEvents() {
 
-    for (const indicator of INDICATORS) {
+    for (
+        const indicator of
+        INDICATORS
+    ) {
 
         const periodKey =
             selectedPeriods[
@@ -1631,25 +1767,39 @@ function setupAllChartEvents() {
 function render() {
 
     const app =
-        document.getElementById("app");
+        document.getElementById(
+            "app"
+        );
 
-    if (!app || !marketData) {
+    if (
+        !app ||
+        !marketData
+    ) {
         return;
     }
 
     let content = "";
 
-    if (currentPage === "dashboard") {
+    if (
+        currentPage ===
+        "dashboard"
+    ) {
 
         content =
             renderDashboard();
 
-    } else if (currentPage === "risk") {
+    } else if (
+        currentPage ===
+        "risk"
+    ) {
 
         content =
             renderRiskPanel();
 
-    } else if (currentPage === "trend") {
+    } else if (
+        currentPage ===
+        "trend"
+    ) {
 
         content =
             renderTrendPanel();
@@ -1672,7 +1822,9 @@ function render() {
 async function loadData() {
 
     const app =
-        document.getElementById("app");
+        document.getElementById(
+            "app"
+        );
 
     try {
 
@@ -1685,6 +1837,7 @@ async function loadData() {
             );
 
         if (!response.ok) {
+
             throw new Error(
                 `HTTP ${response.status}`
             );
