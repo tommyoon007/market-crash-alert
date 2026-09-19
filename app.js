@@ -94,9 +94,7 @@ function getIndicator(id) {
     return INDICATORS.find(item => item.id === id);
 }
 
-
 function getObservations(id) {
-
     if (
         !marketData ||
         !marketData.data ||
@@ -108,9 +106,7 @@ function getObservations(id) {
     return marketData.data[id].observations || [];
 }
 
-
 function formatValue(value, indicator) {
-
     if (
         value === null ||
         value === undefined ||
@@ -124,9 +120,7 @@ function formatValue(value, indicator) {
     ) + indicator.unit;
 }
 
-
 function formatDate(dateString) {
-
     if (!dateString) {
         return "—";
     }
@@ -134,11 +128,8 @@ function formatDate(dateString) {
     return dateString.replaceAll("-", ".");
 }
 
-
 function getLatestObservation(id) {
-
-    const observations =
-        getObservations(id);
+    const observations = getObservations(id);
 
     if (!observations.length) {
         return null;
@@ -153,7 +144,6 @@ function getLatestObservation(id) {
 ========================= */
 
 function getStatus(value, indicator) {
-
     if (
         value === null ||
         value === undefined ||
@@ -163,15 +153,11 @@ function getStatus(value, indicator) {
     }
 
     for (const level of indicator.levels) {
-
         if (level.inverse) {
-
             if (value <= level.value) {
                 return level.status;
             }
-
         } else {
-
             if (value >= level.value) {
                 return level.status;
             }
@@ -181,9 +167,7 @@ function getStatus(value, indicator) {
     return "safe";
 }
 
-
 function statusText(status) {
-
     const map = {
         safe: "NORMAL",
         caution: "CAUTION",
@@ -195,9 +179,7 @@ function statusText(status) {
     return map[status] || "N/A";
 }
 
-
 function statusScore(status) {
-
     const map = {
         safe: 0,
         caution: 1,
@@ -209,27 +191,22 @@ function statusScore(status) {
     return map[status] || 0;
 }
 
-
 function calculateRisk() {
-
     let score = 0;
 
     for (const indicator of INDICATORS) {
-
-        const latest =
-            getLatestObservation(
-                indicator.id
-            );
+        const latest = getLatestObservation(
+            indicator.id
+        );
 
         if (!latest) {
             continue;
         }
 
-        const status =
-            getStatus(
-                latest.value,
-                indicator
-            );
+        const status = getStatus(
+            latest.value,
+            indicator
+        );
 
         score += statusScore(status);
     }
@@ -237,9 +214,7 @@ function calculateRisk() {
     return score;
 }
 
-
 function overallStatus(score) {
-
     if (score >= 7) {
         return "danger";
     }
@@ -261,9 +236,7 @@ function overallStatus(score) {
 ========================= */
 
 function getChange(id, observationCount) {
-
-    const observations =
-        getObservations(id);
+    const observations = getObservations(id);
 
     if (
         observations.length <=
@@ -290,9 +263,7 @@ function getChange(id, observationCount) {
     return latest - previous;
 }
 
-
 function getChangeClass(change) {
-
     if (change === null) {
         return "change-neutral";
     }
@@ -308,9 +279,7 @@ function getChangeClass(change) {
     return "change-neutral";
 }
 
-
 function formatChange(change, indicator) {
-
     if (change === null) {
         return "—";
     }
@@ -334,15 +303,13 @@ function filterByPeriod(
     observations,
     periodKey
 ) {
-
     if (!observations.length) {
         return [];
     }
 
     const period =
         PERIODS.find(
-            item =>
-                item.key === periodKey
+            item => item.key === periodKey
         );
 
     if (
@@ -371,7 +338,6 @@ function filterByPeriod(
     const filtered =
         observations.filter(
             item => {
-
                 const date =
                     new Date(
                         item.date +
@@ -396,7 +362,6 @@ function downsample(
     data,
     maxPoints = 180
 ) {
-
     if (data.length <= maxPoints) {
         return data;
     }
@@ -412,11 +377,8 @@ function downsample(
         i < maxPoints;
         i++
     ) {
-
         const index =
-            Math.round(
-                i * step
-            );
+            Math.round(i * step);
 
         result.push(
             data[index]
@@ -436,9 +398,7 @@ function createChart(
     indicator,
     chartId
 ) {
-
     if (!observations.length) {
-
         return `
             <div class="chart-empty">
                 데이터 없음
@@ -450,17 +410,19 @@ function createChart(
         downsample(observations);
 
     const width = 700;
-
-    /*
-       실제 창 높이는 렌더링 후
-       왼쪽 정보 영역 높이에 맞춘다.
-    */
-    const baseHeight = 180;
+    const height = 130;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-    const paddingTop = 3;
-    const paddingBottom = 3;
+
+    /*
+       기존 3px → 11px
+
+       그래프 선 위아래에
+       글자 한 줄 정도의 여유를 줌.
+    */
+    const paddingTop = 11;
+    const paddingBottom = 11;
 
     const chartWidth =
         width -
@@ -468,14 +430,13 @@ function createChart(
         paddingRight;
 
     const chartHeight =
-        baseHeight -
+        height -
         paddingTop -
         paddingBottom;
 
     const values =
         data.map(
-            item =>
-                Number(item.value)
+            item => Number(item.value)
         );
 
     let min =
@@ -489,19 +450,13 @@ function createChart(
         max += 1;
     }
 
-    /*
-       실제 데이터 범위를 거의 그대로 사용.
-       그래프가 위아래를 최대한 꽉 채운다.
-    */
     const range =
         max - min;
 
     min -= range * 0.005;
     max += range * 0.005;
 
-
     function x(index) {
-
         if (data.length === 1) {
             return width / 2;
         }
@@ -514,9 +469,7 @@ function createChart(
         );
     }
 
-
     function y(value) {
-
         return (
             paddingTop +
             (max - value) *
@@ -524,7 +477,6 @@ function createChart(
             (max - min)
         );
     }
-
 
     const points =
         data
@@ -536,7 +488,6 @@ function createChart(
             )
             .join(" ");
 
-
     const last =
         data[data.length - 1];
 
@@ -544,10 +495,7 @@ function createChart(
         x(data.length - 1);
 
     const lastY =
-        y(
-            Number(last.value)
-        );
-
+        y(Number(last.value));
 
     return `
         <div
@@ -558,266 +506,166 @@ function createChart(
             <svg
                 class="chart chart-touch-area"
                 id="${chartId}"
-                viewBox="0 0 ${width} ${baseHeight}"
-                preserveAspectRatio="xMidYMid meet"
-                data-base-height="${baseHeight}"
-                data-chart-height="${baseHeight}"
+                viewBox="0 0 ${width} ${height}"
             >
 
+                <line
+                    x1="${paddingLeft}"
+                    y1="${paddingTop}"
+                    x2="${width - paddingRight}"
+                    y2="${paddingTop}"
+                    stroke="#263b59"
+                    stroke-width="1"
+                />
+
+                <line
+                    x1="${paddingLeft}"
+                    y1="${height - paddingBottom}"
+                    x2="${width - paddingRight}"
+                    y2="${height - paddingBottom}"
+                    stroke="#263b59"
+                    stroke-width="1"
+                />
+
+                <polyline
+                    points="${points}"
+                    fill="none"
+                    stroke="#45a9ff"
+                    stroke-width="2.5"
+                    vector-effect="non-scaling-stroke"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                />
+
+                <circle
+                    cx="${lastX}"
+                    cy="${lastY}"
+                    r="3.5"
+                    fill="#ffffff"
+                    stroke="#45a9ff"
+                    stroke-width="2"
+                />
+
+                <text
+                    x="${paddingLeft}"
+                    y="${height - 4}"
+                    fill="#7187a5"
+                    font-size="8"
+                    font-family="Arial, sans-serif"
+                >
+                    ${formatDate(data[0].date)}
+                </text>
+
+                <text
+                    x="${width - paddingRight}"
+                    y="${height - 4}"
+                    text-anchor="end"
+                    fill="#7187a5"
+                    font-size="8"
+                    font-family="Arial, sans-serif"
+                >
+                    ${formatDate(
+                        data[data.length - 1].date
+                    )}
+                </text>
+
+
+                <!-- 전체 그래프 터치 영역 -->
+
+                <rect
+                    class="chart-interaction-area"
+                    x="0"
+                    y="0"
+                    width="${width}"
+                    height="${height}"
+                    fill="transparent"
+                />
+
+
+                <!-- 터치 정보창 -->
+
                 <g
-                    class="chart-content"
-                    id="${chartId}-content"
+                    class="chart-touch-label-bg"
+                    id="${chartId}-label"
+                    visibility="hidden"
                 >
 
-                    <line
-                        x1="${paddingLeft}"
-                        y1="${paddingTop}"
-                        x2="${width - paddingRight}"
-                        y2="${paddingTop}"
-                        stroke="#263b59"
+                    <rect
+                        x="0"
+                        y="0"
+                        width="210"
+                        height="40"
+                        rx="7"
+                        fill="#07101f"
+                        fill-opacity="0.97"
+                        stroke="#3a9aff"
                         stroke-width="1"
-                    />
-
-                    <line
-                        x1="${paddingLeft}"
-                        y1="${baseHeight - paddingBottom}"
-                        x2="${width - paddingRight}"
-                        y2="${baseHeight - paddingBottom}"
-                        stroke="#263b59"
-                        stroke-width="1"
-                    />
-
-                    <polyline
-                        points="${points}"
-                        fill="none"
-                        stroke="#45a9ff"
-                        stroke-width="2.5"
-                        vector-effect="non-scaling-stroke"
-                        stroke-linejoin="round"
-                        stroke-linecap="round"
-                    />
-
-                    <circle
-                        cx="${lastX}"
-                        cy="${lastY}"
-                        r="3.5"
-                        fill="#ffffff"
-                        stroke="#45a9ff"
-                        stroke-width="2"
                     />
 
                     <text
-                        x="${paddingLeft}"
-                        y="${baseHeight - 4}"
-                        fill="#7187a5"
-                        font-size="8"
+                        class="chart-touch-date"
+                        id="${chartId}-date"
+                        x="105"
+                        y="15"
+                        text-anchor="middle"
+                        fill="#dcecff"
                         font-family="Arial, sans-serif"
+                        font-size="13"
+                        font-weight="700"
                     >
-                        ${formatDate(
-                            data[0].date
-                        )}
+                        ${formatDate(last.date)}
                     </text>
 
                     <text
-                        x="${width - paddingRight}"
-                        y="${baseHeight - 4}"
-                        text-anchor="end"
-                        fill="#7187a5"
-                        font-size="8"
+                        class="chart-touch-value"
+                        id="${chartId}-value"
+                        x="105"
+                        y="34"
+                        text-anchor="middle"
+                        fill="#ffffff"
                         font-family="Arial, sans-serif"
+                        font-size="17"
+                        font-weight="800"
                     >
-                        ${formatDate(
-                            data[
-                                data.length - 1
-                            ].date
+                        ${formatValue(
+                            last.value,
+                            indicator
                         )}
                     </text>
-
-                    <!-- 터치 정보창 -->
-
-                    <g
-                        class="chart-touch-label-bg"
-                        id="${chartId}-label"
-                        visibility="hidden"
-                    >
-
-                        <rect
-                            id="${chartId}-label-bg"
-                            x="0"
-                            y="0"
-                            width="180"
-                            height="52"
-                            rx="8"
-                            fill="#07101f"
-                            fill-opacity="0.97"
-                            stroke="#3a9aff"
-                            stroke-width="1"
-                        />
-
-                        <text
-                            class="chart-touch-date"
-                            id="${chartId}-date"
-                            x="90"
-                            y="20"
-                            text-anchor="middle"
-                            fill="#dcecff"
-                            font-family="Arial, sans-serif"
-                            font-size="16"
-                            font-weight="700"
-                        >
-                            ${formatDate(
-                                last.date
-                            )}
-                        </text>
-
-                        <text
-                            class="chart-touch-value"
-                            id="${chartId}-value"
-                            x="90"
-                            y="43"
-                            text-anchor="middle"
-                            fill="#ffffff"
-                            font-family="Arial, sans-serif"
-                            font-size="19"
-                            font-weight="800"
-                        >
-                            ${formatValue(
-                                last.value,
-                                indicator
-                            )}
-                        </text>
-
-                    </g>
-
-                    <line
-                        class="chart-touch-line"
-                        id="${chartId}-line"
-                        x1="${lastX}"
-                        y1="${paddingTop}"
-                        x2="${lastX}"
-                        y2="${baseHeight - paddingBottom}"
-                        stroke="#8ecbff"
-                        stroke-width="1"
-                        stroke-dasharray="4 4"
-                        visibility="hidden"
-                    />
-
-                    <circle
-                        class="chart-touch-point"
-                        id="${chartId}-point"
-                        cx="${lastX}"
-                        cy="${lastY}"
-                        r="5"
-                        fill="#ffffff"
-                        stroke="#45a9ff"
-                        stroke-width="2"
-                        visibility="hidden"
-                    />
 
                 </g>
 
-            </svg>
 
+                <line
+                    class="chart-touch-line"
+                    id="${chartId}-line"
+                    x1="${lastX}"
+                    y1="${paddingTop}"
+                    x2="${lastX}"
+                    y2="${height - paddingBottom}"
+                    stroke="#8ecbff"
+                    stroke-width="1"
+                    stroke-dasharray="4 4"
+                    visibility="hidden"
+                    pointer-events="none"
+                />
+
+                <circle
+                    class="chart-touch-point"
+                    id="${chartId}-point"
+                    cx="${lastX}"
+                    cy="${lastY}"
+                    r="5"
+                    fill="#ffffff"
+                    stroke="#45a9ff"
+                    stroke-width="2"
+                    visibility="hidden"
+                    pointer-events="none"
+                />
+
+            </svg>
         </div>
     `;
-}
-
-
-/* =========================
-   그래프 높이 맞추기
-========================= */
-
-function fitChartsToCards() {
-
-    document
-        .querySelectorAll(
-            ".chart-wrapper"
-        )
-        .forEach(
-            wrapper => {
-
-                const svg =
-                    wrapper.querySelector(
-                        "svg.chart"
-                    );
-
-                if (!svg) {
-                    return;
-                }
-
-                const card =
-                    wrapper.closest(
-                        ".card"
-                    );
-
-                if (!card) {
-                    return;
-                }
-
-                const info =
-                    card.querySelector(
-                        ".card-info"
-                    );
-
-                if (!info) {
-                    return;
-                }
-
-                const wrapperWidth =
-                    wrapper.getBoundingClientRect()
-                        .width;
-
-                const targetHeight =
-                    info.getBoundingClientRect()
-                        .height;
-
-                if (
-                    wrapperWidth <= 0 ||
-                    targetHeight <= 0
-                ) {
-                    return;
-                }
-
-                const width = 700;
-                const baseHeight = 180;
-
-                /*
-                   실제 창 비율과 SVG viewBox 비율을
-                   똑같이 만들어서 빈 공간이 생기지 않게 한다.
-                */
-                const svgHeight =
-                    Math.max(
-                        baseHeight,
-                        width *
-                        targetHeight /
-                        wrapperWidth
-                    );
-
-                svg.setAttribute(
-                    "viewBox",
-                    `0 0 ${width} ${svgHeight}`
-                );
-
-                svg.dataset.chartHeight =
-                    String(svgHeight);
-
-                const content =
-                    svg.querySelector(
-                        ".chart-content"
-                    );
-
-                if (content) {
-
-                    content.setAttribute(
-                        "transform",
-                        `scale(1, ${
-                            svgHeight /
-                            baseHeight
-                        })`
-                    );
-                }
-            }
-        );
 }
 
 
@@ -830,11 +678,8 @@ function setupChartTouchEvents(
     data,
     indicator
 ) {
-
     const svg =
-        document.getElementById(
-            chartId
-        );
+        document.getElementById(chartId);
 
     if (
         !svg ||
@@ -846,11 +691,6 @@ function setupChartTouchEvents(
     const label =
         document.getElementById(
             `${chartId}-label`
-        );
-
-    const labelBg =
-        document.getElementById(
-            `${chartId}-label-bg`
         );
 
     const line =
@@ -874,18 +714,13 @@ function setupChartTouchEvents(
         );
 
     const width = 700;
-
-    const height =
-        Number(
-            svg.dataset.chartHeight
-        ) || 180;
-
-    const baseHeight = 180;
+    const height = 130;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-    const paddingTop = 3;
-    const paddingBottom = 3;
+
+    const paddingTop = 11;
+    const paddingBottom = 11;
 
     const chartWidth =
         width -
@@ -893,18 +728,13 @@ function setupChartTouchEvents(
         paddingRight;
 
     const chartHeight =
-        height *
-        (
-            (baseHeight -
-                paddingTop -
-                paddingBottom) /
-            baseHeight
-        );
+        height -
+        paddingTop -
+        paddingBottom;
 
     const values =
         data.map(
-            item =>
-                Number(item.value)
+            item => Number(item.value)
         );
 
     let min =
@@ -924,28 +754,28 @@ function setupChartTouchEvents(
     min -= range * 0.005;
     max += range * 0.005;
 
-
     function y(value) {
-
         return (
-            paddingTop *
-                (height / baseHeight) +
-
+            paddingTop +
             (max - value) *
             chartHeight /
             (max - min)
         );
     }
 
-
     function showTouch(clientX) {
-
         const rect =
             svg.getBoundingClientRect();
 
+        if (
+            !rect.width ||
+            !rect.height
+        ) {
+            return;
+        }
+
         let relativeX =
-            clientX -
-            rect.left;
+            clientX - rect.left;
 
         relativeX =
             Math.max(
@@ -964,15 +794,11 @@ function setupChartTouchEvents(
         let index;
 
         if (data.length === 1) {
-
             index = 0;
-
         } else {
-
             index =
                 Math.round(
-                    (svgX -
-                        paddingLeft) /
+                    (svgX - paddingLeft) /
                     chartWidth *
                     (data.length - 1)
                 );
@@ -999,30 +825,17 @@ function setupChartTouchEvents(
                   (data.length - 1);
 
         const pointY =
-            y(
-                Number(
-                    item.value
-                )
-            );
+            y(Number(item.value));
 
 
-        const dateString =
-            formatDate(
-                item.date
-            );
+        dateText.textContent =
+            formatDate(item.date);
 
-        const valueString =
+        valueText.textContent =
             formatValue(
                 item.value,
                 indicator
             );
-
-
-        dateText.textContent =
-            dateString;
-
-        valueText.textContent =
-            valueString;
 
 
         line.setAttribute(
@@ -1033,19 +846,6 @@ function setupChartTouchEvents(
         line.setAttribute(
             "x2",
             pointX
-        );
-
-        line.setAttribute(
-            "y1",
-            paddingTop *
-                (height / baseHeight)
-        );
-
-        line.setAttribute(
-            "y2",
-            height -
-                paddingBottom *
-                (height / baseHeight)
         );
 
         line.setAttribute(
@@ -1071,39 +871,19 @@ function setupChartTouchEvents(
 
 
         /*
-           문자 길이에 맞춰
-           터치 정보창 폭을 자동 조절
+           터치 정보창
+
+           기존:
+           180 × 52
+
+           변경:
+           210 × 40
+
+           → 더 넓고 훨씬 낮게
         */
-        const labelWidth =
-            Math.max(
-                145,
-                Math.min(
-                    200,
-                    Math.max(
-                        dateString.length * 10,
-                        valueString.length * 11
-                    ) + 28
-                )
-            );
 
-        const labelHeight = 52;
-
-        labelBg.setAttribute(
-            "width",
-            labelWidth
-        );
-
-
-        dateText.setAttribute(
-            "x",
-            labelWidth / 2
-        );
-
-        valueText.setAttribute(
-            "x",
-            labelWidth / 2
-        );
-
+        const labelWidth = 210;
+        const labelHeight = 40;
 
         let labelX =
             pointX -
@@ -1125,21 +905,30 @@ function setupChartTouchEvents(
         }
 
 
-        let labelY = 4;
+        /*
+           선이 위쪽에 있으면
+           정보창은 아래쪽.
 
-        const topThreshold =
-            70 *
-            (height / baseHeight);
+           선이 아래쪽에 있으면
+           정보창은 위쪽.
 
-        if (pointY < topThreshold) {
+           → 정보창이 그래프 밖으로
+             잘리지 않도록 함.
+        */
 
+        let labelY;
+
+        if (
+            pointY <
+            labelHeight + 8
+        ) {
             labelY =
                 height -
-                labelHeight *
-                    (height / baseHeight) -
+                labelHeight -
                 4;
+        } else {
+            labelY = 4;
         }
-
 
         label.setAttribute(
             "transform",
@@ -1153,9 +942,23 @@ function setupChartTouchEvents(
     }
 
 
+    /*
+       마우스 / 펜
+    */
+
     svg.addEventListener(
         "pointermove",
         event => {
+            showTouch(
+                event.clientX
+            );
+        }
+    );
+
+    svg.addEventListener(
+        "pointerdown",
+        event => {
+            event.preventDefault();
 
             showTouch(
                 event.clientX
@@ -1164,16 +967,45 @@ function setupChartTouchEvents(
     );
 
 
+    /*
+       안드로이드 터치 보강
+
+       pointer 이벤트가 일부 구간에서
+       제대로 잡히지 않는 경우를 대비.
+    */
+
     svg.addEventListener(
-        "pointerdown",
+        "touchstart",
         event => {
+            if (
+                event.touches &&
+                event.touches.length
+            ) {
+                event.preventDefault();
 
-            event.preventDefault();
+                showTouch(
+                    event.touches[0].clientX
+                );
+            }
+        },
+        { passive: false }
+    );
 
-            showTouch(
-                event.clientX
-            );
-        }
+    svg.addEventListener(
+        "touchmove",
+        event => {
+            if (
+                event.touches &&
+                event.touches.length
+            ) {
+                event.preventDefault();
+
+                showTouch(
+                    event.touches[0].clientX
+                );
+            }
+        },
+        { passive: false }
     );
 }
 
@@ -1183,7 +1015,6 @@ function setupChartTouchEvents(
 ========================= */
 
 function createTopMenu() {
-
     return `
         <div class="top-menu-row">
 
@@ -1228,12 +1059,8 @@ function createTopMenu() {
     `;
 }
 
-
 function formatUpdateTime() {
-
-    if (
-        !window.marketDataUpdatedAt
-    ) {
+    if (!window.marketDataUpdatedAt) {
         return "—";
     }
 
@@ -1263,20 +1090,16 @@ function formatUpdateTime() {
     );
 }
 
-
 function setupTopMenu() {
-
     document
         .querySelectorAll(
             ".top-menu-button"
         )
         .forEach(
             button => {
-
                 button.addEventListener(
                     "click",
                     () => {
-
                         currentPage =
                             button.dataset.page;
 
@@ -1293,7 +1116,6 @@ function setupTopMenu() {
 ========================= */
 
 function createRiskScoreHTML() {
-
     const score =
         calculateRisk();
 
@@ -1348,7 +1170,6 @@ function createRiskScoreHTML() {
 ========================= */
 
 function createOverallHTML() {
-
     const score =
         calculateRisk();
 
@@ -1369,9 +1190,7 @@ function createOverallHTML() {
                     </div>
 
                     <div class="overall-value">
-                        ${statusText(
-                            status
-                        )}
+                        ${statusText(status)}
                     </div>
 
                     ${createTopMenu()}
@@ -1395,14 +1214,12 @@ function createCard(
     indicator,
     periodKey
 ) {
-
     const latest =
         getLatestObservation(
             indicator.id
         );
 
     if (!latest) {
-
         return `
             <div class="card">
 
@@ -1481,9 +1298,7 @@ function createCard(
                         <div
                             class="status ${status}"
                         >
-                            ${statusText(
-                                status
-                            )}
+                            ${statusText(status)}
                         </div>
 
                     </div>
@@ -1577,8 +1392,7 @@ function createCard(
                         period => `
                             <button
                                 class="period-button ${
-                                    period.key ===
-                                    periodKey
+                                    period.key === periodKey
                                         ? "active"
                                         : ""
                                 }"
@@ -1594,9 +1408,7 @@ function createCard(
 
                 <div class="date">
                     최근 데이터:
-                    ${formatDate(
-                        latest.date
-                    )}
+                    ${formatDate(latest.date)}
                 </div>
 
             </div>
@@ -1611,7 +1423,6 @@ function createCard(
 ========================= */
 
 function renderDashboard() {
-
     const cards =
         INDICATORS.map(
             indicator => {
@@ -1654,7 +1465,6 @@ function renderDashboard() {
 ========================= */
 
 function renderRiskPanel() {
-
     const rows =
         INDICATORS.map(
             indicator => {
@@ -1694,9 +1504,7 @@ function renderRiskPanel() {
                             <div
                                 class="status ${status}"
                             >
-                                ${statusText(
-                                    status
-                                )}
+                                ${statusText(status)}
                             </div>
 
                         </div>
@@ -1760,7 +1568,6 @@ function renderRiskPanel() {
 ========================= */
 
 function renderTrendPanel() {
-
     const cards =
         INDICATORS.map(
             indicator => {
@@ -1770,9 +1577,7 @@ function renderTrendPanel() {
                         indicator.id
                     );
 
-                if (
-                    !observations.length
-                ) {
+                if (!observations.length) {
                     return "";
                 }
 
@@ -1788,11 +1593,13 @@ function renderTrendPanel() {
                     ];
 
                 const change =
-                    Number(
-                        latest.value
-                    ) -
-                    Number(
-                        old.value
+                    Number(latest.value) -
+                    Number(old.value);
+
+                const status =
+                    getStatus(
+                        latest.value,
+                        indicator
                     );
 
                 return `
@@ -1813,19 +1620,9 @@ function renderTrendPanel() {
                             </div>
 
                             <div
-                                class="status ${
-                                    getStatus(
-                                        latest.value,
-                                        indicator
-                                    )
-                                }"
+                                class="status ${status}"
                             >
-                                ${statusText(
-                                    getStatus(
-                                        latest.value,
-                                        indicator
-                                    )
-                                )}
+                                ${statusText(status)}
                             </div>
 
                         </div>
@@ -1838,9 +1635,7 @@ function renderTrendPanel() {
                         </div>
 
                         <div
-                            class="${getChangeClass(
-                                change
-                            )}"
+                            class="${getChangeClass(change)}"
                         >
                             ${
                                 change > 0
@@ -1894,11 +1689,10 @@ function renderTrendPanel() {
 
 
 /* =========================
-   기간 버튼 이벤트
+   기간 버튼
 ========================= */
 
 function setupPeriodButtons() {
-
     document
         .querySelectorAll(
             ".period-button"
@@ -1911,12 +1705,10 @@ function setupPeriodButtons() {
                     () => {
 
                         const indicatorId =
-                            button.dataset
-                                .indicator;
+                            button.dataset.indicator;
 
                         const period =
-                            button.dataset
-                                .period;
+                            button.dataset.period;
 
                         selectedPeriods[
                             indicatorId
@@ -1935,10 +1727,8 @@ function setupPeriodButtons() {
 ========================= */
 
 function setupAllChartEvents() {
-
     for (
-        const indicator of
-        INDICATORS
+        const indicator of INDICATORS
     ) {
 
         const periodKey =
@@ -1955,9 +1745,7 @@ function setupAllChartEvents() {
             );
 
         const data =
-            downsample(
-                observations
-            );
+            downsample(observations);
 
         const chartId =
             `chart-${indicator.id.replace(
@@ -1979,11 +1767,8 @@ function setupAllChartEvents() {
 ========================= */
 
 function render() {
-
     const app =
-        document.getElementById(
-            "app"
-        );
+        document.getElementById("app");
 
     if (
         !app ||
@@ -1995,26 +1780,20 @@ function render() {
     let content = "";
 
     if (
-        currentPage ===
-        "dashboard"
+        currentPage === "dashboard"
     ) {
-
         content =
             renderDashboard();
 
     } else if (
-        currentPage ===
-        "risk"
+        currentPage === "risk"
     ) {
-
         content =
             renderRiskPanel();
 
     } else if (
-        currentPage ===
-        "trend"
+        currentPage === "trend"
     ) {
-
         content =
             renderTrendPanel();
     }
@@ -2022,12 +1801,6 @@ function render() {
     app.innerHTML =
         createOverallHTML() +
         content;
-
-    /*
-       먼저 왼쪽 정보창과 그래프창의
-       실제 높이를 맞춘다.
-    */
-    fitChartsToCards();
 
     setupTopMenu();
     setupPeriodButtons();
@@ -2040,11 +1813,8 @@ function render() {
 ========================= */
 
 async function loadData() {
-
     const app =
-        document.getElementById(
-            "app"
-        );
+        document.getElementById("app");
 
     try {
 
@@ -2057,7 +1827,6 @@ async function loadData() {
             );
 
         if (!response.ok) {
-
             throw new Error(
                 `HTTP ${response.status}`
             );
