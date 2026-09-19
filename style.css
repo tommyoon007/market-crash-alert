@@ -142,8 +142,8 @@ p {
 ========================= */
 
 .risk-score-box {
-    min-width: 94px;
-    padding: 7px 10px;
+    min-width: 108px;
+    padding: 8px 11px;
     background: rgba(5, 12, 24, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 9px;
@@ -152,14 +152,14 @@ p {
 
 .risk-score-label {
     color: #d7e1ef;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: bold;
 }
 
 .risk-score-number {
     margin-top: 1px;
     color: #ffffff;
-    font-size: 26px;
+    font-size: 29px;
     line-height: 1.05;
     font-weight: 900;
     letter-spacing: -0.8px;
@@ -167,13 +167,13 @@ p {
 
 .risk-score-number span {
     color: #aabbd0;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .risk-score-bar {
     width: 100%;
-    height: 4px;
-    margin-top: 5px;
+    height: 5px;
+    margin-top: 6px;
     overflow: hidden;
     background: #25354c;
     border-radius: 5px;
@@ -348,7 +348,7 @@ p {
 .chart-wrapper {
     position: relative;
     width: 100%;
-    height: 195px;
+    height: 240px;
     margin-top: 0;
     padding: 1px 0;
     background: #091526;
@@ -366,7 +366,7 @@ p {
 
 .chart-empty {
     width: 100%;
-    height: 195px;
+    height: 240px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -399,15 +399,15 @@ p {
 }
 
 .chart-touch-date {
-    font-size: 18px;
+    font-size: 24px;
     font-weight: bold;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
 }
 
 .chart-touch-value {
-    font-size: 21px;
+    font-size: 28px;
     font-weight: bold;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
 }
 
 /* =========================
@@ -643,20 +643,20 @@ p {
     }
 
     .risk-score-box {
-        min-width: 82px;
-        padding: 6px 8px;
+        min-width: 94px;
+        padding: 7px 8px;
     }
 
     .risk-score-label {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .risk-score-number {
-        font-size: 23px;
+        font-size: 26px;
     }
 
     .risk-score-number span {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .dashboard {
@@ -715,21 +715,22 @@ p {
         font-size: 10px;
     }
 
-    /* 모바일에서도 그래프 크기 유지 */
+    /* 모바일 그래프 확대 */
     .chart-wrapper {
-        height: 195px;
+        height: 240px;
     }
 
     .chart-empty {
-        height: 195px;
+        height: 240px;
     }
 
+    /* 모바일 터치 표시 확대 */
     .chart-touch-date {
-        font-size: 18px;
+        font-size: 24px;
     }
 
     .chart-touch-value {
-        font-size: 21px;
+        font-size: 28px;
     }
 
     .period-buttons {
