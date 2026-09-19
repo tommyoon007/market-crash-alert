@@ -450,12 +450,14 @@ function createChart(
         downsample(observations);
 
     const width = 700;
-    const height = 165;
+
+    /* 그래프 높이 확대 */
+    const height = 195;
 
     const paddingLeft = 8;
     const paddingRight = 8;
     const paddingTop = 12;
-    const paddingBottom = 16;
+    const paddingBottom = 18;
 
     const chartWidth =
         width -
@@ -584,7 +586,7 @@ function createChart(
 
                 <text
                     x="${paddingLeft}"
-                    y="${height - 3}"
+                    y="${height - 4}"
                     fill="#7187a5"
                     font-size="8"
                     font-family="Arial, sans-serif"
@@ -596,7 +598,7 @@ function createChart(
 
                 <text
                     x="${width - paddingRight}"
-                    y="${height - 3}"
+                    y="${height - 4}"
                     text-anchor="end"
                     fill="#7187a5"
                     font-size="8"
@@ -610,18 +612,20 @@ function createChart(
                 </text>
 
                 <!-- 터치 정보 -->
+
                 <g
                     class="chart-touch-label-bg"
                     id="${chartId}-label"
                     visibility="hidden"
                 >
 
+                    <!-- 터치 박스 확대 -->
                     <rect
                         x="0"
                         y="0"
-                        width="260"
-                        height="60"
-                        rx="9"
+                        width="300"
+                        height="68"
+                        rx="10"
                         fill="#07101f"
                         fill-opacity="0.96"
                         stroke="#3a9aff"
@@ -631,12 +635,12 @@ function createChart(
                     <text
                         class="chart-touch-date"
                         id="${chartId}-date"
-                        x="130"
-                        y="22"
+                        x="150"
+                        y="25"
                         text-anchor="middle"
                         fill="#dcecff"
                         font-family="Arial, sans-serif"
-                        font-size="17"
+                        font-size="19"
                         font-weight="700"
                     >
                         ${formatDate(
@@ -647,12 +651,12 @@ function createChart(
                     <text
                         class="chart-touch-value"
                         id="${chartId}-value"
-                        x="130"
-                        y="47"
+                        x="150"
+                        y="53"
                         text-anchor="middle"
                         fill="#ffffff"
                         font-family="Arial, sans-serif"
-                        font-size="20"
+                        font-size="22"
                         font-weight="800"
                     >
                         ${formatValue(
@@ -742,12 +746,14 @@ function setupChartTouchEvents(
         );
 
     const width = 700;
-    const height = 165;
+
+    /* createChart와 동일하게 195 */
+    const height = 195;
 
     const paddingLeft = 8;
     const paddingRight = 8;
     const paddingTop = 12;
-    const paddingBottom = 16;
+    const paddingBottom = 18;
 
     const chartWidth =
         width -
@@ -900,7 +906,12 @@ function setupChartTouchEvents(
             "visible"
         );
 
-        const labelWidth = 260;
+        /*
+         * 터치 정보 박스
+         * 기존 260 → 300
+         */
+
+        const labelWidth = 300;
 
         let labelX =
             pointX -
@@ -923,9 +934,15 @@ function setupChartTouchEvents(
 
         let labelY = 5;
 
-        if (pointY < 70) {
+        /*
+         * 그래프 선과 겹치지 않도록
+         * 위쪽 또는 아래쪽으로 이동
+         */
+
+        if (pointY < 80) {
             labelY =
-                height - 68;
+                height -
+                73;
         }
 
         label.setAttribute(
@@ -961,11 +978,8 @@ function setupChartTouchEvents(
     );
 
     /*
-     * pointerleave에서 라벨을 숨기지 않는다.
-     *
-     * 휴대폰에서 손가락을 떼도
-     * 마지막으로 선택한 날짜와 값이
-     * 화면에 남도록 한다.
+     * 손가락을 떼어도
+     * 마지막 선택값을 유지한다.
      */
 }
 
@@ -1066,19 +1080,21 @@ function setupTopMenu() {
         .querySelectorAll(
             ".top-menu-button"
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    currentPage =
-                        button.dataset.page;
+                        currentPage =
+                            button.dataset.page;
 
-                    render();
-                }
-            );
-        });
+                        render();
+                    }
+                );
+            }
+        );
 }
 
 
