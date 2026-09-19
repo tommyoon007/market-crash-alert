@@ -142,8 +142,8 @@ p {
 ========================= */
 
 .risk-score-box {
-    min-width: 108px;
-    padding: 8px 11px;
+    min-width: 94px;
+    padding: 7px 10px;
     background: rgba(5, 12, 24, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 9px;
@@ -152,14 +152,14 @@ p {
 
 .risk-score-label {
     color: #d7e1ef;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
 }
 
 .risk-score-number {
     margin-top: 1px;
     color: #ffffff;
-    font-size: 29px;
+    font-size: 26px;
     line-height: 1.05;
     font-weight: 900;
     letter-spacing: -0.8px;
@@ -167,13 +167,13 @@ p {
 
 .risk-score-number span {
     color: #aabbd0;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .risk-score-bar {
     width: 100%;
-    height: 5px;
-    margin-top: 6px;
+    height: 4px;
+    margin-top: 5px;
     overflow: hidden;
     background: #25354c;
     border-radius: 5px;
@@ -348,7 +348,7 @@ p {
 .chart-wrapper {
     position: relative;
     width: 100%;
-    height: 240px;
+    height: 205px;
     margin-top: 0;
     padding: 1px 0;
     background: #091526;
@@ -366,7 +366,7 @@ p {
 
 .chart-empty {
     width: 100%;
-    height: 240px;
+    height: 205px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -391,7 +391,7 @@ p {
 }
 
 /* =========================
-   터치 날짜 표시
+   터치 날짜 / 값
 ========================= */
 
 .chart-touch-label-bg {
@@ -399,15 +399,15 @@ p {
 }
 
 .chart-touch-date {
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 0.3px;
+    font-size: 24px !important;
+    font-weight: bold !important;
+    letter-spacing: 0.5px !important;
 }
 
 .chart-touch-value {
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 0.3px;
+    font-size: 28px !important;
+    font-weight: bold !important;
+    letter-spacing: 0.5px !important;
 }
 
 /* =========================
@@ -481,7 +481,7 @@ p {
 }
 
 /* =========================
-   위험도 상세 화면
+   위험도 상세
 ========================= */
 
 .risk-panel {
@@ -643,20 +643,20 @@ p {
     }
 
     .risk-score-box {
-        min-width: 94px;
-        padding: 7px 8px;
+        min-width: 82px;
+        padding: 6px 8px;
     }
 
     .risk-score-label {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .risk-score-number {
-        font-size: 26px;
+        font-size: 23px;
     }
 
     .risk-score-number span {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .dashboard {
@@ -715,22 +715,22 @@ p {
         font-size: 10px;
     }
 
-    /* 모바일 그래프 확대 */
+    /* 그래프 */
     .chart-wrapper {
-        height: 240px;
+        height: 205px;
     }
 
     .chart-empty {
-        height: 240px;
+        height: 205px;
     }
 
-    /* 모바일 터치 표시 확대 */
+    /* 터치 표시 */
     .chart-touch-date {
-        font-size: 24px;
+        font-size: 24px !important;
     }
 
     .chart-touch-value {
-        font-size: 28px;
+        font-size: 28px !important;
     }
 
     .period-buttons {
