@@ -41,7 +41,6 @@ p {
 .overall {
     margin-bottom: 8px;
     padding: 12px 13px;
-
     border-radius: 12px;
     border: 1px solid transparent;
 }
@@ -98,31 +97,24 @@ p {
     display: flex;
     align-items: center;
     gap: 7px;
-
     margin-top: 8px;
-
     min-width: 0;
 }
 
 .top-menu {
     display: flex;
     gap: 4px;
-
     min-width: 0;
 }
 
 .top-menu-button {
     padding: 6px 10px;
-
     background: rgba(7, 16, 31, 0.58);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 7px;
-
     color: #a9bad3;
-
     font-size: 9px;
     font-weight: bold;
-
     cursor: pointer;
     white-space: nowrap;
 }
@@ -140,11 +132,8 @@ p {
 
 .top-update {
     margin-left: auto;
-
     color: #9eb0c9;
-
     font-size: 8px;
-
     white-space: nowrap;
 }
 
@@ -154,70 +143,51 @@ p {
 
 .risk-score-box {
     min-width: 94px;
-
     padding: 7px 10px;
-
     background: rgba(5, 12, 24, 0.55);
-
     border: 1px solid rgba(255, 255, 255, 0.18);
-
     border-radius: 9px;
-
     text-align: center;
 }
 
 .risk-score-label {
     color: #d7e1ef;
-
     font-size: 10px;
     font-weight: bold;
 }
 
 .risk-score-number {
     margin-top: 1px;
-
     color: #ffffff;
-
     font-size: 26px;
     line-height: 1.05;
-
     font-weight: 900;
-
     letter-spacing: -0.8px;
 }
 
 .risk-score-number span {
     color: #aabbd0;
-
     font-size: 15px;
 }
 
 .risk-score-bar {
     width: 100%;
     height: 4px;
-
     margin-top: 5px;
-
     overflow: hidden;
-
     background: #25354c;
-
     border-radius: 5px;
 }
 
 .risk-score-fill {
     height: 100%;
-
     border-radius: 5px;
-
     background: #ffbd45;
 }
 
 .risk-score-change {
     margin-top: 4px;
-
     color: #8fa3c0;
-
     font-size: 8px;
 }
 
@@ -231,31 +201,22 @@ p {
 
 .dashboard {
     display: grid;
-
     grid-template-columns: 1fr;
-
     gap: 8px;
 }
 
 .card {
     min-width: 0;
-
     padding: 9px;
-
     background: #111b2e;
-
     border: 1px solid #2a3d5b;
-
     border-radius: 12px;
 }
 
 .card-main {
     display: grid;
-
     grid-template-columns: 28% 72%;
-
     gap: 9px;
-
     align-items: stretch;
 }
 
@@ -265,71 +226,50 @@ p {
 
 .card-chart {
     min-width: 0;
-
     display: flex;
-
     align-items: stretch;
 }
 
 .card-header {
     display: flex;
-
     align-items: flex-start;
-
     justify-content: space-between;
-
     gap: 6px;
 }
 
 .card-title {
     font-size: 16px;
-
     font-weight: bold;
-
     letter-spacing: -0.3px;
 }
 
 .ticker {
     margin-top: 2px;
-
     color: #8298b8;
-
     font-size: 9px;
 }
 
 .description {
     margin-top: 5px;
-
     color: #a6b7cf;
-
     font-size: 10px;
-
     line-height: 1.4;
 }
 
 .value {
     margin-top: 9px;
-
     color: #ffffff;
-
     font-size: 27px;
-
     font-weight: 800;
-
     letter-spacing: -0.5px;
 }
 
 .status {
     flex-shrink: 0;
-
     padding: 4px 8px;
-
     border-radius: 12px;
-
     font-size: 9px;
-
     font-weight: bold;
-
     white-space: nowrap;
 }
 
@@ -364,29 +304,21 @@ p {
 
 .changes {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap: 5px;
-
     margin-top: 8px;
 }
 
 .change-box {
     padding: 6px 7px;
-
     background: #0a1424;
-
     border: 1px solid #223451;
-
     border-radius: 7px;
 }
 
 .change-label {
     margin-bottom: 2px;
-
     color: #8fa3c0;
-
     font-size: 8px;
 }
 
@@ -394,7 +326,6 @@ p {
 .change-down,
 .change-neutral {
     font-size: 11px;
-
     font-weight: bold;
 }
 
@@ -416,55 +347,38 @@ p {
 
 .chart-wrapper {
     position: relative;
-
     width: 100%;
-    height: 180px;
-
+    height: 195px;
     margin-top: 0;
-
     padding: 1px 0;
-
     background: #091526;
-
     border: 1px solid #253b5b;
-
     border-radius: 8px;
-
     overflow: hidden;
 }
 
 .chart {
     display: block;
-
     width: 100%;
     height: 100%;
-
     touch-action: none;
 }
 
 .chart-empty {
     width: 100%;
-    height: 180px;
-
+    height: 195px;
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     background: #091526;
-
     border: 1px solid #253b5b;
-
     border-radius: 8px;
-
     color: #8398b6;
-
     font-size: 10px;
 }
 
 .chart-touch-area {
     cursor: crosshair;
-
     touch-action: none;
 }
 
@@ -485,18 +399,14 @@ p {
 }
 
 .chart-touch-date {
-    font-size: 16px;
-
+    font-size: 18px;
     font-weight: bold;
-
     letter-spacing: 0.2px;
 }
 
 .chart-touch-value {
-    font-size: 19px;
-
+    font-size: 21px;
     font-weight: bold;
-
     letter-spacing: 0.2px;
 }
 
@@ -510,13 +420,9 @@ p {
 
 .period-buttons {
     display: flex;
-
     gap: 4px;
-
     margin-top: 0;
-
     overflow-x: auto;
-
     scrollbar-width: none;
 }
 
@@ -526,23 +432,14 @@ p {
 
 .period-button {
     flex: 1;
-
     min-width: 44px;
-
     padding: 6px 3px;
-
     border: 1px solid #304665;
-
     border-radius: 11px;
-
     background: #0a1424;
-
     color: #9aacca;
-
     font-size: 9px;
-
     cursor: pointer;
-
     white-space: nowrap;
 }
 
@@ -552,11 +449,8 @@ p {
 
 .period-button.active {
     background: #123b68;
-
     border-color: #3a9aff;
-
     color: #ffffff;
-
     font-weight: bold;
 }
 
@@ -566,33 +460,23 @@ p {
 
 .date {
     margin-top: 4px;
-
     color: #8298b6;
-
     font-size: 8px;
 }
 
 .source {
     margin-top: 8px;
-
     text-align: center;
-
     color: #7187a5;
-
     font-size: 8px;
 }
 
 .error {
     padding: 18px;
-
     background: #5a171c;
-
     border: 1px solid #92232c;
-
     border-radius: 10px;
-
     text-align: center;
-
     color: #ffffff;
 }
 
@@ -602,81 +486,59 @@ p {
 
 .risk-panel {
     display: grid;
-
     gap: 8px;
 }
 
 .risk-row {
     padding: 13px;
-
     background: #111b2e;
-
     border: 1px solid #2a3d5b;
-
     border-radius: 11px;
 }
 
 .panel-title {
     color: #ffffff;
-
     font-size: 16px;
-
     font-weight: bold;
 }
 
 .panel-subtitle {
     margin-top: 4px;
-
     color: #9eb1ca;
-
     font-size: 10px;
 }
 
 .risk-row-top {
     display: flex;
-
     align-items: flex-start;
-
     justify-content: space-between;
-
     gap: 9px;
 }
 
 .risk-name {
     color: #ffffff;
-
     font-size: 15px;
-
     font-weight: bold;
 }
 
 .risk-description {
     margin-top: 4px;
-
     color: #9eb1ca;
-
     font-size: 10px;
-
     line-height: 1.35;
 }
 
 .risk-row-bottom {
     display: flex;
-
     justify-content: space-between;
-
     gap: 8px;
-
     margin-top: 10px;
-
     color: #8fa3c0;
-
     font-size: 9px;
 }
 
 .risk-row-bottom strong {
     color: #ffffff;
-
     margin-left: 3px;
 }
 
@@ -686,53 +548,39 @@ p {
 
 .trend-panel {
     display: grid;
-
     gap: 8px;
 }
 
 .trend-card {
     padding: 12px;
-
     background: #111b2e;
-
     border: 1px solid #2a3d5b;
-
     border-radius: 11px;
 }
 
 .trend-header {
     display: flex;
-
     align-items: flex-start;
-
     justify-content: space-between;
-
     gap: 8px;
 }
 
 .trend-name {
     color: #ffffff;
-
     font-size: 15px;
-
     font-weight: bold;
 }
 
 .trend-ticker {
     margin-top: 2px;
-
     color: #8298b8;
-
     font-size: 9px;
 }
 
 .trend-value {
     margin: 7px 0;
-
     color: #ffffff;
-
     font-size: 22px;
-
     font-weight: 800;
 }
 
@@ -760,9 +608,7 @@ p {
 
     .overall {
         padding: 10px 11px;
-
         margin-bottom: 6px;
-
         border-radius: 11px;
     }
 
@@ -780,7 +626,6 @@ p {
 
     .top-menu-row {
         gap: 4px;
-
         margin-top: 7px;
     }
 
@@ -790,7 +635,6 @@ p {
 
     .top-menu-button {
         padding: 6px 8px;
-
         font-size: 8px;
     }
 
@@ -800,7 +644,6 @@ p {
 
     .risk-score-box {
         min-width: 82px;
-
         padding: 6px 8px;
     }
 
@@ -822,13 +665,11 @@ p {
 
     .card {
         padding: 8px;
-
         border-radius: 11px;
     }
 
     .card-main {
         grid-template-columns: 29% 71%;
-
         gap: 7px;
     }
 
@@ -842,25 +683,21 @@ p {
 
     .description {
         font-size: 9px;
-
         line-height: 1.4;
     }
 
     .value {
         margin-top: 8px;
-
         font-size: 24px;
     }
 
     .status {
         padding: 4px 7px;
-
         font-size: 8px;
     }
 
     .changes {
         margin-top: 7px;
-
         gap: 4px;
     }
 
@@ -878,20 +715,21 @@ p {
         font-size: 10px;
     }
 
+    /* 모바일에서도 그래프 크기 유지 */
     .chart-wrapper {
-        height: 175px;
+        height: 195px;
     }
 
     .chart-empty {
-        height: 175px;
+        height: 195px;
     }
 
     .chart-touch-date {
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .chart-touch-value {
-        font-size: 19px;
+        font-size: 21px;
     }
 
     .period-buttons {
@@ -900,9 +738,7 @@ p {
 
     .period-button {
         min-width: 43px;
-
         padding: 5px 2px;
-
         font-size: 8px;
     }
 
