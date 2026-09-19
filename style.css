@@ -48,7 +48,7 @@ p {
 
 .overall-top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 170px;
+    grid-template-columns: minmax(0, 1fr) 200px;
     align-items: start;
     gap: 10px;
 }
@@ -144,8 +144,8 @@ p {
 ========================= */
 
 .overall-right {
-    width: 170px;
-    min-width: 170px;
+    width: 200px;
+    min-width: 200px;
 
     display: flex;
     flex-direction: column;
@@ -153,8 +153,8 @@ p {
 }
 
 .risk-score-box {
-    width: 170px;
-    min-width: 170px;
+    width: 200px;
+    min-width: 200px;
 
     padding: 10px 12px;
 
@@ -484,6 +484,16 @@ p {
     touch-action: none;
 }
 
+/*
+   그래프 전체를 터치할 수 있도록 하는
+   투명한 터치 영역
+*/
+.chart-interaction-area {
+    pointer-events: all;
+    cursor: crosshair;
+    touch-action: none;
+}
+
 .chart-touch-line {
     pointer-events: none;
 }
@@ -502,7 +512,7 @@ p {
 }
 
 .chart-touch-date {
-    font-size: 16px;
+    font-size: 13px;
 
     font-weight: bold;
 
@@ -510,7 +520,7 @@ p {
 }
 
 .chart-touch-value {
-    font-size: 19px;
+    font-size: 16px;
 
     font-weight: bold;
 
@@ -790,7 +800,7 @@ p {
     .overall-top {
         grid-template-columns:
             minmax(0, 1fr)
-            170px;
+            200px;
 
         gap: 7px;
     }
@@ -826,13 +836,13 @@ p {
     /* 위험지수 */
 
     .overall-right {
-        width: 170px;
-        min-width: 170px;
+        width: 200px;
+        min-width: 200px;
     }
 
     .risk-score-box {
-        width: 170px;
-        min-width: 170px;
+        width: 200px;
+        min-width: 200px;
 
         padding: 9px 10px;
     }
@@ -933,7 +943,7 @@ p {
 
     /*
        그래프 높이는 고정하지 않는다.
-       왼쪽 정보 영역 높이에 맞춰
+       왼쪽 정보 영역에 맞춰
        JavaScript가 자동으로 맞춘다.
     */
 
@@ -950,11 +960,11 @@ p {
     /* 터치 표시 */
 
     .chart-touch-date {
-        font-size: 16px;
+        font-size: 13px;
     }
 
     .chart-touch-value {
-        font-size: 19px;
+        font-size: 16px;
     }
 
 
