@@ -34,6 +34,7 @@ p {
     margin: 10px auto 0;
 }
 
+
 /* =========================
    전체 위험도
 ========================= */
@@ -47,9 +48,9 @@ p {
 
 .overall-top {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 280px;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
 
 .overall-left {
@@ -88,6 +89,7 @@ p {
     background: #54171b;
     border-color: #b52f39;
 }
+
 
 /* =========================
    상단 메뉴
@@ -137,16 +139,23 @@ p {
     white-space: nowrap;
 }
 
+
 /* =========================
    위험지수
 ========================= */
 
 .risk-score-box {
-    min-width: 94px;
-    padding: 7px 10px;
+    width: 280px;
+    min-width: 280px;
+
+    padding: 8px 16px;
+
     background: rgba(5, 12, 24, 0.55);
+
     border: 1px solid rgba(255, 255, 255, 0.18);
+
     border-radius: 9px;
+
     text-align: center;
 }
 
@@ -194,6 +203,7 @@ p {
 .risk-score-change strong {
     color: #ffffff;
 }
+
 
 /* =========================
    대시보드
@@ -298,6 +308,7 @@ p {
     color: #e0e6ef;
 }
 
+
 /* =========================
    변화량
 ========================= */
@@ -341,6 +352,7 @@ p {
     color: #d2dbea;
 }
 
+
 /* =========================
    그래프
 ========================= */
@@ -348,7 +360,7 @@ p {
 .chart-wrapper {
     position: relative;
     width: 100%;
-    height: 205px;
+    height: 180px;
     margin-top: 0;
     padding: 1px 0;
     background: #091526;
@@ -366,7 +378,7 @@ p {
 
 .chart-empty {
     width: 100%;
-    height: 205px;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -390,8 +402,9 @@ p {
     pointer-events: none;
 }
 
+
 /* =========================
-   터치 날짜 / 값
+   터치 날짜 표시
 ========================= */
 
 .chart-touch-label-bg {
@@ -399,16 +412,17 @@ p {
 }
 
 .chart-touch-date {
-    font-size: 24px !important;
-    font-weight: bold !important;
-    letter-spacing: 0.5px !important;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.4px;
 }
 
 .chart-touch-value {
-    font-size: 28px !important;
-    font-weight: bold !important;
-    letter-spacing: 0.5px !important;
+    font-size: 19px;
+    font-weight: bold;
+    letter-spacing: 0.4px;
 }
+
 
 /* =========================
    기간 버튼
@@ -454,6 +468,7 @@ p {
     font-weight: bold;
 }
 
+
 /* =========================
    날짜 / 출처
 ========================= */
@@ -480,8 +495,9 @@ p {
     color: #ffffff;
 }
 
+
 /* =========================
-   위험도 상세
+   위험도 상세 화면
 ========================= */
 
 .risk-panel {
@@ -542,6 +558,7 @@ p {
     margin-left: 3px;
 }
 
+
 /* =========================
    추세 화면
 ========================= */
@@ -584,6 +601,7 @@ p {
     font-weight: 800;
 }
 
+
 /* =========================
    모바일
 ========================= */
@@ -612,8 +630,13 @@ p {
         border-radius: 11px;
     }
 
+    /*
+       모바일에서도 위험지수 창을
+       오른쪽에 충분히 넓게
+    */
     .overall-top {
-        gap: 7px;
+        grid-template-columns: 1fr 210px;
+        gap: 8px;
     }
 
     .overall-label {
@@ -643,8 +666,9 @@ p {
     }
 
     .risk-score-box {
-        min-width: 82px;
-        padding: 6px 8px;
+        width: 210px;
+        min-width: 210px;
+        padding: 6px 12px;
     }
 
     .risk-score-label {
@@ -715,22 +739,23 @@ p {
         font-size: 10px;
     }
 
-    /* 그래프 */
+    /*
+       그래프 창 높이는 기존 수준 유지
+    */
     .chart-wrapper {
-        height: 205px;
+        height: 180px;
     }
 
     .chart-empty {
-        height: 205px;
+        height: 180px;
     }
 
-    /* 터치 표시 */
     .chart-touch-date {
-        font-size: 24px !important;
+        font-size: 16px;
     }
 
     .chart-touch-value {
-        font-size: 28px !important;
+        font-size: 19px;
     }
 
     .period-buttons {
