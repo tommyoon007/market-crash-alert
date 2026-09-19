@@ -451,13 +451,15 @@ function createChart(
 
     const width = 700;
 
-    /* 그래프 높이 확대 */
+    /* 그래프 실제 높이 */
     const height = 195;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-    const paddingTop = 12;
-    const paddingBottom = 18;
+
+    /* 위아래 여백 최소화 */
+    const paddingTop = 4;
+    const paddingBottom = 8;
 
     const chartWidth =
         width -
@@ -489,8 +491,9 @@ function createChart(
     const range =
         max - min;
 
-    min -= range * 0.08;
-    max += range * 0.08;
+    /* 데이터 위아래 여백 축소 */
+    min -= range * 0.02;
+    max += range * 0.02;
 
     function x(index) {
 
@@ -619,12 +622,11 @@ function createChart(
                     visibility="hidden"
                 >
 
-                    <!-- 터치 박스 확대 -->
                     <rect
                         x="0"
                         y="0"
-                        width="300"
-                        height="68"
+                        width="260"
+                        height="60"
                         rx="10"
                         fill="#07101f"
                         fill-opacity="0.96"
@@ -635,13 +637,17 @@ function createChart(
                     <text
                         class="chart-touch-date"
                         id="${chartId}-date"
-                        x="150"
-                        y="25"
+                        x="130"
+                        y="23"
                         text-anchor="middle"
                         fill="#dcecff"
                         font-family="Arial, sans-serif"
-                        font-size="19"
+                        font-size="18"
                         font-weight="700"
+                        style="
+                            font-size:18px;
+                            letter-spacing:0.8px;
+                        "
                     >
                         ${formatDate(
                             last.date
@@ -651,13 +657,17 @@ function createChart(
                     <text
                         class="chart-touch-value"
                         id="${chartId}-value"
-                        x="150"
-                        y="53"
+                        x="130"
+                        y="49"
                         text-anchor="middle"
                         fill="#ffffff"
                         font-family="Arial, sans-serif"
-                        font-size="22"
+                        font-size="21"
                         font-weight="800"
+                        style="
+                            font-size:21px;
+                            letter-spacing:0.8px;
+                        "
                     >
                         ${formatValue(
                             last.value,
@@ -747,13 +757,14 @@ function setupChartTouchEvents(
 
     const width = 700;
 
-    /* createChart와 동일하게 195 */
     const height = 195;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-    const paddingTop = 12;
-    const paddingBottom = 18;
+
+    /* createChart와 동일 */
+    const paddingTop = 4;
+    const paddingBottom = 8;
 
     const chartWidth =
         width -
@@ -785,8 +796,8 @@ function setupChartTouchEvents(
     const range =
         max - min;
 
-    min -= range * 0.08;
-    max += range * 0.08;
+    min -= range * 0.02;
+    max += range * 0.02;
 
     function y(value) {
 
@@ -906,12 +917,7 @@ function setupChartTouchEvents(
             "visible"
         );
 
-        /*
-         * 터치 정보 박스
-         * 기존 260 → 300
-         */
-
-        const labelWidth = 300;
+        const labelWidth = 260;
 
         let labelX =
             pointX -
@@ -934,15 +940,10 @@ function setupChartTouchEvents(
 
         let labelY = 5;
 
-        /*
-         * 그래프 선과 겹치지 않도록
-         * 위쪽 또는 아래쪽으로 이동
-         */
-
-        if (pointY < 80) {
+        if (pointY < 75) {
             labelY =
                 height -
-                73;
+                65;
         }
 
         label.setAttribute(
@@ -976,11 +977,6 @@ function setupChartTouchEvents(
             );
         }
     );
-
-    /*
-     * 손가락을 떼어도
-     * 마지막 선택값을 유지한다.
-     */
 }
 
 
