@@ -430,10 +430,6 @@ p {
 
     width: 100%;
 
-    /*
-       6개 그래프의 세로 비율을
-       모두 동일하게 고정
-    */
     aspect-ratio: 1.55 / 1;
 
     height: auto;
@@ -520,9 +516,6 @@ p {
 
     letter-spacing: 0.2px;
 
-    /*
-       실제 글자를 가로로 늘린다.
-    */
     font-stretch: expanded;
 }
 
@@ -739,6 +732,42 @@ p {
     border-radius: 11px;
 }
 
+.trend-card-main {
+    display: grid;
+
+    grid-template-columns:
+        29%
+        71%;
+
+    gap: 9px;
+
+    align-items: stretch;
+}
+
+.trend-info {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.trend-chart {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: stretch;
+}
+
+.trend-chart .chart-wrapper {
+    width: 100%;
+
+    aspect-ratio: 1.55 / 1;
+}
+
 .trend-header {
     display: flex;
 
@@ -773,6 +802,11 @@ p {
     font-size: 22px;
 
     font-weight: 800;
+}
+
+.trend-change-label {
+    color: #7187a5;
+    font-weight: normal;
 }
 
 
@@ -950,9 +984,8 @@ p {
     }
 
 
-    /*
-       모든 그래프가 같은 비율
-    */
+    /* 그래프 */
+
     .chart-wrapper {
         aspect-ratio: 1.55 / 1;
         height: auto;
@@ -1019,7 +1052,15 @@ p {
     /* 추세 */
 
     .trend-card {
-        padding: 11px;
+        padding: 10px;
+    }
+
+    .trend-card-main {
+        grid-template-columns:
+            29%
+            71%;
+
+        gap: 7px;
     }
 
     .trend-name {
@@ -1028,5 +1069,9 @@ p {
 
     .trend-value {
         font-size: 21px;
+    }
+
+    .trend-chart .chart-wrapper {
+        aspect-ratio: 1.55 / 1;
     }
 }
