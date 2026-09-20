@@ -90,6 +90,11 @@ p {
     border-color: #b52f39;
 }
 
+.overall.extreme {
+    background: #3b0b12;
+    border-color: #d51f36;
+}
+
 
 /* =========================
    상단 메뉴
@@ -360,6 +365,11 @@ p {
 .danger {
     background: #b21d2a;
     color: #ffe7e9;
+}
+
+.extreme {
+    background: #d51f36;
+    color: #ffffff;
 }
 
 .unknown {
@@ -650,17 +660,17 @@ p {
 .panel-title {
     color: #ffffff;
 
-    font-size: 16px;
+    font-size: 19px;
 
     font-weight: bold;
 }
 
 .panel-subtitle {
-    margin-top: 4px;
+    margin-top: 5px;
 
     color: #9eb1ca;
 
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .risk-row-top {
@@ -676,19 +686,19 @@ p {
 .risk-name {
     color: #ffffff;
 
-    font-size: 15px;
+    font-size: 18px;
 
     font-weight: bold;
 }
 
 .risk-description {
-    margin-top: 4px;
+    margin-top: 5px;
 
     color: #9eb1ca;
 
-    font-size: 10px;
+    font-size: 12px;
 
-    line-height: 1.35;
+    line-height: 1.4;
 }
 
 .risk-row-bottom {
@@ -698,17 +708,17 @@ p {
 
     gap: 8px;
 
-    margin-top: 10px;
+    margin-top: 11px;
 
     color: #8fa3c0;
 
-    font-size: 9px;
+    font-size: 11px;
 }
 
 .risk-row-bottom strong {
     color: #ffffff;
 
-    margin-left: 3px;
+    margin-left: 4px;
 }
 
 
@@ -752,6 +762,10 @@ p {
     flex-direction: column;
 
     justify-content: center;
+
+    padding-right: 4px;
+
+    overflow: visible;
 }
 
 .trend-chart {
@@ -769,13 +783,19 @@ p {
 }
 
 .trend-header {
-    display: flex;
+    display: block;
 
-    align-items: flex-start;
+    min-width: 0;
+}
 
-    justify-content: space-between;
+.trend-header > div:first-child {
+    min-width: 0;
+}
 
-    gap: 8px;
+.trend-header .status {
+    display: inline-block;
+
+    margin-top: 6px;
 }
 
 .trend-name {
@@ -784,6 +804,8 @@ p {
     font-size: 15px;
 
     font-weight: bold;
+
+    white-space: nowrap;
 }
 
 .trend-ticker {
@@ -792,6 +814,8 @@ p {
     color: #8298b8;
 
     font-size: 9px;
+
+    white-space: nowrap;
 }
 
 .trend-value {
@@ -802,6 +826,8 @@ p {
     font-size: 22px;
 
     font-weight: 800;
+
+    white-space: nowrap;
 }
 
 .trend-change-label {
@@ -1029,23 +1055,23 @@ p {
     }
 
     .panel-title {
-        font-size: 15px;
+        font-size: 18px;
     }
 
     .panel-subtitle {
-        font-size: 9px;
+        font-size: 11px;
     }
 
     .risk-name {
-        font-size: 14px;
+        font-size: 17px;
     }
 
     .risk-description {
-        font-size: 9px;
+        font-size: 11px;
     }
 
     .risk-row-bottom {
-        font-size: 8px;
+        font-size: 10px;
     }
 
 
@@ -1067,11 +1093,19 @@ p {
         font-size: 14px;
     }
 
+    .trend-ticker {
+        font-size: 8px;
+    }
+
     .trend-value {
         font-size: 21px;
     }
 
     .trend-chart .chart-wrapper {
         aspect-ratio: 1.55 / 1;
+    }
+
+    .trend-header .status {
+        margin-top: 5px;
     }
 }
