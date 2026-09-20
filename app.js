@@ -450,19 +450,10 @@ function createChart(
         downsample(observations);
 
     const width = 700;
-
-    /*
-       모든 그래프가 동일한
-       세로 크기를 사용한다.
-    */
     const baseHeight = 300;
 
     const paddingLeft = 8;
     const paddingRight = 8;
-
-    /*
-       위/아래 동일한 여백
-    */
     const paddingTop = 12;
     const paddingBottom = 12;
 
@@ -563,9 +554,7 @@ function createChart(
                 data-chart-height="${baseHeight}"
             >
 
-                <g
-                    class="chart-content"
-                >
+                <g class="chart-content">
 
                     <line
                         x1="${paddingLeft}"
@@ -625,16 +614,10 @@ function createChart(
                         font-family="Arial, sans-serif"
                     >
                         ${formatDate(
-                            data[
-                                data.length - 1
-                            ].date
+                            data[data.length - 1].date
                         )}
                     </text>
 
-                    <!--
-                       그래프 전체 터치 영역
-                       실제 그래프보다 넓게 잡는다.
-                    -->
                     <rect
                         class="chart-interaction-area"
                         x="0"
@@ -643,8 +626,6 @@ function createChart(
                         height="${baseHeight}"
                         fill="transparent"
                     />
-
-                    <!-- 터치 정보창 -->
 
                     <g
                         class="chart-touch-label-bg"
@@ -967,18 +948,12 @@ function setupChartTouchEvents(
             );
 
 
-        /* 날짜 / 값 */
-
         dateText.textContent =
             dateString;
 
         valueText.textContent =
             valueString;
 
-
-        /*
-           글자 가로 비율 고정
-        */
         dateText.setAttribute(
             "textLength",
             "135"
@@ -1000,8 +975,6 @@ function setupChartTouchEvents(
         );
 
 
-        /* 세로 점선 */
-
         line.setAttribute(
             "x1",
             pointX
@@ -1019,8 +992,7 @@ function setupChartTouchEvents(
 
         line.setAttribute(
             "y2",
-            height -
-            paddingBottom
+            height - paddingBottom
         );
 
         line.setAttribute(
@@ -1028,8 +1000,6 @@ function setupChartTouchEvents(
             "visible"
         );
 
-
-        /* 터치된 포인트 */
 
         point.setAttribute(
             "cx",
@@ -1047,9 +1017,6 @@ function setupChartTouchEvents(
         );
 
 
-        /*
-           정보창은 항상 동일한 크기
-        */
         const labelWidth = 190;
         const labelHeight = 40;
 
@@ -1094,10 +1061,6 @@ function setupChartTouchEvents(
         }
 
 
-        /*
-           점이 위쪽이면 정보창을 아래쪽,
-           점이 아래쪽이면 정보창을 위쪽에 표시
-        */
         let labelY = 5;
 
         if (
@@ -1123,10 +1086,6 @@ function setupChartTouchEvents(
         );
     }
 
-
-    /* =========================
-       Pointer 이벤트
-    ========================= */
 
     svg.addEventListener(
         "pointerdown",
@@ -1179,10 +1138,6 @@ function setupChartTouchEvents(
     );
 
 
-    /* =========================
-       Android Touch 이벤트
-    ========================= */
-
     svg.addEventListener(
         "touchstart",
         event => {
@@ -1215,10 +1170,6 @@ function setupChartTouchEvents(
     );
 
 
-    /*
-       일부 모바일 브라우저에서
-       click으로만 전달되는 경우 대비
-    */
     svg.addEventListener(
         "click",
         event => {
@@ -1848,74 +1799,102 @@ function renderTrendPanel() {
                         old.value
                     );
 
+                const trendObservations =
+                    filterByPeriod(
+                        observations,
+                        "1Y"
+                    );
+
+                const chartId =
+                    `trend-chart-${indicator.id.replace(
+                        /[^a-zA-Z0-9]/g,
+                        ""
+                    )}`;
+
+                const chart =
+                    createChart(
+                        trendObservations,
+                        indicator,
+                        chartId
+                    );
+
                 return `
                     <div class="trend-card">
 
-                        <div class="trend-header">
+                        <div class="trend-card-main">
 
-                            <div>
+                            <div class="trend-info">
 
-                                <div class="trend-name">
-                                    ${indicator.name}
+                                <div class="trend-header">
+
+                                    <div>
+
+                                        <div class="trend-name">
+                                            ${indicator.name}
+                                        </div>
+
+                                        <div class="trend-ticker">
+                                            ${indicator.id}
+                                        </div>
+
+                                    </div>
+
+                                    <div
+                                        class="status ${
+                                            getStatus(
+                                                latest.value,
+                                                indicator
+                                            )
+                                        }"
+                                    >
+                                        ${statusText(
+                                            getStatus(
+                                                latest.value,
+                                                indicator
+                                            )
+                                        )}
+                                    </div>
+
                                 </div>
 
-                                <div class="trend-ticker">
-                                    ${indicator.id}
+                                <div class="trend-value">
+                                    ${formatValue(
+                                        latest.value,
+                                        indicator
+                                    )}
+                                </div>
+
+                                <div
+                                    class="${getChangeClass(
+                                        change
+                                    )}"
+                                >
+                                    ${
+                                        change > 0
+                                            ? "▲ "
+                                            : change < 0
+                                            ? "▼ "
+                                            : ""
+                                    }
+
+                                    ${formatChange(
+                                        change,
+                                        indicator
+                                    )}
+
+                                    <span
+                                        class="trend-change-label"
+                                    >
+                                        · 최근 20개 관측치
+                                    </span>
+
                                 </div>
 
                             </div>
 
-                            <div
-                                class="status ${
-                                    getStatus(
-                                        latest.value,
-                                        indicator
-                                    )
-                                }"
-                            >
-                                ${statusText(
-                                    getStatus(
-                                        latest.value,
-                                        indicator
-                                    )
-                                )}
+                            <div class="trend-chart">
+                                ${chart}
                             </div>
-
-                        </div>
-
-                        <div class="trend-value">
-                            ${formatValue(
-                                latest.value,
-                                indicator
-                            )}
-                        </div>
-
-                        <div
-                            class="${getChangeClass(
-                                change
-                            )}"
-                        >
-                            ${
-                                change > 0
-                                    ? "▲ "
-                                    : change < 0
-                                    ? "▼ "
-                                    : ""
-                            }
-
-                            ${formatChange(
-                                change,
-                                indicator
-                            )}
-
-                            <span
-                                style="
-                                    color:#7187a5;
-                                    font-weight:normal;
-                                "
-                            >
-                                · 최근 20개 관측치
-                            </span>
 
                         </div>
 
@@ -1989,6 +1968,10 @@ function setupPeriodButtons() {
 
 function setupAllChartEvents() {
 
+    /*
+       대시보드 그래프
+    */
+
     for (
         const indicator of
         INDICATORS
@@ -2023,6 +2006,48 @@ function setupAllChartEvents() {
             data,
             indicator
         );
+    }
+
+
+    /*
+       추세 화면 그래프
+       항상 1년 데이터
+    */
+
+    if (
+        currentPage === "trend"
+    ) {
+
+        for (
+            const indicator of
+            INDICATORS
+        ) {
+
+            const observations =
+                filterByPeriod(
+                    getObservations(
+                        indicator.id
+                    ),
+                    "1Y"
+                );
+
+            const data =
+                downsample(
+                    observations
+                );
+
+            const chartId =
+                `trend-chart-${indicator.id.replace(
+                    /[^a-zA-Z0-9]/g,
+                    ""
+                )}`;
+
+            setupChartTouchEvents(
+                chartId,
+                data,
+                indicator
+            );
+        }
     }
 }
 
