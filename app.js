@@ -189,6 +189,7 @@ function statusText(status) {
         caution: "CAUTION",
         warning: "WARNING",
         danger: "HIGH RISK",
+        extreme: "EXTREME RISK",
         unknown: "N/A"
     };
 
@@ -238,7 +239,21 @@ function calculateRisk() {
 }
 
 
+/*
+   전체 위험도 5단계
+
+   0~1   NORMAL
+   2~3   CAUTION
+   4~6   WARNING
+   7~9   HIGH RISK
+   10~16 EXTREME RISK
+*/
+
 function overallStatus(score) {
+
+    if (score >= 10) {
+        return "extreme";
+    }
 
     if (score >= 7) {
         return "danger";
