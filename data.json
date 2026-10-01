@@ -1,10 +1,14 @@
 {
-  "updated_at": "2026-10-01T13:01:59.163258+00:00",
+  "updated_at": "2026-10-01T18:49:29.183743+00:00",
   "status": "ok",
   "data": {
     "BAMLH0A0HYM2": {
       "name": "HY OAS",
       "observations": [
+        {
+          "date": "2026-09-30",
+          "value": 3.12
+        },
         {
           "date": "2026-09-29",
           "value": 3.08
@@ -3151,6 +3155,10 @@
       "name": "CCC OAS",
       "observations": [
         {
+          "date": "2026-09-30",
+          "value": 11.79
+        },
+        {
           "date": "2026-09-29",
           "value": 11.57
         },
@@ -6295,6 +6303,10 @@
     "VIXCLS": {
       "name": "VIX",
       "observations": [
+        {
+          "date": "2026-09-30",
+          "value": 16.34
+        },
         {
           "date": "2026-09-29",
           "value": 16.04
