@@ -5,34 +5,58 @@ const INDICATORS = [
         description: "미국 하이일드 회사채 신용스프레드",
         unit: "%",
         decimals: 2,
-        levels: [
-            { value: 6, status: "danger" },
-            { value: 5, status: "warning" },
-            { value: 4, status: "caution" }
+        group: "credit",
+        weight: 17.5,
+        frequency: "일간",
+        staleAfterDays: 7,
+        sourceMeaning: "투자부적격 등급 회사채의 국채 대비 추가 금리입니다. 값이 오르면 시장이 기업 부도 위험에 더 높은 보상을 요구한다는 뜻입니다.",
+        bands: [
+            { min: 8, score: 5, status: "extreme", label: "극단 위험", range: "8.00% 이상", meaning: "신용시장이 심각한 스트레스를 반영하는 구간입니다." },
+            { min: 6, score: 4, status: "danger", label: "고위험", range: "6.00% 이상 ~ 8.00% 미만", meaning: "기업 신용위험과 자금조달 부담이 크게 높아진 상태입니다." },
+            { min: 5, score: 3, status: "warning", label: "경계", range: "5.00% 이상 ~ 6.00% 미만", meaning: "신용 여건이 뚜렷하게 악화되는지 주의 깊게 볼 구간입니다." },
+            { min: 4, score: 2, status: "caution", label: "주의", range: "4.00% 이상 ~ 5.00% 미만", meaning: "평상시보다 신용위험 프리미엄이 높아진 구간입니다." },
+            { min: 3, score: 1, status: "safe", label: "보통", range: "3.00% 이상 ~ 4.00% 미만", meaning: "상대적으로 보통 수준이지만 추세 악화 여부를 확인해야 합니다." },
+            { min: null, score: 0, status: "verylow", label: "낮음", range: "3.00% 미만", meaning: "스프레드 수준만 보면 신용 스트레스가 낮은 구간입니다." }
         ]
     },
     {
         name: "CCC OAS",
         id: "BAMLH0A3HYC",
-        description: "CCC급 회사채 신용스프레드",
+        description: "CCC급 이하 회사채 신용스프레드",
         unit: "%",
         decimals: 2,
-        levels: [
-            { value: 10, status: "danger" },
-            { value: 8, status: "warning" },
-            { value: 6, status: "caution" }
+        group: "credit",
+        weight: 17.5,
+        frequency: "일간",
+        staleAfterDays: 7,
+        sourceMeaning: "신용등급이 가장 낮은 CCC급 이하 회사채의 추가 금리입니다. HY OAS보다 취약기업의 자금조달 스트레스에 민감할 수 있습니다.",
+        bands: [
+            { min: 12, score: 5, status: "extreme", label: "극단 위험", range: "12.00% 이상", meaning: "취약기업의 신용시장 접근성이 크게 악화되었을 가능성이 있습니다." },
+            { min: 10, score: 4, status: "danger", label: "고위험", range: "10.00% 이상 ~ 12.00% 미만", meaning: "CCC급 기업의 부도·차환 위험이 상당히 높아진 구간입니다." },
+            { min: 8, score: 3, status: "warning", label: "경계", range: "8.00% 이상 ~ 10.00% 미만", meaning: "저신용 기업의 신용 스트레스가 뚜렷해지는 구간입니다." },
+            { min: 6, score: 2, status: "caution", label: "주의", range: "6.00% 이상 ~ 8.00% 미만", meaning: "취약기업 신용 여건의 악화 여부를 확인해야 합니다." },
+            { min: 5, score: 1, status: "safe", label: "보통", range: "5.00% 이상 ~ 6.00% 미만", meaning: "상대적으로 보통 수준이나 HY OAS와 함께 해석해야 합니다." },
+            { min: null, score: 0, status: "verylow", label: "낮음", range: "5.00% 미만", meaning: "현재 스프레드 수준만 보면 취약기업 신용 스트레스가 낮은 편입니다." }
         ]
     },
     {
         name: "VIX",
         id: "VIXCLS",
-        description: "미국 증시 변동성 지수",
+        description: "S&P 500 옵션 기반 기대 변동성 지수",
         unit: "",
         decimals: 2,
-        levels: [
-            { value: 40, status: "danger" },
-            { value: 30, status: "warning" },
-            { value: 20, status: "caution" }
+        group: "market",
+        weight: 20,
+        frequency: "일간",
+        staleAfterDays: 7,
+        sourceMeaning: "S&P 500 옵션 가격에서 산출한 약 30일 기대 변동성 지표입니다. 주가 방향을 예측하는 지표는 아니며 급등은 시장 불안의 신호일 수 있습니다.",
+        bands: [
+            { min: 40, score: 5, status: "extreme", label: "극단 위험", range: "40 이상", meaning: "시장 공포와 헤지 수요가 매우 높은 구간입니다." },
+            { min: 30, score: 4, status: "danger", label: "고위험", range: "30 이상 ~ 40 미만", meaning: "변동성이 크게 확대되어 급격한 가격 변동에 대비해야 합니다." },
+            { min: 25, score: 3, status: "warning", label: "경계", range: "25 이상 ~ 30 미만", meaning: "시장 스트레스가 뚜렷하게 높아진 구간입니다." },
+            { min: 20, score: 2, status: "caution", label: "주의", range: "20 이상 ~ 25 미만", meaning: "평상시보다 불안이 높아졌는지 다른 지표와 확인해야 합니다." },
+            { min: 15, score: 1, status: "safe", label: "보통", range: "15 이상 ~ 20 미만", meaning: "일반적인 변동성 범위로 볼 수 있지만 낮은 VIX가 위험 부재를 보장하지는 않습니다." },
+            { min: null, score: 0, status: "verylow", label: "낮음", range: "15 미만", meaning: "옵션시장의 기대 변동성이 낮은 구간입니다. 과도한 안도감도 별도 위험이 될 수 있습니다." }
         ]
     },
     {
@@ -41,30 +65,59 @@ const INDICATORS = [
         description: "미국 금융여건 지수",
         unit: "",
         decimals: 2,
-        levels: [
-            { value: 1, status: "danger" },
-            { value: 0.5, status: "warning" },
-            { value: 0, status: "caution" }
+        group: "financial",
+        weight: 20,
+        frequency: "주간",
+        staleAfterDays: 18,
+        sourceMeaning: "금리·신용·주식시장 등 여러 금융 변수를 종합한 지수입니다. 0은 장기 평균 수준, 양수는 평균보다 긴축적인 금융여건, 음수는 평균보다 완화적인 여건을 뜻합니다.",
+        bands: [
+            { min: 1, score: 5, status: "extreme", label: "극단 위험", range: "1.00 이상", meaning: "금융여건이 장기 평균보다 매우 긴축적인 구간입니다." },
+            { min: 0.5, score: 4, status: "danger", label: "고위험", range: "0.50 이상 ~ 1.00 미만", meaning: "자금조달과 금융시장 여건이 상당히 긴축적인 구간입니다." },
+            { min: 0.25, score: 3, status: "warning", label: "경계", range: "0.25 이상 ~ 0.50 미만", meaning: "금융여건 긴축이 뚜렷해지는지 확인해야 합니다." },
+            { min: 0, score: 2, status: "caution", label: "주의", range: "0.00 이상 ~ 0.25 미만", meaning: "금융여건이 평균보다 덜 완화적이거나 긴축 쪽에 위치합니다." },
+            { min: -0.5, score: 1, status: "safe", label: "완화적", range: "-0.50 이상 ~ 0.00 미만", meaning: "금융여건이 장기 평균보다 완화적인 구간입니다." },
+            { min: null, score: 0, status: "verylow", label: "매우 완화적", range: "-0.50 미만", meaning: "금융여건이 평균보다 상당히 완화적입니다. 다른 위험이 없다는 의미는 아닙니다." }
         ]
     },
     {
         name: "10Y - 2Y",
         id: "T10Y2Y",
-        description: "미국 10년물 - 2년물 금리차",
+        description: "미국 10년물 - 2년물 국채금리 차이",
         unit: "%",
         decimals: 2,
-        levels: [
-            { value: -1, status: "caution", inverse: true }
+        group: "recession",
+        weight: 12.5,
+        frequency: "일간",
+        staleAfterDays: 7,
+        inverse: true,
+        sourceMeaning: "장기 국채금리에서 단기 국채금리를 뺀 값입니다. 역전은 경기침체 위험의 역사적 신호였지만, 단독으로 시점이나 침체를 확정할 수 없습니다. 역전 해소 과정도 함께 관찰해야 합니다.",
+        bands: [
+            { max: -1, score: 5, status: "extreme", label: "깊은 역전", range: "-1.00% 이하", meaning: "금리차가 크게 역전된 상태입니다. 침체 시점은 이 지표만으로 판단할 수 없습니다." },
+            { max: -0.5, score: 4, status: "danger", label: "강한 역전", range: "-1.00% 초과 ~ -0.50% 이하", meaning: "수익률곡선 역전이 뚜렷한 구간입니다." },
+            { max: 0, score: 3, status: "warning", label: "역전", range: "-0.50% 초과 ~ 0.00% 미만", meaning: "단기금리가 장기금리보다 높은 역전 구간입니다." },
+            { max: 0.25, score: 2, status: "caution", label: "역전 해소·평탄", range: "0.00% 이상 ~ 0.25% 미만", meaning: "금리차가 양수로 돌아섰거나 0 부근입니다. 역전 해소가 항상 경기 개선을 뜻하지는 않습니다." },
+            { max: 0.75, score: 1, status: "safe", label: "완만한 정상화", range: "0.25% 이상 ~ 0.75% 미만", meaning: "장단기 금리차가 양수인 구간입니다. 변화 속도와 경기 데이터를 함께 봐야 합니다." },
+            { max: null, score: 0, status: "verylow", label: "양의 금리차", range: "0.75% 이상", meaning: "금리차가 비교적 큰 양수입니다. 이것만으로 경기 위험이 없다고 단정할 수 없습니다." }
         ]
     },
     {
         name: "Sahm Rule",
         id: "SAHMREALTIME",
         description: "실업률 상승 기반 경기침체 지표",
-        unit: "%",
+        unit: "%p",
         decimals: 2,
-        levels: [
-            { value: 0.5, status: "danger" }
+        group: "recession",
+        weight: 12.5,
+        frequency: "월간",
+        staleAfterDays: 50,
+        sourceMeaning: "실업률 3개월 평균이 직전 12개월 최저치보다 얼마나 높아졌는지 측정합니다. 0.50%포인트 이상은 공식 Sahm Rule 경기침체 신호 기준입니다.",
+        bands: [
+            { min: 0.5, score: 5, status: "extreme", label: "공식 신호 기준 도달", range: "0.50%p 이상", meaning: "Sahm Rule의 대표적인 경기침체 신호 기준에 도달했습니다. 공식 NBER 판정과 동일한 것은 아닙니다." },
+            { min: 0.4, score: 4, status: "danger", label: "매우 근접", range: "0.40%p 이상 ~ 0.50%p 미만", meaning: "대표 기준에 근접했으므로 고용지표의 후속 발표를 면밀히 확인해야 합니다." },
+            { min: 0.3, score: 3, status: "warning", label: "상승 경계", range: "0.30%p 이상 ~ 0.40%p 미만", meaning: "실업률 상승 신호가 뚜렷해지는 구간입니다." },
+            { min: 0.2, score: 2, status: "caution", label: "주의", range: "0.20%p 이상 ~ 0.30%p 미만", meaning: "고용시장 둔화 여부를 다른 노동시장 지표와 함께 확인할 구간입니다." },
+            { min: 0.1, score: 1, status: "safe", label: "초기 상승", range: "0.10%p 이상 ~ 0.20%p 미만", meaning: "상승 초기 신호일 수 있으나 단독 해석은 피해야 합니다." },
+            { min: null, score: 0, status: "verylow", label: "낮음", range: "0.10%p 미만", meaning: "현재 값은 대표적인 0.50%p 기준보다 낮습니다. 음수 값도 가능하며 그 자체로 오류는 아닙니다." }
         ]
     }
 ];
@@ -152,122 +205,178 @@ function getLatestObservation(id) {
    위험도
 ========================= */
 
+function getRiskBand(value, indicator) {
+    if (value === null || value === undefined || !Number.isFinite(Number(value))) {
+        return null;
+    }
+
+    const numericValue = Number(value);
+
+    if (indicator.inverse) {
+        return indicator.bands.find(band =>
+            band.max === null || numericValue <= band.max
+        ) || indicator.bands[indicator.bands.length - 1];
+    }
+
+    return indicator.bands.find(band =>
+        band.min === null || numericValue >= band.min
+    ) || indicator.bands[indicator.bands.length - 1];
+}
+
+
 function getStatus(value, indicator) {
-
-    if (
-        value === null ||
-        value === undefined ||
-        Number.isNaN(value)
-    ) {
-        return "unknown";
-    }
-
-    for (const level of indicator.levels) {
-
-        if (level.inverse) {
-
-            if (value <= level.value) {
-                return level.status;
-            }
-
-        } else {
-
-            if (value >= level.value) {
-                return level.status;
-            }
-        }
-    }
-
-    return "safe";
+    const band = getRiskBand(value, indicator);
+    return band ? band.status : "unknown";
 }
 
 
 function statusText(status) {
-
     const map = {
-        safe: "NORMAL",
-        caution: "CAUTION",
-        warning: "WARNING",
-        danger: "HIGH RISK",
-        extreme: "EXTREME RISK",
-        unknown: "N/A"
+        verylow: "매우 낮음",
+        safe: "낮음·보통",
+        caution: "주의",
+        warning: "경계",
+        danger: "고위험",
+        extreme: "극단 위험",
+        unknown: "데이터 없음"
     };
-
-    return map[status] || "N/A";
+    return map[status] || "데이터 없음";
 }
 
 
-function statusScore(status) {
+function getIndicatorRiskScore(indicator, value) {
+    const band = getRiskBand(value, indicator);
+    if (!band) return null;
 
-    const map = {
-        safe: 0,
-        caution: 1,
-        warning: 2,
-        danger: 3,
-        unknown: 0
-    };
+    let score = band.score;
 
-    return map[status] || 0;
-}
-
-
-function calculateRisk() {
-
-    let score = 0;
-
-    for (const indicator of INDICATORS) {
-
-        const latest =
-            getLatestObservation(
-                indicator.id
-            );
-
-        if (!latest) {
-            continue;
+    // 금리차는 수준만으로 경기침체 시점을 판단할 수 없다.
+    // 역전 상태에서 최근 20개 관측치 동안 빠르게 양(+) 방향으로 움직이면
+    // 역전 해소 가속 신호를 별도로 반영하되, 지표 점수는 최대 5점으로 제한한다.
+    if (indicator.id === "T10Y2Y") {
+        const observations = getObservations(indicator.id);
+        if (observations.length > 20) {
+            const latest = Number(observations[0].value);
+            const previous = Number(observations[20].value);
+            if (Number.isFinite(latest) && Number.isFinite(previous) &&
+                previous < 0 && latest - previous >= 0.50) {
+                score = Math.min(5, score + 1);
+            }
         }
-
-        const status =
-            getStatus(
-                latest.value,
-                indicator
-            );
-
-        score += statusScore(status);
     }
 
     return score;
 }
 
 
-/*
-   전체 위험도 5단계
+function calculateRiskDetails() {
+    const available = INDICATORS.map(indicator => {
+        const latest = getLatestObservation(indicator.id);
+        if (!latest || !Number.isFinite(Number(latest.value))) return null;
 
-   0~1   NORMAL
-   2~3   CAUTION
-   4~6   WARNING
-   7~9   HIGH RISK
-   10~16 EXTREME RISK
-*/
+        const score = getIndicatorRiskScore(indicator, latest.value);
+        if (score === null) return null;
+
+        return {
+            indicator,
+            latest,
+            score,
+            weightedPoints: (score / 5) * indicator.weight
+        };
+    }).filter(Boolean);
+
+    if (!available.length) {
+        return { score: null, availableCount: 0, groups: {}, details: [] };
+    }
+
+    const availableWeight = available.reduce((sum, item) => sum + item.indicator.weight, 0);
+    const total = available.reduce((sum, item) => sum + item.weightedPoints, 0);
+    const normalizedScore = availableWeight > 0 ? (total / availableWeight) * 100 : 0;
+
+    const groupConfig = {
+        credit: { label: "신용 위험", weight: 35 },
+        market: { label: "시장 스트레스", weight: 20 },
+        financial: { label: "금융여건", weight: 20 },
+        recession: { label: "경기침체 신호", weight: 25 }
+    };
+
+    const groups = {};
+    for (const [key, config] of Object.entries(groupConfig)) {
+        const items = available.filter(item => item.indicator.group === key);
+        if (!items.length) {
+            groups[key] = { ...config, score: null, availableCount: 0 };
+            continue;
+        }
+        const groupWeight = items.reduce((sum, item) => sum + item.indicator.weight, 0);
+        const groupRaw = items.reduce((sum, item) => sum + item.weightedPoints, 0);
+        groups[key] = {
+            ...config,
+            score: Math.round((groupRaw / groupWeight) * 100),
+            availableCount: items.length
+        };
+    }
+
+    return {
+        score: Math.round(Math.max(0, Math.min(100, normalizedScore))),
+        availableCount: available.length,
+        groups,
+        details: available
+    };
+}
+
+
+function calculateRisk() {
+    return calculateRiskDetails().score;
+}
+
 
 function overallStatus(score) {
+    if (score === null || score === undefined) return "unknown";
+    if (score >= 75) return "extreme";
+    if (score >= 60) return "danger";
+    if (score >= 45) return "warning";
+    if (score >= 30) return "caution";
+    if (score >= 15) return "safe";
+    return "verylow";
+}
 
-    if (score >= 10) {
-        return "extreme";
+
+function overallStatusText(status) {
+    const map = {
+        verylow: "매우 낮음",
+        safe: "낮음",
+        caution: "주의",
+        warning: "경계",
+        danger: "고위험",
+        extreme: "극단 위험",
+        unknown: "판단 보류"
+    };
+    return map[status] || "판단 보류";
+}
+
+
+function getObservationAgeDays(dateString) {
+    if (!dateString) return null;
+    const observed = new Date(`${dateString}T00:00:00Z`);
+    if (Number.isNaN(observed.getTime())) return null;
+    const now = new Date();
+    const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    return Math.max(0, Math.floor((todayUtc - observed.getTime()) / 86400000));
+}
+
+
+function getFreshness(indicator, dateString) {
+    const age = getObservationAgeDays(dateString);
+    if (age === null) return { age: null, status: "unknown", label: "날짜 확인 불가" };
+    if (age > indicator.staleAfterDays) {
+        return { age, status: "stale", label: `관측 후 ${age}일 · 지연 확인` };
     }
+    return { age, status: "fresh", label: `관측 후 ${age}일` };
+}
 
-    if (score >= 7) {
-        return "danger";
-    }
 
-    if (score >= 4) {
-        return "warning";
-    }
-
-    if (score >= 2) {
-        return "caution";
-    }
-
-    return "safe";
+function formatGroupScore(score) {
+    return score === null || score === undefined ? "—" : `${score}`;
 }
 
 
@@ -1312,51 +1421,55 @@ function setupTopMenu() {
 ========================= */
 
 function createRiskScoreHTML() {
-
-    const score =
-        calculateRisk();
-
-    const maxScore = 16;
-
-    const percentage =
-        Math.min(
-            100,
-            Math.round(
-                score /
-                maxScore *
-                100
-            )
-        );
+    const details = calculateRiskDetails();
+    const score = details.score;
+    const percentage = score === null ? 0 : score;
+    const status = overallStatus(score);
 
     return `
         <div class="overall-right">
-
             <div class="risk-score-box">
-
-                <div class="risk-score-label">
-                    위험지수
-                </div>
-
+                <div class="risk-score-label">위험지수</div>
                 <div class="risk-score-number">
-                    ${score}
-                    <span>/ ${maxScore}</span>
+                    ${score === null ? "—" : score}
+                    <span>/ 100</span>
                 </div>
-
                 <div class="risk-score-bar">
-
-                    <div
-                        class="risk-score-fill"
-                        style="width:${percentage}%"
-                    ></div>
-
+                    <div class="risk-score-fill ${status}" style="width:${percentage}%"></div>
                 </div>
-
+                <div class="risk-score-foot">
+                    ${details.availableCount}/6개 지표 사용
+                </div>
             </div>
+            <div class="top-update">데이터 갱신 ${formatUpdateTime()}</div>
+        </div>
+    `;
+}
 
-            <div class="top-update">
-                업데이트 ${formatUpdateTime()}
-            </div>
 
+function createGroupSummaryHTML() {
+    const details = calculateRiskDetails();
+    if (!details.groups || !Object.keys(details.groups).length) return "";
+
+    const ordered = [
+        ["credit", "신용"],
+        ["market", "시장"],
+        ["financial", "금융여건"],
+        ["recession", "경기침체"]
+    ];
+
+    return `
+        <div class="group-summary">
+            ${ordered.map(([key, label]) => {
+                const group = details.groups[key];
+                const status = overallStatus(group.score);
+                return `
+                    <div class="group-score ${status}">
+                        <span>${label}</span>
+                        <strong>${formatGroupScore(group.score)}<small>/100</small></strong>
+                    </div>
+                `;
+            }).join("")}
         </div>
     `;
 }
@@ -1367,40 +1480,20 @@ function createRiskScoreHTML() {
 ========================= */
 
 function createOverallHTML() {
-
-    const score =
-        calculateRisk();
-
-    const status =
-        overallStatus(score);
+    const score = calculateRisk();
+    const status = overallStatus(score);
 
     return `
-        <section
-            class="overall ${status}"
-        >
-
+        <section class="overall ${status}">
             <div class="overall-top">
-
                 <div class="overall-left">
-
-                    <div class="overall-label">
-                        미국 증시 폭락 위험
-                    </div>
-
-                    <div class="overall-value">
-                        ${statusText(
-                            status
-                        )}
-                    </div>
-
+                    <div class="overall-label">미국 증시 폭락 위험</div>
+                    <div class="overall-value">${overallStatusText(status)}</div>
                     ${createTopMenu()}
-
                 </div>
-
                 ${createRiskScoreHTML()}
-
             </div>
-
+            ${createGroupSummaryHTML()}
         </section>
     `;
 }
@@ -1673,104 +1766,142 @@ function renderDashboard() {
 ========================= */
 
 function renderRiskPanel() {
+    const details = calculateRiskDetails();
 
-    const rows =
-        INDICATORS.map(
-            indicator => {
+    const rows = INDICATORS.map(indicator => {
+        const latest = getLatestObservation(indicator.id);
+        if (!latest) {
+            return `
+                <article class="risk-row">
+                    <div class="risk-name">${indicator.name}</div>
+                    <div class="risk-description">데이터를 사용할 수 없습니다.</div>
+                </article>
+            `;
+        }
 
-                const latest =
-                    getLatestObservation(
-                        indicator.id
-                    );
+        const band = getRiskBand(latest.value, indicator);
+        const score = getIndicatorRiskScore(indicator, latest.value);
+        const freshness = getFreshness(indicator, latest.date);
+        const change5 = getChange(indicator.id, 5);
+        const change20 = getChange(indicator.id, 20);
+        const detailId = `range-${indicator.id.replace(/[^a-zA-Z0-9]/g, "")}`;
 
-                if (!latest) {
-                    return "";
-                }
-
-                const status =
-                    getStatus(
-                        latest.value,
-                        indicator
-                    );
-
-                return `
-                    <div class="risk-row">
-
-                        <div class="risk-row-top">
-
-                            <div>
-
-                                <div class="risk-name">
-                                    ${indicator.name}
-                                </div>
-
-                                <div class="risk-description">
-                                    ${indicator.description}
-                                </div>
-
-                            </div>
-
-                            <div
-                                class="status ${status}"
-                            >
-                                ${statusText(
-                                    status
-                                )}
-                            </div>
-
-                        </div>
-
-                        <div class="risk-row-bottom">
-
-                            <div>
-                                현재값
-                                <strong>
-                                    ${formatValue(
-                                        latest.value,
-                                        indicator
-                                    )}
-                                </strong>
-                            </div>
-
-                            <div>
-                                최근일
-                                <strong>
-                                    ${formatDate(
-                                        latest.date
-                                    )}
-                                </strong>
-                            </div>
-
-                        </div>
-
+        const rangeRows = indicator.bands.map(item => {
+            const current = band === item;
+            return `
+                <div class="band-row ${current ? "current" : ""}">
+                    <div class="band-row-main">
+                        <span class="band-label">${item.label}</span>
+                        <span class="band-range">${item.range}</span>
                     </div>
-                `;
-            }
-        ).join("");
+                    <p>${item.meaning}</p>
+                    ${current ? `<div class="band-current">현재 위치 · ${formatValue(latest.value, indicator)}</div>` : ""}
+                </div>
+            `;
+        }).join("");
+
+        const trendLabel = indicator.id === "T10Y2Y"
+            ? (change20 !== null && change20 >= 0.50 ? "역전 해소 가속 주의" : "수준과 변화 속도를 함께 확인")
+            : (change20 !== null && change20 > 0 ? "최근 20개 관측치 상승" :
+               change20 !== null && change20 < 0 ? "최근 20개 관측치 하락" : "변화 판단 자료 제한");
+
+        return `
+            <article class="risk-row">
+                <div class="risk-row-top">
+                    <div class="risk-heading">
+                        <div class="risk-name">${indicator.name}</div>
+                        <div class="risk-description">${indicator.description}</div>
+                        <div class="risk-ticker">FRED · ${indicator.id} · ${indicator.frequency}</div>
+                    </div>
+                    <div class="risk-status-stack">
+                        <div class="status ${band ? band.status : "unknown"}">${band ? band.label : "데이터 없음"}</div>
+                        <div class="indicator-score">${score === null ? "—" : `${score}/5`}</div>
+                    </div>
+                </div>
+
+                <div class="risk-current-line">
+                    <div class="risk-current-value">${formatValue(latest.value, indicator)}</div>
+                    <div class="risk-current-date">관측일 ${formatDate(latest.date)}</div>
+                </div>
+
+                <div class="risk-metrics">
+                    <div class="risk-metric">
+                        <span>최근 5개 관측치 변화</span>
+                        <strong>${formatChange(change5, indicator)}</strong>
+                    </div>
+                    <div class="risk-metric">
+                        <span>최근 20개 관측치 변화</span>
+                        <strong>${formatChange(change20, indicator)}</strong>
+                    </div>
+                </div>
+                <div class="risk-trend-note">${trendLabel}</div>
+
+                <div class="freshness ${freshness.status}">
+                    데이터 상태: ${freshness.label} · ${indicator.frequency} 지표
+                </div>
+
+                <button
+                    class="range-toggle"
+                    type="button"
+                    data-target="${detailId}"
+                    aria-expanded="false"
+                >구간 설명 보기 <span aria-hidden="true">＋</span></button>
+
+                <div class="range-panel" id="${detailId}" hidden>
+                    <div class="range-intro">${indicator.sourceMeaning}</div>
+                    <div class="range-current-summary">
+                        현재 점수 <strong>${score === null ? "—" : `${score}/5`}</strong>
+                        · 현재 구간 <strong>${band ? band.label : "판단 불가"}</strong>
+                    </div>
+                    <div class="band-list">${rangeRows}</div>
+                    <div class="range-caveat">
+                        구간은 조기경보용 휴리스틱 기준이며 공식 경기침체 판정이나 매매 신호가 아닙니다.
+                        지표의 발표 주기와 수정 가능성을 고려해 다른 지표와 함께 해석하세요.
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join("");
 
     return `
         <div class="risk-panel">
-
-            <div class="risk-row">
-
-                <div class="panel-title">
-                    위험도 상세
-                </div>
-
+            <div class="risk-panel-intro">
+                <div class="panel-title">위험도 상세 분석</div>
                 <div class="panel-subtitle">
-                    6개 지표의 현재 위험상태를 보여줍니다.
+                    전체 위험지수는 0~100점입니다. 지표별 점수는 0~5점이며,
+                    서로 다른 발표 주기를 고려해 최신 관측일을 함께 표시합니다.
                 </div>
-
+                <div class="risk-method-note">
+                    전체 가중치: 신용 35% · 시장 스트레스 20% · 금융여건 20% · 경기침체 신호 25%.
+                    과거 데이터로 정식 백테스트한 예측모형이 아닌 휴리스틱 조기경보 점수입니다.
+                </div>
             </div>
-
             ${rows}
-
             <div class="source">
-                위험점수는 이 앱의 휴리스틱 기준이며 공식 경기침체 판정이 아닙니다.
+                Source: Federal Reserve Bank of St. Louis · FRED.
+                공식 경기침체 판정이 아닌 위험 모니터링 도구입니다.
             </div>
-
         </div>
     `;
+}
+
+
+function setupRiskRangeButtons() {
+    document.querySelectorAll(".range-toggle").forEach(button => {
+        button.addEventListener("click", () => {
+            const targetId = button.dataset.target;
+            const panel = document.getElementById(targetId);
+            if (!panel) return;
+
+            const isOpen = button.getAttribute("aria-expanded") === "true";
+            button.setAttribute("aria-expanded", String(!isOpen));
+            panel.hidden = isOpen;
+
+            const symbol = button.querySelector("span");
+            button.firstChild.textContent = isOpen ? "구간 설명 보기 " : "구간 설명 접기 ";
+            if (symbol) symbol.textContent = isOpen ? "＋" : "－";
+        });
+    });
 }
 
 
@@ -2119,6 +2250,7 @@ function render() {
     setupTopMenu();
     setupPeriodButtons();
     setupAllChartEvents();
+    setupRiskRangeButtons();
 }
 
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "market-crash-alert-v3";
+const CACHE_NAME = "market-crash-alert-v4";
 
 const FILES_TO_CACHE = [
     "./",

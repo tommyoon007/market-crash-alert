@@ -1109,3 +1109,362 @@ p {
         margin-top: 5px;
     }
 }
+
+
+/* =========================
+   정밀 위험도 업데이트 v5
+========================= */
+
+.overall.verylow {
+    background: #103247;
+    border-color: #24708a;
+}
+
+.overall.unknown {
+    background: #263244;
+    border-color: #64748b;
+}
+
+.risk-score-fill.verylow { background: #43c6a0; }
+.risk-score-fill.safe { background: #77cba5; }
+.risk-score-fill.caution { background: #e8c04f; }
+.risk-score-fill.warning { background: #f39a45; }
+.risk-score-fill.danger { background: #f05b62; }
+.risk-score-fill.extreme { background: #ff263e; }
+.risk-score-fill.unknown { background: #718096; }
+
+.verylow.status {
+    background: #146c62;
+    color: #e0fff7;
+}
+
+.risk-score-foot {
+    margin-top: 6px;
+    color: #aabbd0;
+    font-size: 10px;
+}
+
+.group-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.group-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 8px;
+    background: rgba(5, 12, 24, .35);
+}
+
+.group-score span {
+    color: #d2dceb;
+    font-size: 11px;
+}
+
+.group-score strong {
+    color: #fff;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.group-score small {
+    margin-left: 2px;
+    color: #9eafc4;
+    font-size: 9px;
+}
+
+.group-score.verylow { border-color: #24708a; }
+.group-score.safe { border-color: #287a5b; }
+.group-score.caution { border-color: #9b7b25; }
+.group-score.warning { border-color: #a75a2d; }
+.group-score.danger { border-color: #a93440; }
+.group-score.extreme { border-color: #d51f36; }
+.group-score.unknown { border-color: #64748b; }
+
+.risk-panel-intro {
+    padding: 13px;
+    background: #111b2e;
+    border: 1px solid #2a3d5b;
+    border-radius: 11px;
+}
+
+.risk-method-note {
+    margin-top: 9px;
+    padding-top: 8px;
+    border-top: 1px solid #2a3d5b;
+    color: #c4d1e2;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.risk-heading {
+    min-width: 0;
+}
+
+.risk-ticker {
+    margin-top: 5px;
+    color: #7187a5;
+    font-size: 10px;
+}
+
+.risk-status-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.indicator-score {
+    color: #cbd7e8;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.risk-current-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.risk-current-value {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -.4px;
+}
+
+.risk-current-date {
+    color: #8fa3c0;
+    font-size: 10px;
+    text-align: right;
+}
+
+.risk-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    margin-top: 9px;
+}
+
+.risk-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    border-radius: 7px;
+    background: #0b1526;
+}
+
+.risk-metric span {
+    color: #8fa3c0;
+    font-size: 10px;
+}
+
+.risk-metric strong {
+    color: #fff;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.risk-trend-note {
+    margin-top: 7px;
+    color: #d4deed;
+    font-size: 10px;
+}
+
+.freshness {
+    margin-top: 8px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.freshness.fresh { color: #7bd6ad; }
+.freshness.stale { color: #ffb86b; }
+.freshness.unknown { color: #a9bad3; }
+
+.range-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 11px;
+    border: 1px solid #405779;
+    border-radius: 8px;
+    background: #182943;
+    color: #eaf2ff;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+}
+
+.range-toggle:hover,
+.range-toggle:focus-visible {
+    background: #203653;
+    outline: 2px solid #7397c9;
+    outline-offset: 1px;
+}
+
+.range-panel {
+    margin-top: 10px;
+    padding: 11px;
+    border: 1px solid #334968;
+    border-radius: 9px;
+    background: #0b1526;
+}
+
+.range-intro {
+    color: #d4deed;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.range-current-summary {
+    margin-top: 9px;
+    padding: 9px;
+    border-radius: 7px;
+    background: #172943;
+    color: #aebed3;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.range-current-summary strong {
+    color: #fff;
+}
+
+.band-list {
+    display: grid;
+    gap: 6px;
+    margin-top: 9px;
+}
+
+.band-row {
+    padding: 8px 9px;
+    border: 1px solid #2a3d5b;
+    border-radius: 7px;
+    background: #111b2e;
+}
+
+.band-row.current {
+    border-color: #f0c14b;
+    box-shadow: inset 3px 0 0 #f0c14b;
+    background: #242b31;
+}
+
+.band-row-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.band-label {
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.band-range {
+    color: #b7c6d9;
+    font-size: 10px;
+    text-align: right;
+}
+
+.band-row p {
+    margin-top: 5px;
+    color: #9eb1ca;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.band-current {
+    margin-top: 6px;
+    color: #ffe08a;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.range-caveat {
+    margin-top: 10px;
+    color: #8499b4;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+    .group-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    .group-score {
+        padding: 7px 8px;
+    }
+
+    .group-score span {
+        font-size: 10px;
+    }
+
+    .group-score strong {
+        font-size: 14px;
+    }
+
+    .risk-panel-intro {
+        padding: 11px;
+    }
+
+    .risk-method-note {
+        font-size: 10px;
+    }
+
+    .risk-current-value {
+        font-size: 22px;
+    }
+
+    .risk-current-date {
+        font-size: 9px;
+    }
+
+    .risk-metric {
+        padding: 7px;
+    }
+
+    .risk-metric span {
+        font-size: 9px;
+    }
+
+    .risk-metric strong {
+        font-size: 11px;
+    }
+
+    .range-toggle {
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    .range-panel {
+        padding: 9px;
+    }
+
+    .band-row-main {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .band-range {
+        text-align: left;
+    }
+}
