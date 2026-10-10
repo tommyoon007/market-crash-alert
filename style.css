@@ -1496,3 +1496,19 @@ p {
     .trend-summary-grid strong { font-size: 14px; }
     .trend-persistence { grid-template-columns: 1fr; }
 }
+
+
+/* 3차 업데이트: 전체 위험지수 추적 */
+.risk-history-card { margin: 0 0 16px; padding: 15px; border: 1px solid #30435f; border-radius: 17px; background: #101c30; }
+.risk-history-title { color: #dce8f7; font-size: 15px; font-weight: 800; }
+.risk-history-scoreline { display: flex; align-items: baseline; gap: 5px; margin-top: 7px; }
+.risk-history-scoreline strong { color: #fff; font-size: 31px; line-height: 1.2; }
+.risk-history-scoreline span { color: #9fb2cc; font-size: 13px; font-weight: 700; }
+.risk-history-scoreline small { margin-left: auto; color: #91a4be; font-size: 10px; }
+.risk-history-chart { display: block; width: 100%; height: 58px; margin-top: 7px; }
+.risk-history-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 8px; }
+.risk-history-grid > div { min-width: 0; padding: 10px; border-radius: 10px; background: #0a1425; }
+.risk-history-grid span { display: block; color: #93a8c4; font-size: 11px; }
+.risk-history-grid strong { display: block; margin-top: 5px; color: #fff; font-size: 13px; overflow-wrap: anywhere; }
+.risk-history-note { margin: 9px 0 0; color: #91a4be; font-size: 10px; line-height: 1.55; }
+@media (max-width: 420px) { .risk-history-card { padding: 12px; } .risk-history-grid strong { font-size: 12px; } }

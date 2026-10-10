@@ -1760,6 +1760,85 @@ function createCard(
 }
 
 
+
+/* =========================
+   전체 위험지수 기록 (설치 이후 누적)
+========================= */
+const RISK_HISTORY_KEY = "marketCrashRiskHistoryV1";
+
+function loadRiskHistory() {
+    try {
+        const parsed = JSON.parse(localStorage.getItem(RISK_HISTORY_KEY) || "[]");
+        return Array.isArray(parsed) ? parsed.filter(item => item && /^\d{4}-\d{2}-\d{2}$/.test(item.date) && Number.isFinite(Number(item.score))) : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function recordRiskHistory(score) {
+    if (!Number.isFinite(Number(score))) return loadRiskHistory();
+    const history = loadRiskHistory();
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+    const entry = { date, score: Math.round(Number(score)), updatedAt: now.toISOString() };
+    const index = history.findIndex(item => item.date === date);
+    if (index >= 0) history[index] = entry;
+    else history.push(entry);
+    history.sort((a,b) => a.date.localeCompare(b.date));
+    const trimmed = history.slice(-400);
+    try { localStorage.setItem(RISK_HISTORY_KEY, JSON.stringify(trimmed)); } catch (_) {}
+    return trimmed;
+}
+
+function getHistoryChange(history, days) {
+    if (!history.length) return null;
+    const latest = history[history.length - 1];
+    const target = new Date(`${latest.date}T12:00:00`);
+    target.setDate(target.getDate() - days);
+    const targetString = `${target.getFullYear()}-${String(target.getMonth()+1).padStart(2,"0")}-${String(target.getDate()).padStart(2,"0")}`;
+    const previous = [...history].reverse().find(item => item.date <= targetString);
+    if (!previous || previous.date === latest.date) return null;
+    const elapsed = (new Date(`${latest.date}T12:00:00`) - new Date(`${previous.date}T12:00:00`)) / 86400000;
+    if (elapsed < Math.max(1, days - 2)) return null;
+    return { delta: Number(latest.score) - Number(previous.score), fromDate: previous.date, toDate: latest.date };
+}
+
+function formatRiskDelta(change) {
+    if (!change) return "기록 축적 중";
+    const sign = change.delta > 0 ? "+" : "";
+    const label = change.delta > 0 ? "위험 상승" : change.delta < 0 ? "위험 하락" : "변화 없음";
+    return `${sign}${change.delta}점 · ${label}`;
+}
+
+function renderRiskHistoryHTML(score) {
+    const history = recordRiskHistory(score);
+    const last = history[history.length - 1];
+    const c7 = getHistoryChange(history, 7);
+    const c30 = getHistoryChange(history, 30);
+    let sparkline = "";
+    if (history.length >= 2) {
+        const points = history.slice(-30);
+        const vals = points.map(p => Number(p.score));
+        const min = Math.min(...vals), max = Math.max(...vals);
+        const range = Math.max(1, max - min);
+        const coords = vals.map((v,i) => `${8 + i * (284 / Math.max(1, vals.length-1))},${48 - ((v-min)/range)*38}`).join(" ");
+        sparkline = `<svg class="risk-history-chart" viewBox="0 0 300 56" role="img" aria-label="최근 위험지수 기록 그래프"><polyline points="${coords}" fill="none" stroke="#f0c75e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="49" x2="292" y2="49" stroke="#31435e" stroke-width="1"/></svg>`;
+    }
+    return `
+        <section class="risk-history-card">
+            <div class="risk-history-title">전체 위험지수 추적</div>
+            <div class="risk-history-scoreline"><strong>${score === null ? "—" : score}</strong><span>/100</span><small>${last ? `기록 ${last.date}` : "기록 대기"}</small></div>
+            ${sparkline || `<p class="risk-history-note">기록을 축적하는 중입니다. 첫 기록 이후 추세 그래프가 나타납니다.</p>`}
+            <div class="risk-history-grid">
+                <div><span>최근 7일 변화</span><strong>${formatRiskDelta(c7)}</strong></div>
+                <div><span>최근 30일 변화</span><strong>${formatRiskDelta(c30)}</strong></div>
+            </div>
+            <p class="risk-history-note">이 기록은 이 기기의 브라우저에 저장되며 기능 설치 이후부터 쌓입니다. 과거 점수를 소급 생성하지 않으며, 앱 데이터 삭제·기기 변경 시 기록이 사라질 수 있습니다. 변화는 폭락 확률이나 매매 신호가 아닙니다.</p>
+        </section>
+    `;
+}
+
+
 /* =========================
    대시보드
 ========================= */
@@ -1789,8 +1868,13 @@ function renderDashboard() {
             }
         ).join("");
 
+    const overallScore = calculateRisk();
+    const historyPanel = renderRiskHistoryHTML(overallScore);
+
     return `
         <div class="dashboard">
+
+            ${historyPanel}
 
             ${cards}
 
@@ -1839,6 +1923,7 @@ function createTrendSummaryHTML() {
 
 function renderRiskPanel() {
     const details = calculateRiskDetails();
+    const historyPanel = renderRiskHistoryHTML(details.score);
 
     const rows = INDICATORS.map(indicator => {
         const latest = getLatestObservation(indicator.id);
@@ -1942,6 +2027,7 @@ function renderRiskPanel() {
 
     return `
         <div class="risk-panel">
+            ${historyPanel}
             <div class="risk-panel-intro">
                 <div class="panel-title">위험도 상세 분석</div>
                 <div class="panel-subtitle">
