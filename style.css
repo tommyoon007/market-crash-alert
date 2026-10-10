@@ -1468,3 +1468,31 @@ p {
         text-align: left;
     }
 }
+
+
+/* 위험 가속도 및 지속성 보조 패널 */
+.trend-summary {
+    margin: 10px 0 14px;
+    padding: 13px;
+    border: 1px solid #3a506e;
+    border-radius: 12px;
+    background: #101c30;
+}
+.trend-summary-title { color: #dce8f7; font-size: 14px; font-weight: 800; }
+.trend-summary-headline { margin-top: 7px; color: #f5d27a; font-size: 14px; font-weight: 800; }
+.trend-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin-top: 10px; }
+.trend-summary-grid > div { padding: 9px; border-radius: 8px; background: #0a1425; }
+.trend-summary-grid span, .trend-persistence span { display: block; color: #93a8c4; font-size: 10px; }
+.trend-summary-grid strong { display: block; margin-top: 4px; color: #fff; font-size: 16px; }
+.trend-summary p { margin-top: 9px; color: #91a4be; font-size: 10px; line-height: 1.55; }
+.trend-persistence { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin-top: 8px; padding: 9px; border-radius: 8px; background: #0a1425; }
+.trend-persistence strong { display: block; margin-top: 4px; color: #e6edf7; font-size: 11px; }
+.trend-persistence .worsening { color: #ff9b9b; }
+.trend-persistence .improving { color: #82d9b4; }
+.trend-persistence .stable { color: #d8e2f0; }
+@media (max-width: 700px) {
+    .trend-summary { padding: 10px; }
+    .trend-summary-title, .trend-summary-headline { font-size: 12px; }
+    .trend-summary-grid strong { font-size: 14px; }
+    .trend-persistence { grid-template-columns: 1fr; }
+}

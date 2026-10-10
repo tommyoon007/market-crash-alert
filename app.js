@@ -269,6 +269,48 @@ function getIndicatorRiskScore(indicator, value) {
 }
 
 
+function getTrendMetrics(indicator) {
+    const observations = getObservations(indicator.id);
+    if (!observations.length) {
+        return { direction: "자료 부족", delta: null, persistentCount: 0, latestScore: null, oldScore: null };
+    }
+
+    const latestValue = Number(observations[0].value);
+    const latestBand = getRiskBand(latestValue, indicator);
+    const latestScore = latestBand ? latestBand.score : null;
+    const oldIndex = Math.min(5, observations.length - 1);
+    const oldValue = Number(observations[oldIndex].value);
+    const oldBand = getRiskBand(oldValue, indicator);
+    const oldScore = oldBand ? oldBand.score : null;
+    const delta = latestScore !== null && oldScore !== null ? latestScore - oldScore : null;
+
+    let persistentCount = 0;
+    for (const observation of observations) {
+        const value = Number(observation.value);
+        if (!Number.isFinite(value)) break;
+        const band = getRiskBand(value, indicator);
+        if (!band || band.score < 3) break;
+        persistentCount++;
+    }
+
+    let direction = "대체로 보합";
+    if (delta !== null && delta >= 2) direction = "위험 빠르게 악화";
+    else if (delta === 1) direction = "위험 악화";
+    else if (delta <= -2) direction = "위험 빠르게 완화";
+    else if (delta === -1) direction = "위험 완화";
+
+    return { direction, delta, persistentCount, latestScore, oldScore };
+}
+
+
+function getPersistenceLabel(indicator, count) {
+    if (!count) return "최근 관측치에서 3/5 이상 위험 지속 없음";
+    if (indicator.frequency === "일간") return `${count}개 관측일 연속`;
+    if (indicator.frequency === "주간") return `${count}개 관측주 연속`;
+    return `${count}개 관측월 연속`;
+}
+
+
 function calculateRiskDetails() {
     const available = INDICATORS.map(indicator => {
         const latest = getLatestObservation(indicator.id);
@@ -1765,6 +1807,36 @@ function renderDashboard() {
    위험도 상세
 ========================= */
 
+function createTrendSummaryHTML() {
+    const metrics = INDICATORS.map(indicator => {
+        const latest = getLatestObservation(indicator.id);
+        if (!latest) return null;
+        return { indicator, ...getTrendMetrics(indicator) };
+    }).filter(Boolean);
+
+    const worsening = metrics.filter(item => item.delta !== null && item.delta >= 1);
+    const fastWorsening = metrics.filter(item => item.delta !== null && item.delta >= 2);
+    const persistent = metrics.filter(item => item.persistentCount >= 3);
+    const headline = fastWorsening.length
+        ? `${fastWorsening.length}개 지표에서 위험등급이 빠르게 악화`
+        : worsening.length
+            ? `${worsening.length}개 지표에서 위험등급 악화`
+            : "위험등급의 뚜렷한 상승 신호 없음";
+
+    return `
+        <section class="trend-summary">
+            <div class="trend-summary-title">위험 가속도 · 지속성</div>
+            <div class="trend-summary-headline">${headline}</div>
+            <div class="trend-summary-grid">
+                <div><span>최근 5개 관측치 기준 악화</span><strong>${worsening.length}/6개</strong></div>
+                <div><span>위험등급 3/5 이상 3회 연속</span><strong>${persistent.length}/6개</strong></div>
+            </div>
+            <p>변화는 최신 점수와 5개 관측치 전 점수의 차이로 계산합니다. 지속성은 각 지표의 발표 주기를 기준으로 연속 관측치를 셉니다. 이는 보조 신호이며 폭락 확률이나 매매 신호가 아닙니다.</p>
+        </section>
+    `;
+}
+
+
 function renderRiskPanel() {
     const details = calculateRiskDetails();
 
@@ -1782,6 +1854,7 @@ function renderRiskPanel() {
         const band = getRiskBand(latest.value, indicator);
         const score = getIndicatorRiskScore(indicator, latest.value);
         const freshness = getFreshness(indicator, latest.date);
+        const trendMetrics = getTrendMetrics(indicator);
         const change5 = getChange(indicator.id, 5);
         const change20 = getChange(indicator.id, 20);
         const detailId = `range-${indicator.id.replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -1835,6 +1908,10 @@ function renderRiskPanel() {
                     </div>
                 </div>
                 <div class="risk-trend-note">${trendLabel}</div>
+                <div class="trend-persistence">
+                    <div><span>위험 변화</span><strong class="trend-direction ${trendMetrics.delta !== null && trendMetrics.delta > 0 ? "worsening" : trendMetrics.delta !== null && trendMetrics.delta < 0 ? "improving" : "stable"}">${trendMetrics.direction}</strong></div>
+                    <div><span>위험 지속성</span><strong>${getPersistenceLabel(indicator, trendMetrics.persistentCount)}</strong></div>
+                </div>
 
                 <div class="freshness ${freshness.status}">
                     데이터 상태: ${freshness.label} · ${indicator.frequency} 지표
@@ -1876,6 +1953,7 @@ function renderRiskPanel() {
                     과거 데이터로 정식 백테스트한 예측모형이 아닌 휴리스틱 조기경보 점수입니다.
                 </div>
             </div>
+            ${createTrendSummaryHTML()}
             ${rows}
             <div class="source">
                 Source: Federal Reserve Bank of St. Louis · FRED.
