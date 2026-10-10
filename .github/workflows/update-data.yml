@@ -27,7 +27,9 @@ jobs:
           import urllib.request
           from datetime import datetime, timezone
 
-          API_KEY = os.environ["FRED_API_KEY"]
+          API_KEY = os.environ.get("FRED_API_KEY", "").strip()
+          if not API_KEY:
+              raise RuntimeError("FRED_API_KEY secret is missing. Existing data.json was not changed.")
 
           series = {
               "HY OAS": "BAMLH0A0HYM2",
@@ -68,6 +70,11 @@ jobs:
 
                   data = json.load(response)
 
+              if not isinstance(data, dict) or "observations" not in data:
+                  raise RuntimeError(
+                      f"Invalid FRED response for {series_id}; existing data.json was not changed."
+                  )
+
               observations = []
 
               for item in data.get("observations", []):
@@ -86,6 +93,18 @@ jobs:
                       "date": item["date"],
                       "value": value
                   })
+
+              if not observations:
+                  raise RuntimeError(
+                      f"No valid observations for {series_id}; existing data.json was not changed."
+                  )
+
+              # FRED is requested in descending date order. Verify this before writing.
+              dates = [item["date"] for item in observations]
+              if dates != sorted(dates, reverse=True):
+                  raise RuntimeError(
+                      f"Observations for {series_id} are not newest-first; existing data.json was not changed."
+                  )
 
               result["data"][series_id] = {
                   "name": name,
