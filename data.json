@@ -1,10 +1,14 @@
 {
-  "updated_at": "2026-10-29T14:08:20.093711+00:00",
+  "updated_at": "2026-10-29T20:12:33.549223+00:00",
   "status": "ok",
   "data": {
     "BAMLH0A0HYM2": {
       "name": "HY OAS",
       "observations": [
+        {
+          "date": "2026-10-28",
+          "value": 3.14
+        },
         {
           "date": "2026-10-27",
           "value": 3.18
@@ -3150,6 +3154,10 @@
     "BAMLH0A3HYC": {
       "name": "CCC OAS",
       "observations": [
+        {
+          "date": "2026-10-28",
+          "value": 13.07
+        },
         {
           "date": "2026-10-27",
           "value": 13.21
