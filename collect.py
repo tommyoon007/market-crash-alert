@@ -91,27 +91,34 @@ def to_float(raw):
 # 소스별 수집: {date(ISO): value}
 # --------------------------------------------------------------------------
 
+def fetch_fred_api(series_id, api_key):
+    params = urllib.parse.urlencode(
+        {
+            "series_id": series_id,
+            "api_key": api_key,
+            "file_type": "json",
+            "sort_order": "asc",
+        }
+    )
+    raw = http_get("https://api.stlouisfed.org/fred/series/observations?" + params)
+    payload = json.loads(raw.decode("utf-8"))
+    if not isinstance(payload, dict) or "observations" not in payload:
+        raise RuntimeError(f"{series_id}: FRED 응답 형식 오류")
+    series = {}
+    for item in payload["observations"]:
+        value = to_float(item.get("value"))
+        if value is None:
+            continue
+        series[item["date"]] = value
+    return series, "FRED API"
+
+
 def fetch_fred(series_id, api_key):
     if api_key:
-        params = urllib.parse.urlencode(
-            {
-                "series_id": series_id,
-                "api_key": api_key,
-                "file_type": "json",
-                "sort_order": "asc",
-            }
-        )
-        raw = http_get("https://api.stlouisfed.org/fred/series/observations?" + params)
-        payload = json.loads(raw.decode("utf-8"))
-        if not isinstance(payload, dict) or "observations" not in payload:
-            raise RuntimeError(f"{series_id}: FRED 응답 형식 오류")
-        series = {}
-        for item in payload["observations"]:
-            value = to_float(item.get("value"))
-            if value is None:
-                continue
-            series[item["date"]] = value
-        return series, "FRED API"
+        try:
+            return fetch_fred_api(series_id, api_key)
+        except Exception as error:  # noqa: BLE001 - API 실패 시 공개 CSV로 대체
+            print(f"[WARN] FRED API 실패({series_id}): {error} → fredgraph CSV로 재시도")
 
     raw = http_get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}")
     text = raw.decode("utf-8-sig")
@@ -487,13 +494,14 @@ def main():
         print("[FATAL] 모든 시리즈가 10일 넘게 지연되었습니다. data.json을 변경하지 않습니다.")
         return 1
 
-    if not changed:
-        print("[INFO] 지표 값 변화 없음 → data.json을 쓰지 않습니다.")
-        return 0
-
     payload = {
         "schema": SCHEMA,
-        "updated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        # 값이 바뀌지 않았으면 기존 갱신 시각을 그대로 둔다(무의미한 diff 방지).
+        "updated_at": (
+            datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+            if changed or not existing or not existing.get("updated_at")
+            else existing["updated_at"]
+        ),
         "status": "ok" if not warnings else "degraded",
         "latest_observation": latest_day,
         "history_start": min(block["observations"][-1][0] for block in payload_series.values()),
@@ -502,11 +510,30 @@ def main():
         "data": payload_series,
     }
 
-    with open(data_path, "w", encoding="utf-8") as handle:
-        json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
+    serialized = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
-    size = os.path.getsize(data_path)
-    print(f"[OK] data.json 갱신: {len(payload_series)}개 시리즈, 최신 관측일 {latest_day}, {size / 1024:.0f}KB")
+    if changed:
+        with open(data_path, "w", encoding="utf-8") as handle:
+            handle.write(serialized)
+        size = os.path.getsize(data_path)
+        print(f"[OK] data.json 갱신: {len(payload_series)}개 시리즈, 최신 관측일 {latest_day}, {size / 1024:.0f}KB")
+    else:
+        print("[INFO] 지표 값 변화 없음 → data.json을 쓰지 않습니다.")
+
+    # 스냅숏: 마지막으로 완전하게 수집된 페이로드.
+    # app.js는 data.json이 불완전할 때 이 파일로 빈 지표를 메운다.
+    snapshot_path = os.path.join(repo_root, "data-snapshot.json")
+    try:
+        with open(snapshot_path, encoding="utf-8") as handle:
+            snapshot_same = handle.read() == serialized
+    except OSError:
+        snapshot_same = False
+
+    if not snapshot_same:
+        with open(snapshot_path, "w", encoding="utf-8") as handle:
+            handle.write(serialized)
+        print(f"[OK] data-snapshot.json 갱신 ({len(payload_series)}개 시리즈)")
+
     if warnings:
         print("[OK] 경고:", "; ".join(warnings))
     return 0

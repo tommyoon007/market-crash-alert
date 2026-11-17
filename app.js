@@ -2723,25 +2723,24 @@ async function loadData() {
 
     try {
 
-        const response =
-            await fetch(
-                "./data.json",
-                {
-                    cache: "no-store"
-                }
+        let payload =
+            normalizeMarketData(
+                await fetchJson("./data.json")
             );
 
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
+        if (!hasAllSeries(payload)) {
+            try {
+                const snapshot =
+                    normalizeMarketData(
+                        await fetchJson("./data-snapshot.json")
+                    );
+                payload = mergePayload(payload, snapshot);
+            } catch (error) {
+                console.warn("스냅숏 데이터를 읽지 못했습니다:", error);
+            }
         }
 
-        marketData =
-            normalizeMarketData(
-                await response.json()
-            );
+        marketData = payload;
 
         window.marketDataUpdatedAt =
             marketData.updated_at;
@@ -2775,6 +2774,71 @@ async function loadData() {
 /* =========================
    데이터 형식 정규화
 ========================= */
+
+async function fetchJson(url) {
+
+    const response =
+        await fetch(
+            url,
+            {
+                cache: "no-store"
+            }
+        );
+
+    if (!response.ok) {
+
+        throw new Error(
+            `HTTP ${response.status}`
+        );
+    }
+
+    return response.json();
+}
+
+
+// 모든 지표(관측치·백분위 보정값)가 들어 있는지 확인한다.
+function hasAllSeries(payload) {
+
+    if (!payload || !payload.data) return false;
+
+    return INDICATORS.every(indicator => {
+
+        const block = payload.data[indicator.id];
+        const observations = block && block.observations;
+
+        if (!Array.isArray(observations) || observations.length < 30) {
+            return false;
+        }
+
+        return Boolean(block.calibration && Array.isArray(block.calibration.quantiles));
+    });
+}
+
+
+// 기본 데이터에 빠진 지표는 마지막 완전 수집분(data-snapshot.json)으로 메운다.
+function mergePayload(primary, snapshot) {
+
+    if (!snapshot || !snapshot.data) return primary;
+
+    const merged = Object.assign({}, snapshot, primary);
+
+    merged.data = Object.assign({}, snapshot.data);
+
+    for (const [id, block] of Object.entries(primary.data || {})) {
+        const fallback = snapshot.data[id];
+        if (!fallback) {
+            merged.data[id] = block;
+            continue;
+        }
+        merged.data[id] = Object.assign({}, fallback, block);
+        if (!block.calibration && fallback.calibration) {
+            merged.data[id].calibration = fallback.calibration;
+        }
+    }
+
+    return merged;
+}
+
 
 /*
    data.json v2는 관측치를 ["YYYY-MM-DD", 값] 배열로 저장한다(전송량 절감).
