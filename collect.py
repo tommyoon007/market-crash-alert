@@ -82,6 +82,10 @@ NET_LIQ_SERIES = [
     ("RRPONTSYD", 500),
 ]
 NET_LIQ_STEP = 13
+# 13관측치가 실제로 13주 간격일 때만 '13주 변화'로 인정한다(주 1회 지표 기준 91일).
+# 한 주가 빠지면 98·105일이 될 수 있으므로 그만큼만 허용하고, 수년씩 ln 간격은 버린다.
+NET_LIQ_MIN_SPAN_DAYS = 84
+NET_LIQ_MAX_SPAN_DAYS = 105
 # WALCL 기준일(주간)에 붙일 TGA·ON RRP 값의 허용 간격(일).
 # 둘 다 주간 지표라 너무 넓게 잡으면 같은 주 값을 두 번 세게 되므로 짧게 둔다.
 NET_LIQ_GAP_DAYS = {"WTREGEN": 3, "RRPONTSYD": 4}
@@ -366,7 +370,11 @@ def derived_net_liquidity(walcl, tga, rrp):
     days = sorted(levels)
     changes = {}
     for index in range(NET_LIQ_STEP, len(days)):
-        base = levels[days[index - NET_LIQ_STEP]]
+        base_day = days[index - NET_LIQ_STEP]
+        span = (date.fromisoformat(days[index]) - date.fromisoformat(base_day)).days
+        if span < NET_LIQ_MIN_SPAN_DAYS or span > NET_LIQ_MAX_SPAN_DAYS:
+            continue
+        base = levels[base_day]
         # 기준값이 0에 가까우면 변화율이 폭주하므로 계산하지 않는다.
         if abs(base) < 1.0:
             continue
