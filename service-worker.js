@@ -1,4 +1,4 @@
-const CACHE_NAME = "market-crash-alert-v9";
+const CACHE_NAME = "market-crash-alert-v10";
 
 /*
    캐시 키는 쿼리스트링(?v=, ?t=)을 뗀 주소로 통일한다.

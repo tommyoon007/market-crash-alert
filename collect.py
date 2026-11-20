@@ -6,8 +6,11 @@
   - FRED 단기 유동성 3종 (SOFR, IORB, IOER) — SOFR-IORB 스프레드 재료
   - CBOE 공식 CSV (VIX, VIX3M) — FRED보다 하루 빠른 종가
   - Yahoo Finance chart (^VIX, ^VIX3M) — 당일 종가 보강
+  - Yahoo Finance chart (^MOVE) — 채권 변동성 지수 20년 일간 종가
+  - FRED 연준 순유동성 3종 (WALCL, WTREGEN, RRPONTSYD) — 13주 변화율 재료
   - 파생: HY OAS 20관측치 변화, CCC-HY 격차, VIX 기간구조(VIX3M/VIX),
-    SOFR-IORB 스프레드(bp)와 그 5관측치 이동평균
+    SOFR-IORB 스프레드(bp)와 그 5관측치 이동평균,
+    연준 순유동성(WALCL − TGA − ON RRP) 13관측치 변화율
 
 설계 원칙
   - 지표 값이 실제로 바뀌지 않으면 data.json을 쓰지 않는다 (updated_at만 바뀌는 커밋 방지).
@@ -15,6 +18,7 @@
   - 백분위 보정값(calibration)은 긴 이력으로 먼저 계산하고, 저장 이력은 5년으로 자른다.
 """
 
+import bisect
 import csv
 import io
 import json
@@ -64,7 +68,23 @@ CBOE_CSV = {
 YAHOO_SYMBOLS = {
     "VIX": "%5EVIX",
     "VIX3M": "%5EVIX3M",
+    "MOVE": "%5EMOVE",
 }
+# MOVE는 2002년부터 일간 이력이 있으므로 보정에 쓸 만큼 긴 구간을 받는다.
+MOVE_RANGE = "25y"
+MOVE_MIN_OBSERVATIONS = 2000
+
+# 연준 순유동성 재료: FRED ID, 요구 최소 관측치(백만/십억 달러 단위가 섞여 있다).
+# WALCL·WTREGEN은 백만 달러, RRPONTSYD는 십억 달러.
+NET_LIQ_SERIES = [
+    ("WALCL", 500),
+    ("WTREGEN", 500),
+    ("RRPONTSYD", 500),
+]
+NET_LIQ_STEP = 13
+# WALCL 기준일(주간)에 붙일 TGA·ON RRP 값의 허용 간격(일).
+# 둘 다 주간 지표라 너무 넓게 잡으면 같은 주 값을 두 번 세게 되므로 짧게 둔다.
+NET_LIQ_GAP_DAYS = {"WTREGEN": 3, "RRPONTSYD": 4}
 
 
 # --------------------------------------------------------------------------
@@ -315,6 +335,45 @@ def derived_spread_bp(left, right, scale=100):
     }
 
 
+def value_on_or_before(days, series, day, max_gap_days):
+    """day 당일 또는 그 이전 max_gap_days 이내의 최신 관측치 날짜를 찾는다."""
+    index = bisect.bisect_right(days, day) - 1
+    if index < 0:
+        return None
+    found = days[index]
+    if (date.fromisoformat(day) - date.fromisoformat(found)).days > max_gap_days:
+        return None
+    return found
+
+
+def derived_net_liquidity(walcl, tga, rrp):
+    """연준 순유동성($B)과 그 13관측치 변화율(%)을 만든다.
+
+    WALCL(백만 달러)·WTREGEN(백만 달러)은 1000으로 나눠 십억 달러로 맞추고,
+    RRPONTSYD(십억 달러)를 그대로 뺀다. 주간 지표(WALCL) 날짜를 기준으로
+    TGA는 3일, ON RRP는 4일 이내의 값을 붙인다.
+    """
+    tga_days = sorted(tga)
+    rrp_days = sorted(rrp)
+    levels = {}
+    for day in sorted(walcl):
+        tga_day = value_on_or_before(tga_days, tga, day, NET_LIQ_GAP_DAYS["WTREGEN"])
+        rrp_day = value_on_or_before(rrp_days, rrp, day, NET_LIQ_GAP_DAYS["RRPONTSYD"])
+        if not tga_day or not rrp_day:
+            continue
+        levels[day] = (walcl[day] - tga[tga_day]) / 1000.0 - rrp[rrp_day]
+
+    days = sorted(levels)
+    changes = {}
+    for index in range(NET_LIQ_STEP, len(days)):
+        base = levels[days[index - NET_LIQ_STEP]]
+        # 기준값이 0에 가까우면 변화율이 폭주하므로 계산하지 않는다.
+        if abs(base) < 1.0:
+            continue
+        changes[days[index]] = (levels[days[index]] - base) / abs(base) * 100.0
+    return levels, changes
+
+
 def derived_moving_average(series, window):
     """관측치 기준 최근 window개 이동평균. 달력일이 아니라 거래일 순서로 센다."""
     days = sorted(series)
@@ -414,6 +473,21 @@ def main():
             warnings.append(f"{fred_id} 수집 실패({error})")
             print(f"[WARN] {fred_id} 수집 실패: {error}")
 
+    # 1-3) 연준 순유동성 재료: WALCL / WTREGEN / RRPONTSYD.
+    # 저장하지 않고 NET_LIQ_CHG13 계산 재료로만 쓴다.
+    net_liq_inputs = {}
+    for fred_id, minimum in NET_LIQ_SERIES:
+        time.sleep(0.4)
+        try:
+            series, _ = fetch_fred(fred_id, api_key)
+            if len(series) < minimum:
+                raise RuntimeError(f"{fred_id}: 관측치 {len(series)}개로 너무 적음")
+            net_liq_inputs[fred_id] = series
+            print(f"[FRED] {fred_id}: {len(series)}건, 최신 {max(series)}")
+        except Exception as error:  # noqa: BLE001
+            warnings.append(f"{fred_id} 수집 실패({error})")
+            print(f"[WARN] {fred_id} 수집 실패: {error}")
+
     # 2) VIX / VIX3M: FRED 이력 + CBOE 종가 + Yahoo 최신 종가
     for name, fred_id in (("VIX", "VIXCLS"),):
         base = dict(collected.get(fred_id, {}))
@@ -459,6 +533,26 @@ def main():
         warnings.append(f"Yahoo VIX3M 실패({error})")
         print(f"[WARN] Yahoo VIX3M 실패: {error}")
 
+    # 2-2) MOVE: 미국 국채 옵션 기반 채권 변동성 지수 (Yahoo 장기 일간 종가)
+    time.sleep(0.4)
+    try:
+        move, _ = fetch_yahoo("MOVE", rng=MOVE_RANGE)
+        if len(move) < MOVE_MIN_OBSERVATIONS:
+            raise RuntimeError(f"MOVE: 관측치 {len(move)}개로 너무 적음")
+        collected["MOVE"] = move
+        sources["MOVE"] = "Yahoo (^MOVE)"
+        print(f"[Yahoo] MOVE: {len(move)}건, 최신 {max(move)}")
+    except Exception as error:  # noqa: BLE001
+        fallback = existing_series(existing, "MOVE")
+        if fallback:
+            collected["MOVE"] = fallback
+            sources["MOVE"] = "기존 data.json 유지"
+            warnings.append(f"MOVE 신규 수집 실패({error}); 기존 값 유지")
+            print(f"[WARN] MOVE 수집 실패 → 기존 값 유지: {error}")
+        else:
+            warnings.append(f"MOVE 수집 실패({error}); 값 없음")
+            print(f"[WARN] MOVE 수집 실패, 기존 값도 없음: {error}")
+
     # 3) 파생 지표
     hy = collected.get("BAMLH0A0HYM2", {})
     ccc = collected.get("BAMLH0A3HYC", {})
@@ -489,7 +583,47 @@ def main():
         collected["SOFR_IORB_MA5"] = derived_moving_average(spread, LIQUIDITY_SPREAD_MA)
         sources["SOFR_IORB_MA5"] = f"FRED 파생 (SOFR - IORB {LIQUIDITY_SPREAD_MA}관측치 평균)"
 
-    for derived_id in ("HY_OAS_CHG20", "CCC_HY_GAP", "VIX_TERM", "SOFR_IORB", "SOFR_IORB_MA5"):
+    # 연준 순유동성 13주 변화율. 세 소스가 모두 온전히 수집됐을 때만 새로 계산하고,
+    # 하나라도 실패하거나 이력이 짧아지면 기존 data.json 값을 그대로 유지한다.
+    net_liq_levels = {}
+    net_liq_changes = {}
+    if len(net_liq_inputs) == len(NET_LIQ_SERIES):
+        try:
+            net_liq_levels, net_liq_changes = derived_net_liquidity(
+                net_liq_inputs["WALCL"],
+                net_liq_inputs["WTREGEN"],
+                net_liq_inputs["RRPONTSYD"],
+            )
+        except Exception as error:  # noqa: BLE001
+            warnings.append(f"NET_LIQ_CHG13 계산 실패({error})")
+            print(f"[WARN] NET_LIQ_CHG13 계산 실패: {error}")
+    else:
+        warnings.append("NET_LIQ_CHG13: 순유동성 소스 일부 실패 → 기존 값 유지")
+        print("[WARN] 순유동성 소스 일부 실패 → NET_LIQ_CHG13은 기존 값 유지")
+
+    if net_liq_changes:
+        previous_changes = existing_series(existing, "NET_LIQ_CHG13")
+        new_first = min(net_liq_changes)
+        new_latest = max(net_liq_changes)
+        old_first = min(previous_changes) if previous_changes else ""
+        old_latest = max(previous_changes) if previous_changes else ""
+        truncated = bool(previous_changes) and (
+            new_latest < old_latest or (bool(old_first) and new_first > old_first)
+        )
+        if truncated:
+            warnings.append(
+                f"NET_LIQ_CHG13: 수집 구간이 기존보다 짧음({new_first}~{new_latest}) → 기존 값 유지"
+            )
+            print("[WARN] NET_LIQ_CHG13 구간이 잘려 기존 값을 유지합니다.")
+        else:
+            collected["NET_LIQ_CHG13"] = net_liq_changes
+            sources["NET_LIQ_CHG13"] = "FRED 파생 (WALCL − WTREGEN − RRPONTSYD, 13관측치 변화율)"
+            print(
+                f"[파생] NET_LIQ_CHG13: {len(net_liq_changes)}건, 최신 {new_latest} "
+                f"({net_liq_changes[new_latest]:.2f}%, 순유동성 ${net_liq_levels[new_latest]:.1f}B)"
+            )
+
+    for derived_id in ("HY_OAS_CHG20", "CCC_HY_GAP", "VIX_TERM", "SOFR_IORB", "SOFR_IORB_MA5", "NET_LIQ_CHG13"):
         series = collected.get(derived_id) or existing_series(existing, derived_id)
         if series:
             collected[derived_id] = series
@@ -554,6 +688,13 @@ def main():
         age = (date.fromisoformat(latest_day) - date.fromisoformat(max(sofr_series))).days
         if age > 6:
             message = f"SOFR: 최신 관측일이 {age}일 전 ({max(sofr_series)})"
+            warnings.append(message)
+            print(f"[WARN] {message}")
+    net_liq_series = collected.get("NET_LIQ_CHG13") or {}
+    if net_liq_series:
+        age = (date.fromisoformat(latest_day) - date.fromisoformat(max(net_liq_series))).days
+        if age > 14:
+            message = f"연준 순유동성 13주 변화: 최신 관측일이 {age}일 전 ({max(net_liq_series)})"
             warnings.append(message)
             print(f"[WARN] {message}")
     if all(

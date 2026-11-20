@@ -89,7 +89,7 @@ const INDICATORS = [
         unit: "",
         decimals: 2,
         group: "market",
-        weight: 50,
+        weight: 40,
         frequency: "일간",
         staleAfterDays: 3,
         source: "FRED · CBOE",
@@ -110,7 +110,7 @@ const INDICATORS = [
         unit: "",
         decimals: 2,
         group: "market",
-        weight: 50,
+        weight: 35,
         frequency: "일간",
         staleAfterDays: 3,
         source: "CBOE",
@@ -126,13 +126,34 @@ const INDICATORS = [
         ]
     },
     {
+        name: "MOVE",
+        id: "MOVE",
+        description: "미국 국채 옵션 기반 채권 변동성 지수",
+        unit: "",
+        decimals: 1,
+        group: "market",
+        weight: 25,
+        frequency: "일간",
+        staleAfterDays: 3,
+        source: "Yahoo",
+        sourceMeaning: "미국 국채 옵션 가격에서 산출한 채권시장의 기대 변동성 지수입니다. 주식의 VIX에 대응하는 지표로, 값이 오르면 채권시장이 금리 경로를 얼마나 불확실하게 보는지가 커졌다는 뜻입니다. 주식보다 금리 충격에 먼저 반응하는 경우가 있습니다.",
+        bands: [
+            { min: 155, score: 5, status: "extreme", label: "극단 위험", range: "155 이상", meaning: "채권시장 변동성이 금융위기급으로 확대된 구간입니다." },
+            { min: 140, score: 4, status: "danger", label: "고위험", range: "140 이상 ~ 155 미만", meaning: "금리 불확실성이 매우 커져 채권·주식 동반 조정에 대비해야 하는 구간입니다." },
+            { min: 130, score: 3, status: "warning", label: "경계", range: "130 이상 ~ 140 미만", meaning: "채권시장 스트레스가 뚜렷하게 높아지는 구간입니다." },
+            { min: 120, score: 2, status: "caution", label: "주의", range: "120 이상 ~ 130 미만", meaning: "평상시보다 금리 변동성 기대가 높아진 구간입니다." },
+            { min: 100, score: 1, status: "safe", label: "보통", range: "100 이상 ~ 120 미만", meaning: "일반적인 채권 변동성 범위로 볼 수 있습니다." },
+            { min: null, score: 0, status: "verylow", label: "낮음", range: "100 미만", meaning: "채권시장 기대 변동성이 낮은 구간입니다. 지나친 안도감도 별도 위험이 될 수 있습니다." }
+        ]
+    },
+    {
         name: "NFCI",
         id: "NFCI",
         description: "미국 금융여건 지수",
         unit: "",
         decimals: 2,
         group: "financial",
-        weight: 60,
+        weight: 40,
         frequency: "주간",
         staleAfterDays: 10,
         sourceMeaning: "금리·신용·주식시장 등 여러 금융 변수를 종합한 지수입니다. 0은 장기 평균 수준, 양수는 평균보다 긴축적인 금융여건, 음수는 평균보다 완화적인 여건을 뜻합니다.",
@@ -152,7 +173,7 @@ const INDICATORS = [
         unit: "bp",
         decimals: 1,
         group: "financial",
-        weight: 40,
+        weight: 35,
         frequency: "일간",
         staleAfterDays: 3,
         source: "FRED 파생",
@@ -164,6 +185,28 @@ const INDICATORS = [
             { min: 2, score: 2, status: "caution", label: "주의", range: "2bp 이상 ~ 5bp 미만", meaning: "평상시보다 조금 높은 구간입니다. 월말·분기말 자금 수요인지 추세인지 확인해야 합니다." },
             { min: 0, score: 1, status: "safe", label: "보통", range: "0bp 이상 ~ 2bp 미만", meaning: "정책금리 아래 또는 바로 위에서 보통 범위로 움직이는 구간입니다." },
             { min: null, score: 0, status: "verylow", label: "낮음", range: "0bp 미만", meaning: "자금이 남아도는 구간입니다. 지표 수준만 보면 유동성 스트레스가 낮습니다." }
+        ]
+    },
+    {
+        name: "연준 순유동성 13주 변화",
+        id: "NET_LIQ_CHG13",
+        description: "연준 순유동성(WALCL − TGA − ON RRP)의 13주 변화율",
+        unit: "%",
+        decimals: 1,
+        group: "financial",
+        weight: 25,
+        frequency: "주간",
+        staleAfterDays: 12,
+        source: "FRED 파생",
+        inverse: true,
+        sourceMeaning: "연준 자산(WALCL)에서 재무부 계좌(TGA)와 역레포 잔액(ON RRP)을 뺀 순유동성이 13주 전보다 몇 % 늘었거나 줄었는지 봅니다. 시중에 풀린 유동성의 방향을 보는 지표이며, 음수가 커질수록 유동성이 빠르게 빨려 들어가는 구간입니다.",
+        bands: [
+            { max: -7, score: 5, status: "extreme", label: "극단 축소", range: "-7.0% 이하", meaning: "순유동성이 13주 만에 7% 넘게 줄어 시장 자금 여건이 급격히 조여지는 구간입니다." },
+            { max: -5, score: 4, status: "danger", label: "급격한 축소", range: "-7.0% 초과 ~ -5.0% 이하", meaning: "유동성 축소 속도가 빨라 위험자산에 부담이 커지는 구간입니다." },
+            { max: -3, score: 3, status: "warning", label: "축소 경계", range: "-5.0% 초과 ~ -3.0% 이하", meaning: "유동성이 뚜렷하게 줄어드는 구간입니다." },
+            { max: -1.5, score: 2, status: "caution", label: "주의", range: "-3.0% 초과 ~ -1.5% 이하", meaning: "완만하게 유동성이 줄어드는지 추세를 확인할 구간입니다." },
+            { max: 0, score: 1, status: "safe", label: "약한 축소", range: "-1.5% 초과 ~ 0.0% 이하", meaning: "거의 변화가 없거나 조금 줄어든 구간입니다." },
+            { max: null, score: 0, status: "verylow", label: "유동성 확대", range: "0.0% 초과", meaning: "순유동성이 늘어나 시장 자금 여건이 완화되는 구간입니다. 지표 수준만 보면 위험이 낮습니다." }
         ]
     },
     {
