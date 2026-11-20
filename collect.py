@@ -3,9 +3,11 @@
 
 수집 대상
   - FRED 6종 (HY OAS, CCC OAS, VIX, NFCI, 10Y-2Y, Sahm Rule) + 10Y-3M
+  - FRED 단기 유동성 3종 (SOFR, IORB, IOER) — SOFR-IORB 스프레드 재료
   - CBOE 공식 CSV (VIX, VIX3M) — FRED보다 하루 빠른 종가
   - Yahoo Finance chart (^VIX, ^VIX3M) — 당일 종가 보강
-  - 파생 3종: HY OAS 20관측치 변화, CCC-HY 격차, VIX 기간구조(VIX3M/VIX)
+  - 파생: HY OAS 20관측치 변화, CCC-HY 격차, VIX 기간구조(VIX3M/VIX),
+    SOFR-IORB 스프레드(bp)와 그 5관측치 이동평균
 
 설계 원칙
   - 지표 값이 실제로 바뀌지 않으면 data.json을 쓰지 않는다 (updated_at만 바뀌는 커밋 방지).
@@ -44,6 +46,15 @@ FRED_SERIES = [
     ("Sahm Rule", "SAHMREALTIME", "recession", 75),
     ("10Y - 3M", "T10Y3M", "recession", 6),
 ]
+
+# 단기 유동성 스프레드 재료: (FRED ID, 요구 최소 관측치)
+# IORB는 2021-07-29부터, IOER는 2021-07-28까지 제공되므로 둘을 이어 붙인다.
+LIQUIDITY_SERIES = [
+    ("SOFR", 100),
+    ("IORB", 100),
+    ("IOER", 100),
+]
+LIQUIDITY_SPREAD_MA = 5
 
 CBOE_CSV = {
     "VIX": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
@@ -296,6 +307,28 @@ def derived_ratio(top, bottom):
     return result
 
 
+def derived_spread_bp(left, right, scale=100):
+    """두 금리(%)의 차이를 bp 단위로. 공통 거래일에만 만든다."""
+    return {
+        day: (left[day] - right[day]) * scale
+        for day in sorted(set(left) & set(right))
+    }
+
+
+def derived_moving_average(series, window):
+    """관측치 기준 최근 window개 이동평균. 달력일이 아니라 거래일 순서로 센다."""
+    days = sorted(series)
+    if len(days) < window:
+        return {}
+    return {
+        days[index]: statistics.fmean(
+            series[days[order]]
+            for order in range(index - window + 1, index + 1)
+        )
+        for index in range(window - 1, len(days))
+    }
+
+
 # --------------------------------------------------------------------------
 # 조립
 # --------------------------------------------------------------------------
@@ -367,6 +400,20 @@ def main():
                 warnings.append(f"{name} 수집 실패({error}); 값 없음")
                 print(f"[WARN] {name} ({series_id}) 수집 실패, 기존 값도 없음: {error}")
 
+    # 1-2) 단기 유동성: SOFR / IORB(+IOER). 저장하지 않고 스프레드 재료로만 쓴다.
+    liquidity = {}
+    for fred_id, minimum in LIQUIDITY_SERIES:
+        time.sleep(0.4)
+        try:
+            series, _ = fetch_fred(fred_id, api_key)
+            if len(series) < minimum:
+                raise RuntimeError(f"{fred_id}: 관측치 {len(series)}개로 너무 적음")
+            liquidity[fred_id] = series
+            print(f"[FRED] {fred_id}: {len(series)}건, 최신 {max(series)}")
+        except Exception as error:  # noqa: BLE001
+            warnings.append(f"{fred_id} 수집 실패({error})")
+            print(f"[WARN] {fred_id} 수집 실패: {error}")
+
     # 2) VIX / VIX3M: FRED 이력 + CBOE 종가 + Yahoo 최신 종가
     for name, fred_id in (("VIX", "VIXCLS"),):
         base = dict(collected.get(fred_id, {}))
@@ -426,7 +473,23 @@ def main():
     if vix and vix3m:
         collected["VIX_TERM"] = derived_ratio(vix3m, vix)
         sources["VIX_TERM"] = "CBOE/Yahoo 파생 (VIX3M / VIX)"
-    for derived_id in ("HY_OAS_CHG20", "CCC_HY_GAP", "VIX_TERM"):
+
+    # SOFR - IORB: 정책금리(IORB) 대비 익일물 자금조달 금리(SOFR)의 격차.
+    # 양수로 벌어지면 자금시장에 유동성 수요가 몰린다는 뜻이다. 월말·분기말
+    # 하루 이틀짜리 튐을 걸러내도록 5관측치 이동평균도 함께 만든다.
+    sofr = liquidity.get("SOFR", {})
+    policy_rate = dict(liquidity.get("IOER", {}))
+    policy_rate.update(liquidity.get("IORB", {}))
+    # IORB가 없으면 스프레드가 2021-07에서 끊겨 5년 구간이 비므로, 새로 계산하지 않고
+    # 아래 3)에서 기존 data.json 값을 그대로 유지한다(지표가 사라지지 않게).
+    if sofr and policy_rate and liquidity.get("IORB"):
+        spread = derived_spread_bp(sofr, policy_rate)
+        collected["SOFR_IORB"] = spread
+        sources["SOFR_IORB"] = "FRED 파생 (SOFR - IORB, 2021-07-28 이전은 IOER)"
+        collected["SOFR_IORB_MA5"] = derived_moving_average(spread, LIQUIDITY_SPREAD_MA)
+        sources["SOFR_IORB_MA5"] = f"FRED 파생 (SOFR - IORB {LIQUIDITY_SPREAD_MA}관측치 평균)"
+
+    for derived_id in ("HY_OAS_CHG20", "CCC_HY_GAP", "VIX_TERM", "SOFR_IORB", "SOFR_IORB_MA5"):
         series = collected.get(derived_id) or existing_series(existing, derived_id)
         if series:
             collected[derived_id] = series
@@ -484,6 +547,13 @@ def main():
         age = (date.fromisoformat(latest_day) - date.fromisoformat(max(series))).days
         if age > max_delay:
             message = f"{name}: 최신 관측일이 {age}일 전 ({max(series)})"
+            warnings.append(message)
+            print(f"[WARN] {message}")
+    sofr_series = liquidity.get("SOFR") or {}
+    if sofr_series:
+        age = (date.fromisoformat(latest_day) - date.fromisoformat(max(sofr_series))).days
+        if age > 6:
+            message = f"SOFR: 최신 관측일이 {age}일 전 ({max(sofr_series)})"
             warnings.append(message)
             print(f"[WARN] {message}")
     if all(

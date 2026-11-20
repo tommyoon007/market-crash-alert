@@ -132,7 +132,7 @@ const INDICATORS = [
         unit: "",
         decimals: 2,
         group: "financial",
-        weight: 100,
+        weight: 60,
         frequency: "주간",
         staleAfterDays: 10,
         sourceMeaning: "금리·신용·주식시장 등 여러 금융 변수를 종합한 지수입니다. 0은 장기 평균 수준, 양수는 평균보다 긴축적인 금융여건, 음수는 평균보다 완화적인 여건을 뜻합니다.",
@@ -143,6 +143,27 @@ const INDICATORS = [
             { min: 0, score: 2, status: "caution", label: "주의", range: "0.00 이상 ~ 0.25 미만", meaning: "금융여건이 평균보다 덜 완화적이거나 긴축 쪽에 위치합니다." },
             { min: -0.5, score: 1, status: "safe", label: "완화적", range: "-0.50 이상 ~ 0.00 미만", meaning: "금융여건이 장기 평균보다 완화적인 구간입니다." },
             { min: null, score: 0, status: "verylow", label: "매우 완화적", range: "-0.50 미만", meaning: "금융여건이 평균보다 상당히 완화적입니다. 다른 위험이 없다는 의미는 아닙니다." }
+        ]
+    },
+    {
+        name: "SOFR − IORB (5일 평균)",
+        id: "SOFR_IORB_MA5",
+        description: "미국 단기 자금조달 금리(SOFR)와 정책금리(IORB)의 5일 평균 격차",
+        unit: "bp",
+        decimals: 1,
+        group: "financial",
+        weight: 40,
+        frequency: "일간",
+        staleAfterDays: 3,
+        source: "FRED 파생",
+        sourceMeaning: "지급준비금 잔액에 붙는 이자율(IORB)과 익일물 환매조건부 거래 금리(SOFR)의 차이입니다. 평상시에는 SOFR이 조금 낮아 음수로 유지되는데, 양수로 벌어지면 은행들이 준비금을 담보로 자금을 빌려야 할 만큼 단기 유동성 수요가 커졌다는 뜻입니다. 월말·분기말 하루 이틀짜리 튐을 거르려고 5관측치 평균을 씁니다.",
+        bands: [
+            { min: 20, score: 5, status: "extreme", label: "극단 위험", range: "20bp 이상", meaning: "자금조달 금리가 정책금리를 크게 웃돌아 단기 유동성 경색이 뚜렷한 구간입니다." },
+            { min: 10, score: 4, status: "danger", label: "고위험", range: "10bp 이상 ~ 20bp 미만", meaning: "유동성 수요가 강해져 자금시장 경색 위험이 커진 구간입니다." },
+            { min: 5, score: 3, status: "warning", label: "경계", range: "5bp 이상 ~ 10bp 미만", meaning: "자금조달 금리가 정책금리 위로 벌어져 유동성 여건이 조여드는 구간입니다." },
+            { min: 2, score: 2, status: "caution", label: "주의", range: "2bp 이상 ~ 5bp 미만", meaning: "평상시보다 조금 높은 구간입니다. 월말·분기말 자금 수요인지 추세인지 확인해야 합니다." },
+            { min: 0, score: 1, status: "safe", label: "보통", range: "0bp 이상 ~ 2bp 미만", meaning: "정책금리 아래 또는 바로 위에서 보통 범위로 움직이는 구간입니다." },
+            { min: null, score: 0, status: "verylow", label: "낮음", range: "0bp 미만", meaning: "자금이 남아도는 구간입니다. 지표 수준만 보면 유동성 스트레스가 낮습니다." }
         ]
     },
     {
